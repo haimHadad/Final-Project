@@ -1,0 +1,26 @@
+﻿@model FinalProject.Models.DappAccount
+@{
+    ViewData["Title"] = "AccountMainPage";
+    Layout = "~/Views/Shared/_LayoutAccount.cshtml";
+}
+
+<h1>AccountMainPage</h1>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Public Key</th>
+            <th scope="col">Asset's Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var a in @Model.assetsList)
+        {
+            <tr>
+                <td>@a.accountAddress</td>
+                <td>@a.address</td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+

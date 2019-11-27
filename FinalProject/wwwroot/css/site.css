@@ -1,0 +1,42 @@
+﻿body {
+    background-color: #2C2F33 !important;
+}
+
+#public_key_input {
+    margin-top: 64px;
+    width: 55%;
+    text-align: center;
+    border-radius: 4px;
+    border: thin;
+}
+
+#private_key_input {
+    width: 55%;
+    text-align: center;
+    border-radius: 4px;
+    border: thin;
+}
+/* ---------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 64px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    line-height: 64px; /* Vertically center the text there */
+}
+
+@media only screen and (max-width: 576px) {
+    .footer {
+        line-height: 22px; /* Vertically center the text there */
+    }
+}
