@@ -1,0 +1,196 @@
+﻿
+    pragma solidity ^0.5.11;
+    contract SalesContract 
+    {
+        uint private timeOfContractCreation;
+        uint private timeToBeOpen;
+        address payable constant internal govrementAddress = 0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80;
+        uint private taxPay;
+
+        struct Asset{
+            uint id;
+            string loaction;
+            uint rooms;
+            uint areaIn;
+            string image;
+            uint price;
+        }
+        
+        address payable private oldOwnerAddress;
+        Asset private ownerAsset;
+        address payable private buyerAddress;
+        address payable private newOwnerAddress; //will be set after govrenmet`s signing
+
+        bool private ownerSign = false;       //flag raised after owner sign 
+        bool private buyerSign = false;       //flag raised after buyer sign
+        bool private govrenmentSign = false;  //flag raised after govrenment sign
+        bool private isContractPayed = false; //flag raised after buyer sent ether to the contract
+        bool private isExpired = false;       //if I bought the asset and want to sell it to another person, the govrenment raise this flag
+        
+        event notifyNewOffer(address fromContract, address toBuyer); //send message to buyer when seller create and sign the contract
+        event notifyContractApproved(address fromContract, address toSeller, address toBuyer); //govrenment raise signing flag, and send back the contract. Both sides reads the flag.
+        event notifyContractSigned(address fromContract, address toGovrenment); //after buyer and sell signing we notify the govrenment 
+        event notifyDenyOffer(address fromContract, address fromBuyer,address toSeller);  //send message to seller and tell him that buyer denied contract
+        event notifyCancelOffer(address fromContract, address toBuyer,address toSeller, uint codeAction); //govrenment cancel the contract 
+
+        
+        constructor(uint _timeToBeOpen ,uint _Id, string memory _Loaction, uint _Rooms, uint _AreaIn,string memory _Image, uint _price, address payable _buyer ) public 
+        {
+         require( msg.sender !=  _buyer, 'Buyer and seller are the same person' ); //only the seller can create the contract
+         timeToBeOpen = _timeToBeOpen * 3600; //time in secounds only, constructor gets hour unit only
+         ownerAsset = Asset({
+             id: _Id,
+             loaction: _Loaction, 
+             rooms: _Rooms, 
+             areaIn: _AreaIn,
+             image: _Image,
+             price: _price
+         });
+         
+         oldOwnerAddress = msg.sender;
+         buyerAddress = _buyer;
+         ownerSign = true;
+         timeOfContractCreation = now;
+         emit notifyNewOffer(address(this), buyerAddress);
+        }
+       
+        
+        
+        function() external payable //this is fallback function. it responisble for all data of transactions (pays for this contract)
+        { 
+            require( buyerAddress == msg.sender, 'Only buyer may pay this contract' );    //when address send ether to the contract, it must be the buyer`s address only
+            require( ownerAsset.price == msg.value , 'Your pay is not equal to the asset`s price tag' ); //buyer can pay only the amount that the seller wants
+            require( isContractPayed != true , 'Buyer already payed for this contract' ); //buyer can pay only the amount that the seller wants
+            isContractPayed = true;
+        }
+
+        function isTimerOver() public view returns (bool)
+        {
+            uint contractTime = now - timeOfContractCreation;
+            if(contractTime > timeToBeOpen) 
+                return true;
+            return false;
+            
+        }
+        
+        function getContractBalance() public view returns(uint) //this method return the balance of this contract = the ether amount that sent to this contract
+        {
+            return address(this).balance;
+        }
+            
+        function getAssetDetails() public view returns (uint AssetID, string memory AssetLoaction, uint AssetRooms, uint AssetAreaIn, string memory AssetImageURL ,uint AssetPrice) //this method return the asset details for confirmation
+        {
+            
+            return 
+                (
+                ownerAsset.id, 
+                ownerAsset.loaction,
+                ownerAsset.rooms,
+                ownerAsset.areaIn,
+                ownerAsset.image,
+                ownerAsset.price
+                );
+        }
+        
+        function getOldAssetOwner() public view returns(address) 
+        {
+            return oldOwnerAddress;
+        }
+        
+        function getAssetBuyer() public view returns(address) 
+        {
+            return buyerAddress;
+        }
+        
+        function getNewAssetOwner() public view returns(address)
+        {
+           return newOwnerAddress; 
+        } 
+         
+        function getOwnerSigning() public view returns(bool) //this method return state of owner sign
+        {
+            return ownerSign;
+        }
+         
+        function getBuyerSigning() public view returns(bool) //this method return state of buyer sign
+        {
+            return buyerSign;
+        }
+         
+        function setBuyerSigning() public  //buyer sign the contract
+        {
+            require( buyerAddress == msg.sender, 'Only buyer may sign this contract');    //only buyer can sign
+            require(isContractPayed == true, 'You didn`t payed the price for the deal'); 
+            require(buyerSign != true, 'The buyer already signed this contract' );
+            buyerSign = true;
+            emit notifyContractSigned(address(this), govrementAddress);
+        }
+        
+       function getIsExpired() public view returns(bool)
+       {
+           return isExpired;
+       }
+       
+       function TimeLeft() public view returns(uint)
+       {
+           if(isTimerOver() == true)
+                                return 0;
+            return (timeToBeOpen - ( now - timeOfContractCreation));
+       }
+       
+       
+       
+       function setIsExpired() public
+       {
+           require( msg.sender ==  govrementAddress, 'Only govrenment may call this function' ); //only govrenment can call this function
+           isExpired = !isExpired;
+       }
+        
+        function approveAndExcecuteContract(uint _taxPay ) public returns (bool) //this method responsible for the excecution of the contract
+        {
+           require( msg.sender ==  govrementAddress, 'Only govrenment may call this function' ); //only govrenment can call this function
+           require(_taxPay < getContractBalance(), 'The tax payment must be lower than the buyer payment' );   //govrenment cannot take more ether than what the contract has
+           require(buyerSign == true, 'The contract didn`t recieve the buyer`s signing' );
+           require(govrenmentSign != true, 'The govrenment already signed this contract' );
+
+           //we don`t need the owner signing, because that he signed the contract while he deployed it
+
+           taxPay = _taxPay;   //set the propery first
+           uint payPriceForOwner = ownerAsset.price - taxPay;
+           oldOwnerAddress.transfer(payPriceForOwner);
+           govrementAddress.transfer(taxPay);
+           newOwnerAddress = buyerAddress;
+           govrenmentSign = true;
+           emit notifyContractApproved(address(this), oldOwnerAddress, newOwnerAddress);
+           return govrenmentSign;
+           
+        }
+        
+        function cancelContract() public //for the govrenment
+        {
+          require(govrementAddress == msg.sender, 'Only govrenment may call this function');
+          require(govrenmentSign != true, 'The govrenment already signed this contract' );
+          emit  notifyCancelOffer(address(this), buyerAddress , oldOwnerAddress, 1); //notifyCancelOffer 
+          selfdestruct(buyerAddress); //Destruct the contract and return ether to the buyer
+        }
+    
+         function denyContract() public //for the buyer
+        {
+          require(buyerAddress == msg.sender, 'Only buyer may call this function'); 
+          require(buyerSign != true, 'Buyer cannot deny the contract after signing'); 
+          emit notifyDenyOffer(address(this), buyerAddress, oldOwnerAddress);
+          selfdestruct(buyerAddress); //Destruct the contract, no need return ether to the buyer
+        }
+        
+        function abortContract() public //in case buyer didnt take action in time   
+        {
+            require(oldOwnerAddress == msg.sender, 'Only asset owner may call this function'); 
+            require(buyerSign != true, 'Buyer already signed the contract');
+            require(isTimerOver() == true, 'Time didn`t over yet');
+            selfdestruct(buyerAddress); //Destruct the contract and return ether to the buyer
+            emit  notifyCancelOffer(address(this), buyerAddress , oldOwnerAddress, 2); //notifyCancelOffer 
+
+        }
+   
+    } 
+
