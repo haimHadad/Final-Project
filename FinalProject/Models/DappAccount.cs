@@ -78,9 +78,9 @@ namespace FinalProject.Models
         }
 
 
-        public float getExchangeRate_ETH_To_ILS()
+        public double getExchangeRate_ETH_To_ILS()
         {
-            float exchangeRate;
+            double exchangeRate;
             string[] words;
             int indexOfExchangeRate;
 
@@ -91,7 +91,7 @@ namespace FinalProject.Models
                     var htmlPage = client.DownloadString("https://coinyep.com/he/rss/ETH-ILS.xml");
                     words = htmlPage.Split(' ');
                     indexOfExchangeRate = words.IndexOf("ILS");
-                    exchangeRate = (float)Convert.ToDouble(words[indexOfExchangeRate - 1]);
+                    exchangeRate = Convert.ToDouble(words[indexOfExchangeRate - 1]);
 
                 }
                 catch (Exception e)
