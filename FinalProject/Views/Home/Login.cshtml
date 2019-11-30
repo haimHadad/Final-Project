@@ -2,18 +2,49 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<div class="container">
-    @using (Html.BeginForm("AccountMainPage", "DappAccount", FormMethod.Post))
-    {
 
+<script language="javascript">
+
+    function SendLoginData() {
+        document.getElementById("LoginErrorLabel").style.display = "none";
+        var url = "/DappAccount/CheckAccount";
+
+        $.post(url, { PublicKey: $("#public_key_input").val(), PrivateKey: $("#private_key_input").val() }, function (data) {
+            if (data == false) {
+                document.getElementById("LoginErrorLabel").style.display = "block";
+                return;
+            }
+            else {
+                document.getElementById("loader").style.display = "block";
+                $("#myform").submit()
+            }
+
+        });
+    }
+
+
+
+</script>
+
+
+<div class="container">
+    @using (Html.BeginForm("AccountMainPage", "DappAccount", FormMethod.Post, new { @id = "myform" }))
+    {
         <div class="row justify-content-center">
             @Html.TextBoxFor(m => m.publicKey, new { id = "public_key_input", placeholder = "Ethereum Public Key", required = "required" })
         </div> <br />
         <div class="row justify-content-center">
             @Html.TextBoxFor(m => m.privateKey, new { id = "private_key_input", placeholder = "Ethereum Private Key", required = "required", type = "password" })
         </div> <br />
-        <div class="row justify-content-center">
-            <input type="submit" value="Login" class="btn btn-primary" />
-        </div>
     }
+
+    <center>
+        <img id="loader" style="display: none;" src="https://s5.gifyu.com/images/12171581b356cc6c8d7.gif" alt="12171581b356cc6c8d7.gif">
+    </center>
+    <div class="row justify-content-center">
+        <input id="submit" type="button" value="Login" class="btn btn-primary" onclick="SendLoginData()" />
+    </div>
+    <label id="LoginErrorLabel" style="color: red; display: none;">*Wrong login detail !</label>
+
+
 </div>

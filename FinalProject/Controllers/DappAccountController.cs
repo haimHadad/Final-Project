@@ -19,10 +19,28 @@ namespace FinalProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AccountMainPage(DappAccount account)
+        public async Task<IActionResult> AccountMainPage(string PublicKey, string PrivateKey)
         {
+            
+            DappAccount account = new DappAccount(PublicKey, PrivateKey);
             account.OwnAssetsList = await _context.assets.FromSqlRaw("select * from Assets2 where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
             return View(account);
+
+        }
+
+
+        [HttpPost]
+        public async Task<bool> CheckAccount(String PublicKey, string PrivateKey)
+        {
+            DappAccount account = new DappAccount(PublicKey, PrivateKey);
+            if (account.IsValidated)
+            {
+                return true;
+            }
+
+           
+
+            return false;
         }
     }
 }
