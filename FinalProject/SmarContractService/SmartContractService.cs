@@ -210,7 +210,7 @@ namespace FinalProject.Models
             }
             return true;
         }
-
+        
         public async Task<bool> abort() //in case buyer didnt take action in time
         {
             string SellerAddress = await getOldAssetOwner();

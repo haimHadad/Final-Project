@@ -8,9 +8,33 @@ namespace FinalProject.Models
 {
     public class Asset
     {
+        /* [Key]
+         public string address { get; set; }
+         [Required]
+         public string accountAddress { get; set; }*/
+
         [Key]
-        public string address { get; set; }
+        public int AssetID { get; set; }
+        
         [Required]
-        public string accountAddress { get; set; }
+        public int OwnerID { get; set; }
+
+        [Required]
+        public string OwnerPublicKey { get; set; }
+
+        [Required]
+        public string Loaction { get; set; }
+
+        [Required]
+        public int AreaIn { get; set; }
+
+        [Required]
+        public int Rooms { get; set; }
+
+        [Required]
+        public string ImageURL { get; set; }
+
+        [Required]
+        public double Price { get; set; }
     }
 }

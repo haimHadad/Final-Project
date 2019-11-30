@@ -26,7 +26,7 @@ namespace FinalProject.Models
         }
         public Nethereum.Web3.Accounts.Account BlockchainAcount;
 
-        public List<Asset> assetsList { get; set; }
+        public List<Asset> OwnAssetsList { get; set; }
         public DappAccount(String _publicKey, String _privateKey) //password = public key
         {
             try
