@@ -30,16 +30,13 @@ namespace FinalProject.Controllers
 
 
         [HttpPost]
-        public async Task<bool> CheckAccount(String PublicKey, string PrivateKey)
+        public bool CheckAccount(String PublicKey, string PrivateKey)
         {
             DappAccount account = new DappAccount(PublicKey, PrivateKey);
             if (account.IsValidated)
             {
                 return true;
             }
-
-           
-
             return false;
         }
     }
