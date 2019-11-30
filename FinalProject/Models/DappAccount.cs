@@ -19,14 +19,16 @@ namespace FinalProject.Models
         public String AccountNetwork { get; set; }
 
         public Web3 Blockchain { get; set; }
-
-        public DappAccount()
-        {
-
-        }
+    
         public Nethereum.Web3.Accounts.Account BlockchainAcount;
 
         public List<Asset> OwnAssetsList { get; set; }
+
+        public List<OpenContract> SentContractsList { get; set; }
+
+        public List<OpenContract> RecievedContractsList { get; set; }
+
+
         public DappAccount(String _publicKey, String _privateKey) //password = public key
         {
             try

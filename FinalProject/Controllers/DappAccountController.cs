@@ -11,9 +11,9 @@ namespace FinalProject.Controllers
 {
     public class DappAccountController : Controller
     {
-        private AssetContext _context;
+        private AccountContext _context;
 
-        public DappAccountController(AssetContext context)
+        public DappAccountController(AccountContext context)
         {
             _context = context;
         }
@@ -24,6 +24,7 @@ namespace FinalProject.Controllers
             
             DappAccount account = new DappAccount(PublicKey, PrivateKey);
             account.OwnAssetsList = await _context.assets.FromSqlRaw("select * from Assets2 where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
+            account.RecievedContractsList = await _context.recievedOpenContracts.FromSqlRaw("select * from OpenContracts where BuyerPublicKey = {0}", account.publicKey).ToListAsync();
             return View(account);
 
         }
