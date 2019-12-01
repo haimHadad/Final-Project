@@ -13,6 +13,15 @@ namespace FinalProject.Data
         public DbSet<Asset> assets { get; set; }
         public DbSet<OpenContract> recievedOpenContracts { get; set; }
 
-        //public DbSet<ClosedContract> sentOpenContracts { get; set; }
+        public DbSet<OpenContract> sentOpenContracts { get; set; }
+
+        public DbSet<ClosedContract> ClosedContracts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ClosedContract>()
+                .HasKey(c => new { c.AssetID, c.ContractAddress });
+        }
+
     }
 }

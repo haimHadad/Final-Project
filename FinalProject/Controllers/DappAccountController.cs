@@ -25,7 +25,7 @@ namespace FinalProject.Controllers
             DappAccount account = new DappAccount(PublicKey, PrivateKey);
             account.OwnAssetsList = await _context.assets.FromSqlRaw("select * from Assets2 where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
             //account.RecievedContractsList = await _context.recievedOpenContracts.FromSqlRaw("select * from OpenContracts where BuyerPublicKey = {0}", account.publicKey).ToListAsync();
-           // account.RecievedContractsList = await _context.recievedOpenContracts.FromSqlRaw("select * from OpenContracts where BuyerPublicKey = {0}", account.publicKey).ToListAsync();
+            account.ClosedContractsList = await _context.ClosedContracts.FromSqlRaw("select * from ClosedContracts").ToListAsync();
 
             return View(account);
 
