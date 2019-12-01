@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace FinalProject.Models
 {
-    public class OpenContract
+    public class ClosedContract
     {
         [Key]
         public int AssetID { get; set; }
 
-        [Required]
+        [Key]
         public string ContractAddress { get; set; }
 
         [Required]
@@ -21,12 +21,13 @@ namespace FinalProject.Models
         public string BuyerPublicKey { get; set; }
 
         [Required]
-        public bool SellerSign { get; set; }
+        public bool IsApproved { get; set; }
 
         [Required]
-        public int BuyerSign { get; set; }
-    
+        public string RejectedBy { get; set; }
+
+        [Required]
+        public string Reason { get; set; }
+
     }
-
-
 }

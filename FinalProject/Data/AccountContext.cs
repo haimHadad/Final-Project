@@ -13,5 +13,6 @@ namespace FinalProject.Data
         public DbSet<Asset> assets { get; set; }
         public DbSet<OpenContract> recievedOpenContracts { get; set; }
 
+        public DbSet<ClosedContract> sentOpenContracts { get; set; }
     }
 }

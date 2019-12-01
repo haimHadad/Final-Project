@@ -28,6 +28,9 @@ namespace FinalProject.Models
 
         public List<OpenContract> RecievedContractsList { get; set; }
 
+        public List<ClosedContract> ClosedContractsList { get; set; }
+
+
 
         public DappAccount(String _publicKey, String _privateKey) //password = public key
         {
