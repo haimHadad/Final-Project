@@ -24,7 +24,10 @@ namespace FinalProject.Models
         
         public Nethereum.Web3.Accounts.Account BlockchainAcount;
 
-        public List<Asset> assetsList { get; set; }
+        public List<Asset> OwnAssetsList { get; set; }
+
+        public List<ClosedContract> ClosedContractsList { get; set; }
+
 
 
         public DappAccount()
