@@ -21,7 +21,7 @@ namespace FinalProject.Controllers
         [HttpPost]
         public async Task<IActionResult> AccountMainPage(DappAccount account)
         {
-            account.assetsList = await _context.assets.FromSqlRaw("select * from assets where accountAddress = {0}", account.publicKey).ToListAsync();
+            account.assetsList = await _context.Assets.FromSqlRaw("select * from assets where accountAddress = {0}", account.publicKey).ToListAsync();
             return View(account);
         }
     }
