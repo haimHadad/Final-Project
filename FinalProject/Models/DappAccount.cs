@@ -14,47 +14,68 @@ namespace FinalProject.Models
 
         public string privateKey { get; set; }
 
-        public Boolean IsValidated { get; set; }
+        private Boolean IsValidated { get; set; }
 
+        private Boolean IsConnectedToBlockChain { get; set; }
         public String AccountNetwork { get; set; }
 
         public Web3 Blockchain { get; set; }
+
+        
+        public Nethereum.Web3.Accounts.Account BlockchainAcount;
+
+        public List<Asset> assetsList { get; set; }
+
 
         public DappAccount()
         {
 
         }
-        public Nethereum.Web3.Accounts.Account BlockchainAcount;
 
-        public List<Asset> assetsList { get; set; }
-        public DappAccount(String _publicKey, String _privateKey) //password = public key
+
+        public async Task<bool> CheckLogin(string _publicKey, string _privateKey)
         {
             try
             {
                 BlockchainAcount = new Nethereum.Web3.Accounts.Account(_privateKey);
+                String declaredAddress = _publicKey;                         //address from son = textbox of our web dApp = Account class that Haim created
+                String realAddress = BlockchainAcount.Address;               //BlockchainAcount.Address is the real address of the private key  
+                if (!declaredAddress.Equals(realAddress))                     //If the addresses are matched => Login details are correct = > dApp will show wallt(account) content in the next view 
+                {
+                    this.IsValidated = false;
+                    return IsValidated;
+                }
             }
             catch (Exception e)
             {
-                IsValidated = false;
-                return;
+                this.IsValidated = false;
+                return IsValidated;
             }
-
-            String declaredAddress = _publicKey;                         //address from son = textbox of our web dApp = Account class that Haim created
-            String realAddress = BlockchainAcount.Address;               //BlockchainAcount.Address is the real address of the private key  
-            if (declaredAddress.Equals(realAddress))                     //If the addresses are matched => Login details are correct = > dApp will show wallt(account) content in the next view 
-                IsValidated = true;
-            else
-            {
-                IsValidated = false;
-                return;
-            }
-            publicKey = _publicKey;
-            privateKey = _privateKey;
-            var infuraURL = "https://ropsten.infura.io/v3/4dc41c6f591d4d61a3a2e32a219c6635";
-            Blockchain = new Web3(BlockchainAcount, infuraURL);
+            this.IsValidated = true;
+            return this.IsValidated;
         }
 
 
+        public bool ConnectToBlockchain()
+        {
+            if(this.IsValidated == true)
+            {
+                try 
+                {
+                    var infuraURL = "https://ropsten.infura.io/v3/4dc41c6f591d4d61a3a2e32a219c6635";
+                    Blockchain = new Web3(BlockchainAcount, infuraURL);
+                    
+                } 
+                catch(Exception e) 
+                {
+                    this.IsConnectedToBlockChain = false;
+                    return false;
+                }
+                
+            }
+            this.IsConnectedToBlockChain = true;
+            return IsConnectedToBlockChain;
+        }
 
         public async Task<double> get_ETH_Balance()
         {
@@ -69,6 +90,8 @@ namespace FinalProject.Models
         public async Task<double> get_ETH_BalanceOfAnyAccount(String AccountAddress)
         {
             if (AccountAddress == null || IsValidated == false)
+                return -1;
+            if (IsConnectedToBlockChain == false)
                 return -1;
             var balance = await Blockchain.Eth.GetBalance.SendRequestAsync(AccountAddress);
             var etherAmount = Web3.Convert.FromWei(balance.Value);
