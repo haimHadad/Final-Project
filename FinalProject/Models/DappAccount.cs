@@ -28,6 +28,10 @@ namespace FinalProject.Models
 
         public List<ClosedContract> ClosedContractsList { get; set; }
 
+        public List<OpenContract> SentContractsList { get; set; }
+
+        public List<OpenContract> RecievedContractsList { get; set; }
+
 
 
         public DappAccount()
