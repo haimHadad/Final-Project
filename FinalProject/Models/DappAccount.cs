@@ -17,6 +17,7 @@ namespace FinalProject.Models
         private Boolean IsValidated { get; set; }
 
         private Boolean IsConnectedToBlockChain { get; set; }
+
         public String AccountNetwork { get; set; }
 
         public Web3 Blockchain { get; set; }
