@@ -19,16 +19,19 @@
         </tr>
     </thead>
     <tbody align="center">
+        
         @foreach (var a in @Model.OwnAssetsList)
         {
+            //var currentAsset = Newtonsoft.Json.JsonConvert.SerializeObject(@a);
             <tr>
                 <td>@a.AssetID</td>
                 <td>@a.Loaction</td>
                 <td>@a.AreaIn</td>
                 <td>@a.Rooms</td>
                 <td><a target="_blank" href=@a.ImageURL>Click</a></td>
-                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerAsset(@a.AssetID)">Offer Asset</button></td>
+                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract()">Offer Contract</button></td>
             </tr>
+
         }
 
     </tbody>
@@ -37,27 +40,38 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="dialogTitle"></h4>
+                <h4 class="modal-title" id="dialogTitle">Offer Contract</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="asset_dialog_body"></div>
+            <div class="modal-body" id="asset_dialog_body">
+                <p id="dialogAssetID"></p>
+                <p id="dialogOwnerAddress"></p>
+
+            </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">Send Contract</button>
             </div>
         </div>
     </div>
 </div>
-@section scripts {
+@section scripts
+{
+
     <script type="text/javascript">
-        function offerAsset(paramAssetID)
-        {  
-            document.getElementById("dialogTitle").innerHTML="Asset No: "+paramAssetID;
+        function offerContract(jsonData)
+        {
+              
+             
+            document.getElementById("dialogAssetID").innerHTML = "Asset No:".bold();
+            document.getElementById("dialogOwnerAddress").innerHTML="Your Public Key:" +"222";
+
             $('.table tbody').on('click', '.btn', function () {
                 var row = $(this).closest('tr');
                 var col = row.find('td:eq(1)').text();
-                document.getElementById("asset_dialog_body").innerHTML(col);
+                //document.getElementById("asset_dialog_body").innerHTML("vddv");
             })
         }
         $('#myModal').on('shown.bs.modal', function () {

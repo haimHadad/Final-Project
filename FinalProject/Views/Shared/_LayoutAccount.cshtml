@@ -27,11 +27,11 @@
                     <li class="nav-item active">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Contracts<span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="pl-0 mr-0">
-                        <img class="img-responsive pull-right" style="width: 3%" src="~/img/ETH-Icon.png" />
-                        <label>@await Model.get_ETH_Balance() ETH</label>
-                        <label class="ml-2">|</label>
-                        <label class="ml-2">₪ @await Model.get_ILS_Balance() </label>
+                    <li class="pl-0 mr-0 ml-2" > 
+                            <img class="img-responsive pull-right" style="width: 3%" src="~/img/ETH-Icon.png" />
+                            <label><strong>@await Model.get_ETH_Balance() ETH</strong></label>
+                            <label class="ml-2"><strong>|</strong></label>
+                            <label class="ml-2"><strong>₪ @await Model.get_ILS_Balance()</strong></label>       
                     </li>
                 </ul>
             </div>
