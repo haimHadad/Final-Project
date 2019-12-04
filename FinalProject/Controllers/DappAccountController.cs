@@ -23,9 +23,15 @@ namespace FinalProject.Controllers
         public async Task<IActionResult> AccountMainPage(DappAccount account) //here the login succeeded , e initialized the key
         { 
             account.CheckLogin(account.publicKey, account.privateKey); //so now call againg to the login method in order to load more properties
+            account.ConnectToBlockchain();
             myAccount = account; //and save this account in static account so the other controllers be able to read it
-            myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();                 
-            return View(account);
+            myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
+
+           
+
+
+
+            return View(myAccount);
 
         }
 
