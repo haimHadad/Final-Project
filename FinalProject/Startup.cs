@@ -28,7 +28,7 @@ namespace FinalProject
             services.AddControllersWithViews();
             services.AddMvc();
             /* Configures DataBase */
-            services.AddDbContext<AccountContext>(options =>
+            services.AddDbContext<AssetContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DataBase")));
         }
 

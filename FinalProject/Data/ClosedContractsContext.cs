@@ -1,19 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FinalProject.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FinalProject.Models;
 
 namespace FinalProject.Data
 {
-    public class AccountContext : DbContext
+    public class ClosedContractsContext : DbContext
     {
-        public AccountContext(DbContextOptions<AccountContext> options) : base(options) { }
-        public DbSet<Asset> assets { get; set; }
-        public DbSet<OpenContract> recievedOpenContracts { get; set; }
+        public ClosedContractsContext(DbContextOptions<AssetContext> options) : base(options) { }
 
-        public DbSet<OpenContract> sentOpenContracts { get; set; }
 
         public DbSet<ClosedContract> ClosedContracts { get; set; }
 
@@ -22,6 +19,5 @@ namespace FinalProject.Data
             modelBuilder.Entity<ClosedContract>()
                 .HasKey(c => new { c.AssetID, c.ContractAddress });
         }
-
     }
 }
