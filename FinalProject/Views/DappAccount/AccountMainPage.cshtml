@@ -8,15 +8,14 @@
 <h1>Your Assets</h1>
 <table class="table table-hover">
     <thead align="center">
-        <tr>  
+        <tr>
             <th scope="col">AssetID</th>
-            <th scope="col">OwnerID</th>
-            <th scope="col">OwnerPublicKey</th>
             <th scope="col">Loaction</th>
             <th scope="col">AreaIn</th>
             <th scope="col">Rooms</th>
             <th scope="col">ImageURL</th>
-            <th scope="col">Price</th> 
+            <th scope="col">Details</th>
+
         </tr>
     </thead>
     <tbody align="center">
@@ -24,13 +23,11 @@
         {
         <tr>
             <td>@a.AssetID</td>
-            <td>@a.OwnerID</td>
-            <td>@a.OwnerPublicKey</td>
             <td>@a.Loaction</td>
             <td>@a.AreaIn</td>
             <td>@a.Rooms</td>
             <td><a target="_blank" href=@a.ImageURL>Click</a></td>
-            <td>@a.Price ETH</td>
+
         </tr>
         }
 
