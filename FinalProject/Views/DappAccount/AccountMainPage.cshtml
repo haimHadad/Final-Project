@@ -14,7 +14,7 @@
             <th scope="col">AreaIn</th>
             <th scope="col">Rooms</th>
             <th scope="col">ImageURL</th>
-            <th scope="col">Details</th>
+            <th scope="col">Action</th>
 
         </tr>
     </thead>
@@ -27,7 +27,7 @@
                 <td>@a.AreaIn</td>
                 <td>@a.Rooms</td>
                 <td><a target="_blank" href=@a.ImageURL>Click</a></td>
-                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="func()">View Details</button></td>
+                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerAsset(@a.AssetID)">Offer Asset</button></td>
             </tr>
         }
 
@@ -37,7 +37,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h4 class="modal-title" id="dialogTitle"></h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -51,7 +51,9 @@
 </div>
 @section scripts {
     <script type="text/javascript">
-        function func() {
+        function offerAsset(paramAssetID)
+        {  
+            document.getElementById("dialogTitle").innerHTML="Asset No: "+paramAssetID;
             $('.table tbody').on('click', '.btn', function () {
                 var row = $(this).closest('tr');
                 var col = row.find('td:eq(1)').text();
