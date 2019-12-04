@@ -104,7 +104,7 @@ namespace FinalProject.Models
             var balance = await Blockchain.Eth.GetBalance.SendRequestAsync(AccountAddress);
             var etherAmount = Web3.Convert.FromWei(balance.Value);
             double tempBalance = (double)etherAmount;
-            tempBalance = Math.Truncate(tempBalance * 10000) / 10000; //make the double number to be with 3 digits after dot
+            tempBalance = Math.Truncate(tempBalance * 1000) / 1000; //make the double number to be with 3 digits after dot
             return tempBalance;
         }
 
@@ -139,8 +139,9 @@ namespace FinalProject.Models
         {
             double exchangeRate = this.getExchangeRate_ETH_To_ILS();
             double tempBalance = await this.get_ETH_BalanceOfAnyAccount(AccountAddress);
-            return (exchangeRate * tempBalance);
-
+            tempBalance = exchangeRate * tempBalance;
+            tempBalance = Math.Truncate(tempBalance * 1000) / 1000; //make the double number to be with 3 digits after dot
+            return tempBalance;
         }
 
         public async Task<double> get_ILS_Balance()
