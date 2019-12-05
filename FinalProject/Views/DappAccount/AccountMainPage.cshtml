@@ -63,6 +63,14 @@
 {
 
     <script type="text/javascript">
+
+        $(document).ready(function ()
+        {
+            document.getElementById("assetsNavBar").style.textDecoration = "underline";
+            document.getElementById("assetsNavBar").style.fontWeight="bold";  
+        });
+        
+
         function offerContract(assetJson, AssetPriceInILS )
         {                           
             var fullPublicKey = assetJson.OwnerPublicKey;
