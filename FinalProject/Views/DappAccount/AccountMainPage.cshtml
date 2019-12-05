@@ -16,20 +16,19 @@
         </tr>
     </thead>
     <tbody align="center">
-        @{ int i = 0;}
         @foreach (var a in @Model.OwnAssetsList)
         {
             var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
             var rateILS = @Model.getExchangeRate_ETH_To_ILS();
             var assetPriceInILS = rateILS * a.Price;
+            assetPriceInILS = Math.Truncate(assetPriceInILS * 1000) / 1000; //make the double number to be with 3 digits after dot
             //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);            
         <tr>
             <td>@a.AssetID</td>
             <td>@a.Loaction</td>  
             <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @serialModel, @assetPriceInILS)">View Details</button></td>
             
-        </tr>
-            i++;
+        </tr>           
         }
 
     </tbody>
