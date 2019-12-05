@@ -27,17 +27,30 @@
             //var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
             //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
             //,  @a.AreaIn.ToString(), @a.Rooms.ToString(), @a.ImageURL.ToString(), @a.Price.ToString()
-            //String[]  assetArray = new String[8] { a.AssetID.ToString(), a.OwnerID.ToString(), a.OwnerPublicKey.ToString(), a.Loaction.ToString(), a.AreaIn.ToString(), a.Rooms.ToString(), a.ImageURL.ToString(), a.Price.ToString() };
-            //var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(assetArray);
-            //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
-            <tr>
-                <td>@a.AssetID</td>
-                <td id=@loaction>@a.Loaction</td>
-                <td>@a.AreaIn</td>
-                <td>@a.Rooms</td>
-                <td><a id=@url target="_blank" href=@a.ImageURL>Click</a></td>
-                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @i)">Offer Contract</button></td>
-            </tr>
+            //String[]  assetArray = new String[6] { a.AssetID.ToString(), a.OwnerID.ToString(), a.OwnerPublicKey, a.AreaIn.ToString(), a.Rooms.ToString(), a.Price.ToString() };
+            Asset toSend = new Asset();
+            //String[]  assetArray = new String[1] { a.AssetID.ToString() };
+            toSend.AssetID = a.AssetID;
+            toSend.OwnerID = a.OwnerID;
+            toSend.OwnerPublicKey = a.OwnerPublicKey;
+            toSend.Loaction = a.Loaction;
+            toSend.AreaIn = a.AreaIn;
+            toSend.Rooms = a.Rooms;
+            toSend.ImageURL = a.ImageURL;
+            toSend.Price = a.Price;
+            var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+            var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
+            int k = 0;
+
+        <tr>
+            <td>@a.AssetID</td>
+            <td id=@loaction>@a.Loaction</td>
+            <td>@a.AreaIn</td>
+            <td>@a.Rooms</td>
+            <td><a id=@url target="_blank" href=@a.ImageURL>Click</a></td>
+            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @serialModel)">Offer Contract</button></td>
+            
+        </tr>
             i++;
         }
 
@@ -74,20 +87,28 @@
 {
 
     <script type="text/javascript">
-        function offerContract(param  /* , OwnerID , OwnerPublicKey, Loaction, AreaIn, Rooms, ImageURL, Price*/)
-        {        
-            var idLoac = "#loc" + param;
+        function offerContract(param )
+        {   
+            
+            //var obj = JSON.parse('{ "name":"John", "age":30, "city":"New York"}');
+            //var obj = JSON.parse(''+param);
+
+            console.log(param);
+            //console.log(param);
+
+            
+            /*var idLoac = "#loc" + param;
             var idUrl = "#url" + param;
             var demdloc = $(idLoac).text();
-            var demdurl = $(idUrl).attr("href");
-            document.getElementById("dialogAssetID").innerHTML = "Asset No:".bold() + demdloc;
-            document.getElementById("dialogOwnerID").innerHTML = "Your ID:".bold() + demdurl;
-            document.getElementById("dialogOwnerPublicKey").innerHTML="Your Public Key:".bold() +param ;
-            document.getElementById("dialogLoaction").innerHTML="Loaction:".bold() + assetID;
-            document.getElementById("dialogAreaIn").innerHTML="AreaIn:".bold() + param;
-            document.getElementById("dialogRooms").innerHTML="Rooms:".bold() + param;
-            document.getElementById("dialogImageURL").innerHTML="ImageURL:".bold() + param;
-            document.getElementById("dialogPrice").innerHTML="Price:".bold() + "vc";
+            var demdurl = $(idUrl).attr("href");*/
+            document.getElementById("dialogAssetID").innerHTML = "Asset No:".bold() + param.AssetID;
+            document.getElementById("dialogOwnerID").innerHTML = "Your ID:".bold() + param.OwnerID;
+            document.getElementById("dialogOwnerPublicKey").innerHTML="Your Public Key:".bold() +param.OwnerPublicKey ;
+            document.getElementById("dialogLoaction").innerHTML="Loaction:".bold() + param.Loaction;
+            document.getElementById("dialogAreaIn").innerHTML="AreaIn:".bold() + param.AreaIn;
+            document.getElementById("dialogRooms").innerHTML="Rooms:".bold() + param.Rooms;
+            document.getElementById("dialogImageURL").innerHTML="ImageURL:".bold() + param.ImageURL;
+            document.getElementById("dialogPrice").innerHTML="Price:".bold() + param.Price;
 
 
             $('.table tbody').on('click', '.btn', function () {
