@@ -18,7 +18,7 @@
     <tbody align="center">
         @foreach (var a in @Model.OwnAssetsList)
         {
-            var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+            var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
             var rateILS = @Model.getExchangeRate_ETH_To_ILS();
             var assetPriceInILS = rateILS * a.Price;
             assetPriceInILS = Math.Truncate(assetPriceInILS * 1000) / 1000; //make the double number to be with 3 digits after dot
@@ -26,7 +26,7 @@
         <tr>
             <td>@a.AssetID</td>
             <td>@a.Loaction</td>  
-            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @serialModel, @assetPriceInILS)">View Details</button></td>
+            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @AssetSerialModel, @assetPriceInILS)">View Details</button></td>
             
         </tr>           
         }
@@ -63,22 +63,22 @@
 {
 
     <script type="text/javascript">
-        function offerContract(param, priceInILS )
+        function offerContract(assetJson, AssetPriceInILS )
         {                           
-            var fullPublicKey = param.OwnerPublicKey;
+            var fullPublicKey = assetJson.OwnerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
             var partTwo = " . . . ";
             var partThree = fullPublicKey.substring(32, fullPublicKey.length);
             var publicKeyToShow = "" + partOne + partTwo + partThree;
 
-            document.getElementById("dialogAssetID").innerHTML = "Asset No : ".bold() + param.AssetID;
-            document.getElementById("dialogOwnerID").innerHTML = "Your ID : ".bold() + param.OwnerID;
+            document.getElementById("dialogAssetID").innerHTML = "Asset No : ".bold() + assetJson.AssetID;
+            document.getElementById("dialogOwnerID").innerHTML = "Your ID : ".bold() + assetJson.OwnerID;
             document.getElementById("dialogOwnerPublicKey").innerHTML = "Your PublicKey :\n".bold() + publicKeyToShow;//param.OwnerPublicKey ;
-            document.getElementById("dialogLoaction").innerHTML="Loaction : ".bold() + param.Loaction;
-            document.getElementById("dialogAreaIn").innerHTML="AreaIn : ".bold() + param.AreaIn;
-            document.getElementById("dialogRooms").innerHTML="Rooms : ".bold() + param.Rooms;
-            document.getElementById("dialogImageURL").setAttribute("src",param.ImageURL); 
-            document.getElementById("dialogPrice").innerHTML="Purchace Price : ".bold() + param.Price +" ETH / ₪" + priceInILS;
+            document.getElementById("dialogLoaction").innerHTML="Loaction : ".bold() + assetJson.Loaction;
+            document.getElementById("dialogAreaIn").innerHTML="AreaIn : ".bold() + assetJson.AreaIn;
+            document.getElementById("dialogRooms").innerHTML="Rooms : ".bold() + assetJson.Rooms;
+            document.getElementById("dialogImageURL").setAttribute("src",assetJson.ImageURL); 
+            document.getElementById("dialogPrice").innerHTML="Purchace Price : ".bold() + assetJson.Price +" ETH / ₪" + AssetPriceInILS;
 
 
             $('.table tbody').on('click', '.btn', function () {
