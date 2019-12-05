@@ -19,19 +19,26 @@
         </tr>
     </thead>
     <tbody align="center">
-        
+        @{ int i = 0;}
         @foreach (var a in @Model.OwnAssetsList)
         {
-            //var currentAsset = Newtonsoft.Json.JsonConvert.SerializeObject(@a);
+            string loaction = "loc" + i;
+            string url = "url" + i;
+            //var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+            //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
+            //,  @a.AreaIn.ToString(), @a.Rooms.ToString(), @a.ImageURL.ToString(), @a.Price.ToString()
+            //String[]  assetArray = new String[8] { a.AssetID.ToString(), a.OwnerID.ToString(), a.OwnerPublicKey.ToString(), a.Loaction.ToString(), a.AreaIn.ToString(), a.Rooms.ToString(), a.ImageURL.ToString(), a.Price.ToString() };
+            //var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(assetArray);
+            //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
             <tr>
                 <td>@a.AssetID</td>
-                <td>@a.Loaction</td>
+                <td id=@loaction>@a.Loaction</td>
                 <td>@a.AreaIn</td>
                 <td>@a.Rooms</td>
-                <td><a target="_blank" href=@a.ImageURL>Click</a></td>
-                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract()">Offer Contract</button></td>
+                <td><a id=@url target="_blank" href=@a.ImageURL>Click</a></td>
+                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @i)">Offer Contract</button></td>
             </tr>
-
+            i++;
         }
 
     </tbody>
@@ -47,7 +54,13 @@
             </div>
             <div class="modal-body" id="asset_dialog_body">
                 <p id="dialogAssetID"></p>
-                <p id="dialogOwnerAddress"></p>
+                <p id="dialogOwnerID"></p>
+                <p id="dialogOwnerPublicKey"></p>
+                <p id="dialogLoaction"></p>
+                <p id="dialogAreaIn"></p>
+                <p id="dialogRooms"></p>
+                <p id="dialogImageURL"></p>
+                <p id="dialogPrice"></p>
 
             </div>
             <div class="modal-footer">
@@ -61,18 +74,27 @@
 {
 
     <script type="text/javascript">
-        function offerContract(jsonData)
-        {
-              
-             
-            document.getElementById("dialogAssetID").innerHTML = "Asset No:".bold();
-            document.getElementById("dialogOwnerAddress").innerHTML="Your Public Key:" +"222";
+        function offerContract(param  /* , OwnerID , OwnerPublicKey, Loaction, AreaIn, Rooms, ImageURL, Price*/)
+        {        
+            var idLoac = "#loc" + param;
+            var idUrl = "#url" + param;
+            var demdloc = $(idLoac).text();
+            var demdurl = $(idUrl).attr("href");
+            document.getElementById("dialogAssetID").innerHTML = "Asset No:".bold() + demdloc;
+            document.getElementById("dialogOwnerID").innerHTML = "Your ID:".bold() + demdurl;
+            document.getElementById("dialogOwnerPublicKey").innerHTML="Your Public Key:".bold() +param ;
+            document.getElementById("dialogLoaction").innerHTML="Loaction:".bold() + assetID;
+            document.getElementById("dialogAreaIn").innerHTML="AreaIn:".bold() + param;
+            document.getElementById("dialogRooms").innerHTML="Rooms:".bold() + param;
+            document.getElementById("dialogImageURL").innerHTML="ImageURL:".bold() + param;
+            document.getElementById("dialogPrice").innerHTML="Price:".bold() + "vc";
+
 
             $('.table tbody').on('click', '.btn', function () {
-                var row = $(this).closest('tr');
-                var col = row.find('td:eq(1)').text();
-                //document.getElementById("asset_dialog_body").innerHTML("vddv");
-            })
+                    var row = $(this).closest('tr');
+                    var col = row.find('td:eq(1)').text();
+                    //document.getElementById("asset_dialog_body").innerHTML("vddv");
+                })
         }
         $('#myModal').on('shown.bs.modal', function () {
             $('#myInput').trigger('focus')
