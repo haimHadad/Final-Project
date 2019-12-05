@@ -12,7 +12,7 @@ namespace FinalProject.Controllers
     public class DappAccountController : Controller
     {
         private AssetContext _context;
-        private static DappAccount myAccount;
+        public static DappAccount myAccount;
 
         public DappAccountController(AssetContext context)
         {
@@ -29,11 +29,6 @@ namespace FinalProject.Controllers
             account.ConnectToBlockchain();
             myAccount = account; //and save this account in static account so the other controllers be able to read it
             myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
-
-           
-
-
-
             return View(myAccount);
 
         }
@@ -51,6 +46,8 @@ namespace FinalProject.Controllers
             }
             return false;
         }
+
+
     }
 }
 
