@@ -25,11 +25,14 @@
                         <a id="assetsNavBar" class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Assets<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Contracts<span class="sr-only">(current)</span></a>
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Create Contract<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Contracts Status<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active" style="display:flex">
                         <input id="PublicKeyInput" class="form-control p-0" type="text" value=@Model.publicKey readonly>
-                        <input type="button"  class="btn btn-warning pr-1 pl-1" value="Copy" onclick="copyToClipBoard()" />
+                        <input type="button" class="btn btn-warning pr-1 pl-1" value="Copy" onclick="copyToClipBoard()" />
                     </li>
                     <li class="pl-0 mr-0 ml-2">
                         <img class="img-responsive pull-right" style="width: 3%" src="~/img/ETH-Icon.png" />
