@@ -20,11 +20,13 @@
         @foreach (var a in @Model.OwnAssetsList)
         {
             var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+            var rateILS = @Model.getExchangeRate_ETH_To_ILS();
+            var assetPriceInILS = rateILS * a.Price;
             //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);            
         <tr>
             <td>@a.AssetID</td>
             <td>@a.Loaction</td>  
-            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @serialModel)">View Details</button></td>
+            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @serialModel, @assetPriceInILS)">View Details</button></td>
             
         </tr>
             i++;
@@ -32,23 +34,23 @@
 
     </tbody>
 </table>
-<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="dialogTitle">Offer Contract</h4>
+                <h4 class="modal-title" id="dialogTitle">Asset Details</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" id="asset_dialog_body">
+                <center><img class="w-75 p-3" id="dialogImageURL"></center>
                 <p id="dialogAssetID"></p>
                 <p id="dialogOwnerID"></p>
                 <p id="dialogOwnerPublicKey"></p>
                 <p id="dialogLoaction"></p>
                 <p id="dialogAreaIn"></p>
                 <p id="dialogRooms"></p>
-                <p id="dialogImageURL"></p>
                 <p id="dialogPrice"></p>
 
             </div>
@@ -62,25 +64,22 @@
 {
 
     <script type="text/javascript">
-        function offerContract(param )
-        {   
-            
-            //var obj = JSON.parse('{ "name":"John", "age":30, "city":"New York"}');
-            //var obj = JSON.parse(''+param);
+        function offerContract(param, priceInILS )
+        {                           
+            var fullPublicKey = param.OwnerPublicKey;
+            var partOne = fullPublicKey.substring(0, 12);
+            var partTwo = " . . . ";
+            var partThree = fullPublicKey.substring(32, fullPublicKey.length);
+            var publicKeyToShow = "" + partOne + partTwo + partThree;
 
-            console.log(param);
-            //console.log(param);
-
-            
-    
-            document.getElementById("dialogAssetID").innerHTML = "Asset No:".bold() + param.AssetID;
-            document.getElementById("dialogOwnerID").innerHTML = "Your ID:".bold() + param.OwnerID;
-            document.getElementById("dialogOwnerPublicKey").innerHTML="Your Public Key:".bold() +param.OwnerPublicKey ;
-            document.getElementById("dialogLoaction").innerHTML="Loaction:".bold() + param.Loaction;
-            document.getElementById("dialogAreaIn").innerHTML="AreaIn:".bold() + param.AreaIn;
-            document.getElementById("dialogRooms").innerHTML="Rooms:".bold() + param.Rooms;
-            document.getElementById("dialogImageURL").innerHTML="ImageURL:".bold() + param.ImageURL;
-            document.getElementById("dialogPrice").innerHTML="Price:".bold() + param.Price;
+            document.getElementById("dialogAssetID").innerHTML = "Asset No : ".bold() + param.AssetID;
+            document.getElementById("dialogOwnerID").innerHTML = "Your ID : ".bold() + param.OwnerID;
+            document.getElementById("dialogOwnerPublicKey").innerHTML = "Your PublicKey :\n".bold() + publicKeyToShow;//param.OwnerPublicKey ;
+            document.getElementById("dialogLoaction").innerHTML="Loaction : ".bold() + param.Loaction;
+            document.getElementById("dialogAreaIn").innerHTML="AreaIn : ".bold() + param.AreaIn;
+            document.getElementById("dialogRooms").innerHTML="Rooms : ".bold() + param.Rooms;
+            document.getElementById("dialogImageURL").setAttribute("src",param.ImageURL); 
+            document.getElementById("dialogPrice").innerHTML="Purchace Price : ".bold() + param.Price +" ETH / ₪" + priceInILS;
 
 
             $('.table tbody').on('click', '.btn', function () {
