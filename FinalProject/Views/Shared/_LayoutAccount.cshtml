@@ -27,12 +27,18 @@
                     <li class="nav-item active">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Contracts<span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="pl-0 mr-0 ml-2" > 
-                            <img class="img-responsive pull-right" style="width: 3%" src="~/img/ETH-Icon.png" />
-                            <label><strong>@await Model.get_ETH_Balance() ETH</strong></label>
-                            <label class="ml-2"><strong>|</strong></label>
-                            <label class="ml-2"><strong>₪ @await Model.get_ILS_Balance()</strong></label>       
+                    <li class="nav-item active" style="display:flex">
+                        <input id="PublicKeyInput" class="form-control p-0" type="text" value=@Model.publicKey readonly>
+                        <input type="button"  class="btn btn-warning pr-1 pl-1" value="Copy" onclick="copyToClipBoard()" />
                     </li>
+                    <li class="pl-0 mr-0 ml-2">
+                        <img class="img-responsive pull-right" style="width: 3%" src="~/img/ETH-Icon.png" />
+                        <label><strong>@await Model.get_ETH_Balance() ETH</strong></label>
+                        <label class="ml-2"><strong>|</strong></label>
+                        <label class="ml-2"><strong>₪ @await Model.get_ILS_Balance()</strong></label>
+                    </li>
+
+
                 </ul>
             </div>
         </nav>
@@ -40,15 +46,40 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
-        </main>
-    </div>
+            <div class="modal position-fixed" id="dialogCopy">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Public-Key</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h5>Your public-key copied to clipboard.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                function copyToClipBoard() {
+                    var copyText = document.getElementById("PublicKeyInput");
+                    copyText.select();
+                    copyText.setSelectionRange(0, 99999);
+                    document.execCommand("copy");
+                    $('#dialogCopy').modal('show');
+                }
 
-    <footer class="border-top footer text-muted">
-        <div class="container">- Assets Purchase & Selling through Blockchain based Smart Contracts -</div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("Scripts", required: false)
+            </script>
+        </main>
+    </div >
+
+                <footer class="border-top footer text-muted">
+                    <div class="container">- Assets Purchase & Selling through Blockchain based Smart Contracts -</div>
+                </footer>
+                <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="~/js/site.js" asp-append-version="true"></script>
+                @RenderSection("Scripts", required: false)
 </body>
 </html>
