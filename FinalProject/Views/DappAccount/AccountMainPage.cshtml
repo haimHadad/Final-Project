@@ -11,9 +11,6 @@
         <tr>
             <th scope="col">AssetID</th>
             <th scope="col">Loaction</th>
-            <th scope="col">AreaIn</th>
-            <th scope="col">Rooms</th>
-            <th scope="col">ImageURL</th>
             <th scope="col">Action</th>
 
         </tr>
@@ -22,33 +19,12 @@
         @{ int i = 0;}
         @foreach (var a in @Model.OwnAssetsList)
         {
-            string loaction = "loc" + i;
-            string url = "url" + i;
-            //var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-            //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
-            //,  @a.AreaIn.ToString(), @a.Rooms.ToString(), @a.ImageURL.ToString(), @a.Price.ToString()
-            //String[]  assetArray = new String[6] { a.AssetID.ToString(), a.OwnerID.ToString(), a.OwnerPublicKey, a.AreaIn.ToString(), a.Rooms.ToString(), a.Price.ToString() };
-            Asset toSend = new Asset();
-            //String[]  assetArray = new String[1] { a.AssetID.ToString() };
-            toSend.AssetID = a.AssetID;
-            toSend.OwnerID = a.OwnerID;
-            toSend.OwnerPublicKey = a.OwnerPublicKey;
-            toSend.Loaction = a.Loaction;
-            toSend.AreaIn = a.AreaIn;
-            toSend.Rooms = a.Rooms;
-            toSend.ImageURL = a.ImageURL;
-            toSend.Price = a.Price;
             var serialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-            var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
-            int k = 0;
-
+            //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);            
         <tr>
             <td>@a.AssetID</td>
-            <td id=@loaction>@a.Loaction</td>
-            <td>@a.AreaIn</td>
-            <td>@a.Rooms</td>
-            <td><a id=@url target="_blank" href=@a.ImageURL>Click</a></td>
-            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @serialModel)">Offer Contract</button></td>
+            <td>@a.Loaction</td>  
+            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @serialModel)">View Details</button></td>
             
         </tr>
             i++;
@@ -78,7 +54,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" data-dismiss="modal">Send Contract</button>
             </div>
         </div>
     </div>
@@ -97,10 +72,7 @@
             //console.log(param);
 
             
-            /*var idLoac = "#loc" + param;
-            var idUrl = "#url" + param;
-            var demdloc = $(idLoac).text();
-            var demdurl = $(idUrl).attr("href");*/
+    
             document.getElementById("dialogAssetID").innerHTML = "Asset No:".bold() + param.AssetID;
             document.getElementById("dialogOwnerID").innerHTML = "Your ID:".bold() + param.OwnerID;
             document.getElementById("dialogOwnerPublicKey").innerHTML="Your Public Key:".bold() +param.OwnerPublicKey ;
