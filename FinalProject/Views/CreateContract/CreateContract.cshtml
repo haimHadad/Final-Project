@@ -110,7 +110,22 @@
                 var getAssetJson = eSelect.options[eSelect.selectedIndex].value;
                 if (getAssetJson == "Deafult")
                 {
-                    console.log(getAssetJson);
+                    $('#OwnerIdTxt').val("")
+                    $('#OwnerPublicKeyTxt').val("")
+                    $('#LoactionTxt').val("")
+                    $('#AreaInTxt').val("")
+                    $('#RoomsTxt').val("")
+                    $('#PriceIlsTxt').val("")
+                    //$('#PriceEthTxt').val(asset.Price)
+                    document.getElementById("lastPriceLabel").textContent = "" ; 
+                    document.getElementById("lastPriceLabel").style.display = "none";
+                    document.getElementById("PriceEthTxt").disabled = true;  
+                    document.getElementById("BuyerAddressTxt").disabled = true; 
+                    document.getElementById("PriceEthTxt").placeholder = "";
+                    document.getElementById("BuyerAddressTxt").placeholder = "";
+                    document.getElementById("TimeSelector").disabled = true;
+                    document.getElementById("deployContractBtn").disabled = true;
+                    document.getElementById("imageAssetForm").setAttribute("src", "");
                     return;
                 }
                     
@@ -122,6 +137,7 @@
                 $('#LoactionTxt').val(asset.Loaction)
                 $('#AreaInTxt').val(asset.AreaIn)
                 $('#RoomsTxt').val(asset.Rooms)
+                $('#PriceIlsTxt').val("0")
                 //$('#PriceEthTxt').val(asset.Price)
                 document.getElementById("lastPriceLabel").textContent = "Last purchase price: " + asset.Price + "ETH"; 
                 document.getElementById("lastPriceLabel").style.display = "block";
