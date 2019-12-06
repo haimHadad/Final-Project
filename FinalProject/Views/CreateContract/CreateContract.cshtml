@@ -56,11 +56,11 @@
             </div>
             <div class="ml-2">
                 <label>Price [ETH]:</label>
-                <input class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled>
+                <input class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
             </div>
             <div class="ml-2">
                 <label>Price [₪]:</label>
-                <input class="form-control form-control-sm w-auto" type="number" id="PriceIlsTxt" disabled>
+                <input class="form-control form-control-sm w-auto" id="PriceIlsTxt" disabled>
             </div>
         </div>
         <br /><br />
@@ -100,6 +100,24 @@
             document.getElementById("createContractNavBar").style.fontWeight = "bold";
         });
 
+        function getPriceInILS(EthPrice)
+        {
+            var exchangeRate = @Model.getExchangeRate_ETH_To_ILS();
+            var IlsPrice = exchangeRate * EthPrice;
+            IlsPrice = IlsPrice.toFixed(2);
+            var IlsPriceToReturn = IlsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return IlsPriceToReturn;
+        }
+
+
+        function SetIlsPrice()
+        {
+            var priceETH = $('#PriceEthTxt').val();
+            var priceILS = getPriceInILS(priceETH); 
+            $('#PriceIlsTxt').val(priceILS);
+        }
+
+
 
         window.onload = function ()
         {
@@ -116,6 +134,7 @@
                     $('#AreaInTxt').val("")
                     $('#RoomsTxt').val("")
                     $('#PriceIlsTxt').val("")
+                    $('#PriceEthTxt').val("");
                     //$('#PriceEthTxt').val(asset.Price)
                     document.getElementById("lastPriceLabel").textContent = "" ; 
                     document.getElementById("lastPriceLabel").style.display = "none";
@@ -126,6 +145,7 @@
                     document.getElementById("TimeSelector").disabled = true;
                     document.getElementById("deployContractBtn").disabled = true;
                     document.getElementById("imageAssetForm").setAttribute("src", "");
+                    document.getElementById("TimeSelector").value="Deafult";
                     return;
                 }
                     
@@ -139,7 +159,7 @@
                 $('#RoomsTxt').val(asset.Rooms)
                 $('#PriceIlsTxt').val("0")
                 //$('#PriceEthTxt').val(asset.Price)
-                document.getElementById("lastPriceLabel").textContent = "Last purchase price: " + asset.Price + "ETH"; 
+                document.getElementById("lastPriceLabel").textContent = "Last purchase price: " + asset.Price + "ETH | ₪"+getPriceInILS(asset.Price); 
                 document.getElementById("lastPriceLabel").style.display = "block";
                 document.getElementById("PriceEthTxt").disabled = false;  
                 document.getElementById("BuyerAddressTxt").disabled = false; 
