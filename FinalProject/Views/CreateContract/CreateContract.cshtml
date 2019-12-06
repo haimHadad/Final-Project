@@ -14,7 +14,8 @@
             <option value="Deafult">Choose Asset</option>
             @foreach (var a in @Model.OwnAssetsList)
             {
-                <option value=@a.AssetID>Asset No: @a.AssetID</option>
+                var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                <option value=@AssetSerialModel>Asset No: @a.AssetID</option>
             }
         </select>
         <label class="ml-2" style="color:red">*Only available assets will be included</label>
@@ -51,11 +52,11 @@
         <div style="display:inline-flex">
             <div>
                 <label>Buyer Address</label>
-                <input class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="Insert Buyer Address" disabled>
+                <input class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
             </div>
             <div class="ml-2">
                 <label>Price [ETH]:</label>
-                <input class="form-control form-control-sm w-auto" type="number" id="PriceEthTxt" min="0" placeholder="Insert price" disabled>
+                <input class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled>
             </div>
             <div class="ml-2">
                 <label>Price [₪]:</label>
@@ -65,25 +66,28 @@
         <br /><br />
         <label>TimeToComplete:</label>
         <br />
-        <select class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
-            <option value="Deafult">Choose Time</option>
-            <option value="1">1 Hour</option>
-            <option value="2">2 Hours</option>
-            <option value="3">3 Hours</option>
-            <option value="24">24 Hours</option>
-            <option value="48">48 Hours</option>
+        <div style="display:inline-flex">
+            <select class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
+                <option value="Deafult">Choose Time</option>
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+                <option value="3">3 Hours</option>
+                <option value="24">24 Hours</option>
+                <option value="48">48 Hours</option>
 
-        </select>
+            </select>
+            <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary ml-3 p-1 h-25">Last purchase price:</span>
+        </div>
     </div>
+
     <div>
-        <img class="w-75" style="float:right" id="imageForm" src="https://hmp.me/ctkq" />
+        <img class="w-75" style="float:right" id="imageAssetForm" />
     </div>
 </div>
 <br />
 <br />
 <br />
-<button type="button" class="btn btn-success" disabled>Deploy Contract</button>
-
+<button id="deployContractBtn"  type="button" class="btn btn-success" disabled >Deploy Contract</button>
 
 
 @section scripts
@@ -95,5 +99,45 @@
             document.getElementById("createContractNavBar").style.textDecoration = "underline";
             document.getElementById("createContractNavBar").style.fontWeight = "bold";
         });
+
+
+        window.onload = function ()
+        {
+        var eSelect = document.getElementById('AssetSelector');
+        
+            eSelect.onchange = function ()
+            {
+                var getAssetJson = eSelect.options[eSelect.selectedIndex].value;
+                if (getAssetJson == "Deafult")
+                {
+                    console.log(getAssetJson);
+                    return;
+                }
+                    
+                var asset = JSON.parse(getAssetJson);
+                //console.log(asset);
+                
+                $('#OwnerIdTxt').val(asset.OwnerID)
+                $('#OwnerPublicKeyTxt').val(asset.OwnerPublicKey)
+                $('#LoactionTxt').val(asset.Loaction)
+                $('#AreaInTxt').val(asset.AreaIn)
+                $('#RoomsTxt').val(asset.Rooms)
+                //$('#PriceEthTxt').val(asset.Price)
+                document.getElementById("lastPriceLabel").textContent = "Last purchase price: " + asset.Price + "ETH"; 
+                document.getElementById("lastPriceLabel").style.display = "block";
+                document.getElementById("PriceEthTxt").disabled = false;  
+                document.getElementById("BuyerAddressTxt").disabled = false; 
+                document.getElementById("PriceEthTxt").placeholder = "Insert Price";
+                document.getElementById("BuyerAddressTxt").placeholder = "Insert Buyer Address";
+                document.getElementById("TimeSelector").disabled = false;
+                document.getElementById("deployContractBtn").disabled = false;
+                document.getElementById("imageAssetForm").setAttribute("src", asset.ImageURL);
+        
+
+            }
+        }
+    
+
+
     </script>
 }
