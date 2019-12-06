@@ -101,11 +101,20 @@ namespace FinalProject.Models
                 return -1;
             if (IsConnectedToBlockChain == false)
                 return -1;
-            var balance = await Blockchain.Eth.GetBalance.SendRequestAsync(AccountAddress);
-            var etherAmount = Web3.Convert.FromWei(balance.Value);
-            double tempBalance = (double)etherAmount;
-            tempBalance = Math.Truncate(tempBalance * 1000) / 1000; //make the double number to be with 3 digits after dot
-            return tempBalance;
+            try
+            {
+                var balance = await Blockchain.Eth.GetBalance.SendRequestAsync(AccountAddress);
+                var etherAmount = Web3.Convert.FromWei(balance.Value);
+                double tempBalance = (double)etherAmount;
+                tempBalance = Math.Truncate(tempBalance * 1000) / 1000; //make the double number to be with 3 digits after dot
+                return tempBalance;
+
+            }
+            catch(Exception e)
+            {
+                return -1;
+            }
+            
         }
 
 
