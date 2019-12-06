@@ -19,7 +19,7 @@ namespace FinalProject.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> CreateContractAsync()
+        public async Task<IActionResult> CreateContract()
         {
             DappAccount account =  DappAccountController.myAccount;
             List<OpenContract> openContractsToCheck = new List<OpenContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
@@ -41,7 +41,7 @@ namespace FinalProject.Controllers
                 }
             }
 
-            foreach (Asset astDel in AssetsToDelete) //We return to our assets list, and delete al the assets that we collected before (assets that included in the deal)
+            foreach (Asset astDel in AssetsToDelete) //We return to our assets list, and delete all the assets that we collected before (assets that included in the deal)
             {             
                 account.OwnAssetsList.Remove(astDel);  
             }

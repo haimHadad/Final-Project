@@ -5,6 +5,86 @@
 }
 <br />
 <h1>Create Contract</h1>
+<br />
+<h3>Prepare a contract</h3>
+<br />
+<div style="display:inline-flex">
+    <div>
+        <select class="custom-select w-auto" id="AssetSelector">
+            <option value="Deafult">Choose Asset</option>
+            @foreach (var a in @Model.OwnAssetsList)
+            {
+                <option value=@a.AssetID>Asset No: @a.AssetID</option>
+            }
+        </select>
+        <label class="ml-2" style="color:red">*Only available assets will be included</label>
+        <br />
+        <br />
+        <div style="display:inline-flex">
+            <div>
+                <label>Your ID:</label>
+                <input class="form-control form-control-sm w-auto" type="text" id="OwnerIdTxt" disabled>
+            </div>
+            <div class="ml-2">
+                <label>Your Public Key:</label>
+                <input class="form-control form-control-sm w-auto" type="text" id="OwnerPublicKeyTxt" disabled>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div style="display:inline-flex">
+            <div>
+                <label>Loaction:</label>
+                <input class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
+            </div>
+            <div class="ml-2">
+                <label>Area-In [m^2]:</label>
+                <input class="form-control form-control-sm w-auto" type="number" id="AreaInTxt" disabled>
+            </div>
+            <div class="ml-2">
+                <label>Rooms:</label>
+                <input class="form-control form-control-sm w-auto" type="number" id="RoomsTxt" disabled>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div style="display:inline-flex">
+            <div>
+                <label>Buyer Address</label>
+                <input class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="Insert Buyer Address" disabled>
+            </div>
+            <div class="ml-2">
+                <label>Price [ETH]:</label>
+                <input class="form-control form-control-sm w-auto" type="number" id="PriceEthTxt" min="0" placeholder="Insert price" disabled>
+            </div>
+            <div class="ml-2">
+                <label>Price [₪]:</label>
+                <input class="form-control form-control-sm w-auto" type="number" id="PriceIlsTxt" disabled>
+            </div>
+        </div>
+        <br /><br />
+        <label>TimeToComplete:</label>
+        <br />
+        <select class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
+            <option value="Deafult">Choose Time</option>
+            <option value="1">1 Hour</option>
+            <option value="2">2 Hours</option>
+            <option value="3">3 Hours</option>
+            <option value="24">24 Hours</option>
+            <option value="48">48 Hours</option>
+
+        </select>
+    </div>
+    <div>
+        <img class="w-75" style="float:right" id="imageForm" src="https://hmp.me/ctkq" />
+    </div>
+</div>
+<br />
+<br />
+<br />
+<button type="button" class="btn btn-success" disabled>Deploy Contract</button>
+
+
 
 @section scripts
 {
@@ -16,4 +96,4 @@
             document.getElementById("createContractNavBar").style.fontWeight = "bold";
         });
     </script>
- }
+}
