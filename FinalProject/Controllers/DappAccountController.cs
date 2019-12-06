@@ -29,7 +29,7 @@ namespace FinalProject.Controllers
             account.ConnectToBlockchain();
             myAccount = account; //and save this account in static account so the other controllers be able to read it
             myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
-            return View(myAccount);
+            return View(account);
 
         }
 
@@ -46,9 +46,9 @@ namespace FinalProject.Controllers
             }
             return false;
         }
+ 
 
-
-    }
+        }
 }
 
 /* account.OwnAssetsList = await _context.assets.FromSqlRaw("SELECT Assets2.AssetID, Accounts.ID as OwnerID, Assets2.OwnerPublicKey,"
