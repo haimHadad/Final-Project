@@ -48,5 +48,13 @@ namespace FinalProject.Controllers
 
             return View(DappAccountController.myAccount); //Here we will return own assets in the account that not included in open contracts 
         }
+
+
+        public async Task<double> CheckBuyerPublicKeyLegalityAsync(string BuyerPublicKey)
+        {
+            DappAccount account = DappAccountController.myAccount;
+            double buyerBalance = await account.get_ETH_BalanceOfAnyAccount(BuyerPublicKey);
+            return buyerBalance;
+        }
     }
 }

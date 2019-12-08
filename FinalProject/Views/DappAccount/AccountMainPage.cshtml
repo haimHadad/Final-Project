@@ -19,15 +19,11 @@
         <tbody align="center">
             @foreach (var a in @Model.OwnAssetsList)
             {
-                var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                var rateILS = @Model.getExchangeRate_ETH_To_ILS();
-                var assetPriceInILS = rateILS * a.Price;
-                assetPriceInILS = Math.Truncate(assetPriceInILS * 1000) / 1000; //make the double number to be with 3 digits after dot
-                                                                                //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
+                var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);                                                                                //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
                 <tr>
                     <td>@a.AssetID</td>
                     <td>@a.Loaction</td>
-                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="offerContract( @AssetSerialModel, @assetPriceInILS)">View Details</button></td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="ViewAssetDeteils( @AssetSerialModel)">View Details</button></td>
 
                 </tr>
 
@@ -74,8 +70,17 @@
             document.getElementById("assetsNavBar").style.fontWeight = "bold";
         });
 
+        function getPriceInILS(EthPrice)
+        {
+            var exchangeRate = @Model.getExchangeRate_ETH_To_ILS();
+            var IlsPrice = exchangeRate * EthPrice;
+            IlsPrice = IlsPrice.toFixed(2);
+            var IlsPriceToReturn = IlsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return IlsPriceToReturn;
+        }
 
-        function offerContract(assetJson, AssetPriceInILS) {
+
+        function ViewAssetDeteils(assetJson) {
             var fullPublicKey = assetJson.OwnerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
             var partTwo = " . . . ";
@@ -89,7 +94,7 @@
             document.getElementById("dialogAreaIn").innerHTML = "AreaIn : ".bold() + assetJson.AreaIn;
             document.getElementById("dialogRooms").innerHTML = "Rooms : ".bold() + assetJson.Rooms;
             document.getElementById("dialogImageURL").setAttribute("src", assetJson.ImageURL);
-            document.getElementById("dialogPrice").innerHTML = "Purchace Price : ".bold() + assetJson.Price + " ETH / ₪" + AssetPriceInILS;
+            document.getElementById("dialogPrice").innerHTML = "Purchace Price : ".bold() + assetJson.Price + " ETH / ₪" + getPriceInILS(assetJson.Price);
 
             $('.table tbody').on('click', '.btn', function () {
                 var row = $(this).closest('tr');

@@ -87,8 +87,38 @@
 <br />
 <br />
 <br />
-<button id="deployContractBtn"  type="button" class="btn btn-success" disabled >Sign&Deploy Contract</button>
-<img id="loader" style="display: none;" src="https://s5.gifyu.com/images/Loader5a73d3b26568dbc4.gif" alt="Loader5a73d3b26568dbc4.gif" border="0" />
+<button id="deployContractBtn" data-toggle="modal" data-target="#dialogOfferContract" onclick="offerContract()"  type="button" class="btn btn-success" disabled >Sign&Deploy Contract</button>
+
+
+
+<div class="modal fade" id="dialogOfferContract" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="CreateContractDialogTitle"></h4><!--Contract Offer Details-->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="asset_dialog_body">
+                <center><img style="display:none" class="w-75 p-3" id="dialogImageURL"></center>
+                <h5 id="dialogErrorMessage"></h5>
+                <p style="display:none" id="dialogAssetID"></p>
+                <p style="display:none" id="dialogOwnerID"></p>
+                <p style="display:none" id="dialogOwnerPublicKey"></p>
+                <p style="display:none" id="dialogLoaction"></p>
+                <p style="display:none" id="dialogAreaIn"></p>
+                <p style="display:none" id="dialogRooms"></p>
+                <p style="display:none" id="dialogPrice"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="abortButton" class="btn btn-danger" style="display:none" data-dismiss="modal">Cancel</button>
+                <button type="button" id="successButton" class="btn btn-success d-none" data-dismiss="modal">Sign Contract</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section scripts
 {
@@ -99,6 +129,60 @@
             document.getElementById("createContractNavBar").style.textDecoration = "underline";
             document.getElementById("createContractNavBar").style.fontWeight = "bold";
         });
+
+
+        function checkErrors()
+        {
+            var ErrorMsg = "";          
+            var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
+            if (buyerPublicKey == "")
+            {
+                ErrorMsg = ErrorMsg+"Please Insert buyer Public Key.<br>";         
+            } 
+            
+            var dealPrice = document.getElementById("PriceEthTxt").value;
+            if (dealPrice == "")
+            {
+                ErrorMsg = ErrorMsg+"Please Insert buyer price.<br>";     
+            }
+
+            var timeTobeOpen = document.getElementById("TimeSelector").value;
+            if (timeTobeOpen == "Deafult")
+            {
+                ErrorMsg = ErrorMsg + "Please Insert time.<br>";
+            }
+
+            var url = "/CreateContract/CheckBuyerPublicKeyLegality";
+
+            $.post(url, { BuyerPublicKey: buyerPublicKey }, function (data)
+            {
+                console.log("Buyer balance"+data)
+             if (data == -1)
+             {
+                ErrorMsg = ErrorMsg + "Buyer Public Key is illegal.<br>";
+             }
+            
+
+        });
+
+            return ErrorMsg;
+        }
+
+        function offerContract()
+        {
+            ErrorMsg = checkErrors();
+                
+                if (ErrorMsg != "")
+                {
+                    $('#CreateContractDialogTitle').text("Error"); //show error headline
+                    document.getElementById("dialogErrorMessage").innerHTML = ErrorMsg;;
+                    $('#abortButton').text("Close");
+                    document.getElementById("abortButton").style.display = "block";
+                }
+            
+        }
+
+
 
         function getPriceInILS(EthPrice)
         {
