@@ -32,7 +32,7 @@
             <table>
                 <tr>
                     <td>
-                        
+
                         <label>Asset ID:</label>
                         <input name="AssetID" class="form-control form-control-sm w-auto" type="text" id="AssetIdTxt" disabled>
                         <br />
@@ -53,7 +53,7 @@
 
                 <tr>
                     <td>
-                        
+
                         <label>Loaction:</label>
                         <input name="Loaction" class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
                         <br />
@@ -85,7 +85,7 @@
                         <br />
                     </td>
                     <td></td>
-                    <td>          
+                    <td>
                         <label>Price [₪]:</label>
                         <input name="PriceILS" class="form-control form-control-sm w-auto" id="PriceIlsTxt" disabled>
                         <br />
@@ -93,7 +93,7 @@
                 </tr>
                 <tr></tr>
                 <tr>
-                    <td> 
+                    <td>
                         <select name="TimeToBeOpen" required class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
                             <option>Choose Time</option>
                             <option value="1">1 Hour</option>
@@ -116,8 +116,8 @@
     </div>
 </div>
 <br />
-<button id="deployContractBtn" data-toggle="modal" data-target="#dialogOfferContract"  onclick="offerContract()" type="button" class="btn btn-success" disabled>Sign&Deploy Contract</button>
-
+<button id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" disabled>Sign&Deploy Contract</button>
+<!--data-toggle="modal" data-target="#dialogOfferContract"-->
 <br />
 <br />
 <small class="text-danger">• The buyer and the Land Administration needs to approve your offer.</small>
@@ -144,7 +144,7 @@
                 <h5 id="CreateContractDialogMessage"></h5>
             </div>
             <div class="modal-footer">
-                <button type="button" id="closeButton" class="btn btn-danger" style="display:none" data-dismiss="modal" >Close</button>
+                <button type="button" id="closeButton" class="btn btn-danger" style="display:none" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -208,6 +208,7 @@
                     $('#CreateContractDialogTitle').text("Error"); //show error headline
                     document.getElementById("CreateContractDialogMessage").innerHTML = ErrorMsg;
                     document.getElementById("closeButton").style.display = "block";
+                    $('#dialogOfferContract').modal('show');
                     return;
                 }
             $("#DeployContractForm").submit()
@@ -258,36 +259,36 @@
                     document.getElementById("imageAssetForm").setAttribute("src", "");
                     document.getElementById("TimeSelector").value = "Deafult";
                     document.getElementById("AssetIdTxt").disabled = true;
-                    document.getElementById("AssetIdTxt").readOnly = false; 
+                    document.getElementById("AssetIdTxt").readOnly = false;
                     document.getElementById("OwnerIdTxt").disabled = true;
-                    document.getElementById("OwnerIdTxt").readOnly = false; 
+                    document.getElementById("OwnerIdTxt").readOnly = false;
                     document.getElementById("OwnerPublicKeyTxt").disabled = true;
-                    document.getElementById("OwnerPublicKeyTxt").readOnly = false; 
+                    document.getElementById("OwnerPublicKeyTxt").readOnly = false;
                     document.getElementById("LoactionTxt").disabled = true;
-                    document.getElementById("LoactionTxt").readOnly = false; 
+                    document.getElementById("LoactionTxt").readOnly = false;
                     document.getElementById("AreaInTxt").disabled = true;
-                    document.getElementById("AreaInTxt").readOnly = false; 
+                    document.getElementById("AreaInTxt").readOnly = false;
                     document.getElementById("RoomsTxt").disabled = true;
-                    document.getElementById("RoomsTxt").readOnly = false; 
+                    document.getElementById("RoomsTxt").readOnly = false;
                     document.getElementById("PriceIlsTxt").disabled = true;
-                    document.getElementById("PriceIlsTxt").readOnly = false; 
+                    document.getElementById("PriceIlsTxt").readOnly = false;
                     return;
                 }
 
                 document.getElementById("AssetIdTxt").disabled = false;
-                document.getElementById("AssetIdTxt").readOnly = true; 
+                document.getElementById("AssetIdTxt").readOnly = true;
                 document.getElementById("OwnerIdTxt").disabled = false;
-                document.getElementById("OwnerIdTxt").readOnly = true; 
+                document.getElementById("OwnerIdTxt").readOnly = true;
                 document.getElementById("OwnerPublicKeyTxt").disabled = false;
-                document.getElementById("OwnerPublicKeyTxt").readOnly = true; 
+                document.getElementById("OwnerPublicKeyTxt").readOnly = true;
                 document.getElementById("LoactionTxt").disabled = false;
-                document.getElementById("LoactionTxt").readOnly = true; 
+                document.getElementById("LoactionTxt").readOnly = true;
                 document.getElementById("AreaInTxt").disabled = false;
-                document.getElementById("AreaInTxt").readOnly = true; 
+                document.getElementById("AreaInTxt").readOnly = true;
                 document.getElementById("RoomsTxt").disabled = false;
-                document.getElementById("RoomsTxt").readOnly = true; 
+                document.getElementById("RoomsTxt").readOnly = true;
                 document.getElementById("PriceIlsTxt").disabled = false;
-                document.getElementById("PriceIlsTxt").readOnly = true; 
+                document.getElementById("PriceIlsTxt").readOnly = true;
 
 
 

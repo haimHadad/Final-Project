@@ -25,7 +25,7 @@ namespace FinalProject.Controllers
             List<AssetInContract> openContractsToCheck = new List<AssetInContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
             List<int> AssetsNumsIncludedInDeals = new List<int>();
             List<Asset> AssetsToDelete = new List<Asset>();
-            openContractsToCheck = await _context.AssetInContract.FromSqlRaw("select * from AssetsInContract where SellerPublicKey = {0}", account.publicKey).ToListAsync();
+            openContractsToCheck = await _context.AssetInContract.FromSqlRaw("select * from AssetsInContract where SellerPublicKey = {0} and (Status ='Ongoing' or Status ='Pending' )", account.publicKey).ToListAsync();
             
             foreach (AssetInContract cnrt in openContractsToCheck) //Here we take all the assets ID that included in open contracts
             {
