@@ -81,7 +81,7 @@
                     <td></td>
                     <td>
                         <label>Price [ETH]:</label>
-                        <input name="PriceETH" required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
+                        <input  name="PriceETH" required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
                         <br />
                     </td>
                     <td></td>
@@ -94,8 +94,8 @@
                 <tr></tr>
                 <tr>
                     <td>
-                        <select name="TimeToBeOpen" required class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
-                            <option>Choose Time</option>
+                        <select name="TimeToBeOpen" class="custom-select w-auto pt-0 pb-0" id="TimeSelector" required disabled>
+                            <option value="">Choose Time</option>
                             <option value="1">1 Hour</option>
                             <option value="2">2 Hours</option>
                             <option value="3">3 Hours</option>
@@ -106,17 +106,19 @@
                     </td>
                 </tr>
             </table>
-        }
-        <br />
-        <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
 
+            <br />
+            <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
+            <br />
+
+            <input id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" value="Sign&Deploy Contract" disabled />
+
+        }
     </div>
     <div style="float:left">
         <img class="w-75" style="float:right" id="imageAssetForm" />
     </div>
 </div>
-<br />
-<button id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" disabled>Sign&Deploy Contract</button>
 <!--data-toggle="modal" data-target="#dialogOfferContract"-->
 <br />
 <br />
@@ -195,6 +197,15 @@
                 ErrorMsg = ErrorMsg + "You running out of ETH, please deposit more ETH.<br>";
             }
 
+            var form = document.getElementById('DeployContractForm');
+            for (var i = 0; i < form.elements.length; i++)
+                {
+                    if (form.elements[i].value === '' && form.elements[i].hasAttribute('required')) {
+                       ErrorMsg = ErrorMsg + "You missed some required fields!<br>";
+                        break;
+                    }
+                } 
+
             return ErrorMsg;
         }
 
@@ -211,7 +222,11 @@
                     $('#dialogOfferContract').modal('show');
                     return;
                 }
-            $("#DeployContractForm").submit()
+
+            
+                 
+
+            $("#deployContractBtn").submit()
 
         }
 
