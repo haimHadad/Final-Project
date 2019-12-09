@@ -22,7 +22,7 @@ namespace FinalProject.Controllers
         [HttpPost]
         public async Task<IActionResult> AccountMainPage(DappAccount account) //here the login succeeded , e initialized the key
         { 
-            bool IsValidated = await account.CheckLogin(account.publicKey, account.privateKey); //so now call againg to the login method in order to load more properties 
+            bool IsValidated = account.CheckLogin(account.publicKey, account.privateKey); //so now call againg to the login method in order to load more properties 
             if (!IsValidated)
                 return RedirectToAction("Login", "Home");
 
@@ -38,7 +38,7 @@ namespace FinalProject.Controllers
         public async Task<bool> CheckAccountAsync(String PublicKey, string PrivateKey)
         {
             DappAccount account = new DappAccount();
-            bool IsValidated = await account.CheckLogin(PublicKey, PrivateKey); //here we just check the login, the model is not initilized in the key properties
+            bool IsValidated = account.CheckLogin(PublicKey, PrivateKey); //here we just check the login, the model is not initilized in the key properties
 
             if (IsValidated)
             {

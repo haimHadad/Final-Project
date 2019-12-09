@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace FinalProject.Data
 {
-    public class ClosedContractsContext : DbContext
+    public class AssetsInContractContext : DbContext
     {
-        public ClosedContractsContext(DbContextOptions<AssetContext> options) : base(options) { }
+        public AssetsInContractContext(DbContextOptions<AssetsInContractContext> options) : base(options) { }
 
 
-        public DbSet<ClosedContract> ClosedContracts { get; set; }
+        public DbSet<AssetInContract> AssetInContract { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ClosedContract>()
+            modelBuilder.Entity<AssetInContract>()
                 .HasKey(c => new { c.AssetID, c.ContractAddress });
         }
     }

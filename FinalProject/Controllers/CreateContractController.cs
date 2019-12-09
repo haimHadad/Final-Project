@@ -11,10 +11,10 @@ namespace FinalProject.Controllers
 {
     public class CreateContractController : Controller
     {
-        private OpenContractsContext _context;
+        private AssetsInContractContext _context;
 
 
-        public CreateContractController(OpenContractsContext context)
+        public CreateContractController(AssetsInContractContext context)
         {
             _context = context;
         }
@@ -22,12 +22,12 @@ namespace FinalProject.Controllers
         public async Task<IActionResult> CreateContract()
         {
             DappAccount account =  DappAccountController.myAccount;
-            List<OpenContract> openContractsToCheck = new List<OpenContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
+            List<AssetInContract> openContractsToCheck = new List<AssetInContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
             List<int> AssetsNumsIncludedInDeals = new List<int>();
             List<Asset> AssetsToDelete = new List<Asset>();
-            openContractsToCheck = await _context.OpenContracts.FromSqlRaw("select * from OpenContracts where SellerPublicKey = {0}", account.publicKey).ToListAsync();
+            openContractsToCheck = await _context.AssetInContract.FromSqlRaw("select * from AssetsInContract where SellerPublicKey = {0}", account.publicKey).ToListAsync();
             
-            foreach (OpenContract cnrt in openContractsToCheck) //Here we take all the assets ID that included in open contracts
+            foreach (AssetInContract cnrt in openContractsToCheck) //Here we take all the assets ID that included in open contracts
             {
                 AssetsNumsIncludedInDeals.Add(cnrt.AssetID);
             }

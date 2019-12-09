@@ -27,13 +27,7 @@ namespace FinalProject.Models
 
         public List<Asset> OwnAssetsList { get; set; }
 
-        public List<ClosedContract> ClosedContractsList { get; set; }
-
-        public List<OpenContract> SentContractsList { get; set; }
-
-        public List<OpenContract> RecievedContractsList { get; set; }
-
-
+        public List<AssetInContract> ContractsList { get; set; }
 
         public DappAccount()
         {
@@ -41,7 +35,7 @@ namespace FinalProject.Models
         }
 
 
-        public async Task<bool> CheckLogin(string _publicKey, string _privateKey)
+        public bool CheckLogin(string _publicKey, string _privateKey)
         {
             try
             {

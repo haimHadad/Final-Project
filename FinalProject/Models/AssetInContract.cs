@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace FinalProject.Models
 {
-    public class ClosedContract
+    public class AssetInContract
     {
         [Key]
         public int AssetID { get; set; }
@@ -22,13 +21,14 @@ namespace FinalProject.Models
         public string BuyerPublicKey { get; set; }
 
         [Required]
-        public bool IsApproved { get; set; }
+        public string Status { get; set; }
 
         [Required]
-        public string RejectedBy { get; set; }
+        public string DeniedBy { get; set; }
 
         [Required]
         public string Reason { get; set; }
-
     }
+
+
 }

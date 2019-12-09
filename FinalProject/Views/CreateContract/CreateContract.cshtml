@@ -10,7 +10,7 @@
 <br />
 <div style="display:inline-flex">
     <div>
-        <select class="custom-select w-auto" id="AssetSelector">
+        <select required class="custom-select w-auto" id="AssetSelector">
             <option value="Deafult">Choose Asset</option>
             @foreach (var a in @Model.OwnAssetsList)
             {
@@ -18,17 +18,17 @@
                 <option value=@AssetSerialModel>Asset No: @a.AssetID</option>
             }
         </select>
-        <label class="ml-2" style="color:red">*Only available assets will be included</label>
+        <small class="ml-2" style="color:red">*Only available assets will be included</small>
         <br />
         <br />
         <div style="display:inline-flex">
             <div>
                 <label>Your ID:</label>
-                <input class="form-control form-control-sm w-auto" type="text" id="OwnerIdTxt" disabled>
+                <input  class="form-control form-control-sm w-auto" type="text" id="OwnerIdTxt" disabled>
             </div>
             <div class="ml-2">
                 <label>Your Public Key:</label>
-                <input class="form-control form-control-sm w-auto" type="text" id="OwnerPublicKeyTxt" disabled>
+                <input  class="form-control form-control-sm w-auto" type="text" id="OwnerPublicKeyTxt" disabled>
             </div>
         </div>
         <br />
@@ -36,15 +36,15 @@
         <div style="display:inline-flex">
             <div>
                 <label>Loaction:</label>
-                <input class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
+                <input  class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
             </div>
             <div class="ml-2">
                 <label>Area-In [m^2]:</label>
-                <input class="form-control form-control-sm w-auto" type="number" id="AreaInTxt" disabled>
+                <input  class="form-control form-control-sm w-auto" type="number" id="AreaInTxt" disabled>
             </div>
             <div class="ml-2">
                 <label>Rooms:</label>
-                <input class="form-control form-control-sm w-auto" type="number" id="RoomsTxt" disabled>
+                <input  class="form-control form-control-sm w-auto" type="number" id="RoomsTxt" disabled>
             </div>
         </div>
         <br />
@@ -52,11 +52,11 @@
         <div style="display:inline-flex">
             <div>
                 <label>Buyer Address</label>
-                <input class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
+                <input required class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
             </div>
             <div class="ml-2">
                 <label>Price [ETH]:</label>
-                <input class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
+                <input required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
             </div>
             <div class="ml-2">
                 <label>Price [₪]:</label>
@@ -67,14 +67,13 @@
         <label>TimeToComplete:</label>
         <br />
         <div style="display:inline-flex">
-            <select class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
+            <select required class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
                 <option value="Deafult">Choose Time</option>
                 <option value="1">1 Hour</option>
                 <option value="2">2 Hours</option>
                 <option value="3">3 Hours</option>
                 <option value="24">24 Hours</option>
                 <option value="48">48 Hours</option>
-
             </select>
             <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary ml-3 p-1 h-25">Last purchase price:</span>
         </div>
@@ -133,12 +132,22 @@
 
         function checkErrors()
         {
-            var ErrorMsg = "";          
+            var ErrorMsg = "";
+            
+                      
             var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
+            var sellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
+
             if (buyerPublicKey == "")
             {
                 ErrorMsg = ErrorMsg+"Please Insert buyer Public Key.<br>";         
             } 
+
+            if (buyerPublicKey == sellerPublicKey)
+            {
+                ErrorMsg = ErrorMsg+"You cannot offer contract to yourself.<br>";         
+            }
+
             
             var dealPrice = document.getElementById("PriceEthTxt").value;
             if (dealPrice == "")
@@ -152,21 +161,26 @@
                 ErrorMsg = ErrorMsg + "Please Insert time.<br>";
             }
 
-            var url = "/CreateContract/CheckBuyerPublicKeyLegality";
-
-            $.post(url, { BuyerPublicKey: buyerPublicKey }, function (data)
-            {
-                console.log("Buyer balance"+data)
-             if (data == -1)
-             {
-                ErrorMsg = ErrorMsg + "Buyer Public Key is illegal.<br>";//
-             }
             
-
-        });
-
+            
+            $.ajax({
+             url: "/CreateContract/CheckBuyerPublicKeyLegality",
+             type: 'POST',
+             async: false,
+             data : { BuyerPublicKey: buyerPublicKey },
+             success: function(data){
+             console.log("Buyer balance"+data)
+                if (data == -1)
+                {
+                    ErrorMsg = ErrorMsg + "Buyer Public Key is illegal.<br>";//
+                    console.log("1-->" +ErrorMsg );
+                }
+             }
+             });
+            console.log("2-->" +ErrorMsg );
             return ErrorMsg;
         }
+
 
         function offerContract()
         {

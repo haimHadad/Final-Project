@@ -30,7 +30,7 @@ namespace FinalProject
             /* Configures DataBase */
             services.AddDbContext<AssetContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DataBase")));
-            services.AddDbContext<OpenContractsContext>(options =>
+            services.AddDbContext<AssetsInContractContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DataBase")));   
         }
 
