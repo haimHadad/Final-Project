@@ -8,85 +8,125 @@
 <br />
 <h3>Prepare a contract</h3>
 <br />
-<div style="display:inline-flex">
-    <div>
-        <select required class="custom-select w-auto" id="AssetSelector">
-            <option value="Deafult">Choose Asset</option>
-            @foreach (var a in @Model.OwnAssetsList)
-            {
-                var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                <option value=@AssetSerialModel>Asset No: @a.AssetID</option>
-            }
-        </select>
-        <small class="ml-2" style="color:red">*Only available assets will be included</small>
-        <br />
-        <br />
-        <div style="display:inline-flex">
-            <div>
-                <label>Your ID:</label>
-                <input  class="form-control form-control-sm w-auto" type="text" id="OwnerIdTxt" disabled>
-            </div>
-            <div class="ml-2">
-                <label>Your Public Key:</label>
-                <input  class="form-control form-control-sm w-auto" type="text" id="OwnerPublicKeyTxt" disabled>
-            </div>
-        </div>
-        <br />
-        <br />
-        <div style="display:inline-flex">
-            <div>
-                <label>Loaction:</label>
-                <input  class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
-            </div>
-            <div class="ml-2">
-                <label>Area-In [m^2]:</label>
-                <input  class="form-control form-control-sm w-auto" type="number" id="AreaInTxt" disabled>
-            </div>
-            <div class="ml-2">
-                <label>Rooms:</label>
-                <input  class="form-control form-control-sm w-auto" type="number" id="RoomsTxt" disabled>
-            </div>
-        </div>
-        <br />
-        <br />
-        <div style="display:inline-flex">
-            <div>
-                <label>Buyer Address</label>
-                <input required class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
-            </div>
-            <div class="ml-2">
-                <label>Price [ETH]:</label>
-                <input required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
-            </div>
-            <div class="ml-2">
-                <label>Price [₪]:</label>
-                <input class="form-control form-control-sm w-auto" id="PriceIlsTxt" disabled>
-            </div>
-        </div>
-        <br /><br />
-        <label>TimeToComplete:</label>
-        <br />
-        <div style="display:inline-flex">
-            <select required class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
-                <option value="Deafult">Choose Time</option>
-                <option value="1">1 Hour</option>
-                <option value="2">2 Hours</option>
-                <option value="3">3 Hours</option>
-                <option value="24">24 Hours</option>
-                <option value="48">48 Hours</option>
-            </select>
-            <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary ml-3 p-1 h-25">Last purchase price:</span>
-        </div>
-    </div>
 
+
+
+
+<div style="display:inline-flex">
+    <select name="" required class="custom-select w-auto" id="AssetSelector">
+        <option value="Deafult">Choose Asset</option>
+        @foreach (var a in @Model.OwnAssetsList)
+        {
+            var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+            <option value=@AssetSerialModel>Asset No: @a.AssetID</option>
+        }
+    </select>
+    <small class="ml-2" style="color:red">*Only available assets will be included</small>
+    <br />
+    <br />
+</div>
+<div style="display:flex">
     <div>
+        @using (Html.BeginForm("DeployContract", "CreateContract", FormMethod.Post, new { @id = "DeployContractForm" }))
+        {
+            <table>
+                <tr>
+                    <td>
+                        
+                        <label>Asset ID:</label>
+                        <input name="AssetID" class="form-control form-control-sm w-auto" type="text" id="AssetIdTxt" disabled>
+                        <br />
+                    </td>
+                    <td></td>
+                    <td>
+                        <label>Your ID:</label>
+                        <input name="OwnertID" class="form-control form-control-sm w-auto" type="text" id="OwnerIdTxt" disabled>
+                        <br />
+                    </td>
+                    <td></td>
+                    <td>
+                        <label>Your Public Key:</label>
+                        <input name="SellerPublicKey" class="form-control form-control-sm w-auto" type="text" id="OwnerPublicKeyTxt" disabled>
+                        <br />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        
+                        <label>Loaction:</label>
+                        <input name="Loaction" class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
+                        <br />
+                    </td>
+                    <td></td>
+                    <td>
+                        <label>Area-In [m^2]:</label>
+                        <input name="AreaIn" class="form-control form-control-sm w-auto" type="number" id="AreaInTxt" disabled>
+                        <br />
+                    </td>
+                    <td></td>
+                    <td>
+                        <label>Rooms:</label>
+                        <input name="Rooms" class="form-control form-control-sm w-auto" type="number" id="RoomsTxt" disabled>
+                        <br />
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td>
+                        <label>Buyer Public Key</label>
+                        <input name="BuyerPublicKey" required class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
+                        <br />
+                    </td>
+                    <td></td>
+                    <td>
+                        <label>Price [ETH]:</label>
+                        <input name="PriceETH" required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
+                        <br />
+                    </td>
+                    <td></td>
+                    <td>          
+                        <label>Price [₪]:</label>
+                        <input name="PriceILS" class="form-control form-control-sm w-auto" id="PriceIlsTxt" disabled>
+                        <br />
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td> 
+                        <select name="TimeToBeOpen" required class="custom-select w-auto pt-0 pb-0" id="TimeSelector" disabled>
+                            <option>Choose Time</option>
+                            <option value="1">1 Hour</option>
+                            <option value="2">2 Hours</option>
+                            <option value="3">3 Hours</option>
+                            <option value="24">24 Hours</option>
+                            <option value="48">48 Hours</option>
+                        </select>
+
+                    </td>
+                </tr>
+            </table>
+        }
+        <br />
+        <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
+
+    </div>
+    <div style="float:left">
         <img class="w-75" style="float:right" id="imageAssetForm" />
     </div>
 </div>
 <br />
+<button id="deployContractBtn" data-toggle="modal" data-target="#dialogOfferContract"  onclick="offerContract()" type="button" class="btn btn-success" disabled>Sign&Deploy Contract</button>
+
 <br />
 <br />
-<button id="deployContractBtn" data-toggle="modal" data-target="#dialogOfferContract" onclick="offerContract()"  type="button" class="btn btn-success" disabled >Sign&Deploy Contract</button>
+<small class="text-danger">• The buyer and the Land Administration needs to approve your offer.</small>
+<br />
+<small class="text-danger">• Make sure all details are correct - All offers are final!</small>
+<br />
+<small class="text-danger">• The owner declares the asset is proper for residence. </small>
+
+
 
 
 
@@ -101,101 +141,78 @@
             </div>
             <div class="modal-body" id="asset_dialog_body">
                 <center><img style="display:none" class="w-75 p-3" id="dialogImageURL"></center>
-                <h5 id="dialogErrorMessage"></h5>
-                <p style="display:none" id="dialogAssetID"></p>
-                <p style="display:none" id="dialogOwnerID"></p>
-                <p style="display:none" id="dialogOwnerPublicKey"></p>
-                <p style="display:none" id="dialogLoaction"></p>
-                <p style="display:none" id="dialogAreaIn"></p>
-                <p style="display:none" id="dialogRooms"></p>
-                <p style="display:none" id="dialogPrice"></p>
+                <h5 id="CreateContractDialogMessage"></h5>
             </div>
             <div class="modal-footer">
-                <button type="button" id="abortButton" class="btn btn-danger" style="display:none" data-dismiss="modal">Cancel</button>
-                <button type="button" id="successButton" class="btn btn-success d-none" data-dismiss="modal">Sign Contract</button>
+                <button type="button" id="closeButton" class="btn btn-danger" style="display:none" data-dismiss="modal" >Close</button>
             </div>
         </div>
     </div>
 </div>
-
+<br />
+<br />
+<br />
 
 @section scripts
-{
+    {
 
     <script type="text/javascript">
-
         $(document).ready(function () {
             document.getElementById("createContractNavBar").style.textDecoration = "underline";
             document.getElementById("createContractNavBar").style.fontWeight = "bold";
         });
-
-
         function checkErrors()
         {
             var ErrorMsg = "";
-            
-                      
+            var accountBalance = @await Model.get_ETH_Balance();
             var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
             var sellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
 
-            if (buyerPublicKey == "")
-            {
-                ErrorMsg = ErrorMsg+"Please Insert buyer Public Key.<br>";         
-            } 
-
             if (buyerPublicKey == sellerPublicKey)
             {
-                ErrorMsg = ErrorMsg+"You cannot offer contract to yourself.<br>";         
+                ErrorMsg = ErrorMsg + "You cannot offer the contract to yourself.<br>";
             }
 
-            
-            var dealPrice = document.getElementById("PriceEthTxt").value;
-            if (dealPrice == "")
+            if (buyerPublicKey != "")
             {
-                ErrorMsg = ErrorMsg+"Please Insert buyer price.<br>";     
+                $.ajax({
+                    url: "/CreateContract/CheckBuyerPublicKeyLegality",
+                    type: 'POST',
+                    async: false,
+                    data : { BuyerPublicKey: buyerPublicKey },
+                    success: function(data){
+                    console.log("Buyer balance"+data)
+                    if (data == -1)
+                    {
+                       ErrorMsg = ErrorMsg + "Buyer Public Key is illegal.<br>";
+                    }
+                 }
+                });
             }
 
-            var timeTobeOpen = document.getElementById("TimeSelector").value;
-            if (timeTobeOpen == "Deafult")
+            if (accountBalance < 0.005)
             {
-                ErrorMsg = ErrorMsg + "Please Insert time.<br>";
+                ErrorMsg = ErrorMsg + "You running out of ETH, please deposit more ETH.<br>";
             }
 
-            
-            
-            $.ajax({
-             url: "/CreateContract/CheckBuyerPublicKeyLegality",
-             type: 'POST',
-             async: false,
-             data : { BuyerPublicKey: buyerPublicKey },
-             success: function(data){
-             console.log("Buyer balance"+data)
-                if (data == -1)
-                {
-                    ErrorMsg = ErrorMsg + "Buyer Public Key is illegal.<br>";//
-                    console.log("1-->" +ErrorMsg );
-                }
-             }
-             });
-            console.log("2-->" +ErrorMsg );
             return ErrorMsg;
         }
 
-
         function offerContract()
         {
+            document.getElementById("CreateContractDialogMessage").innerHTML = "";
             ErrorMsg = checkErrors();
-                
+
                 if (ErrorMsg != "")
                 {
                     $('#CreateContractDialogTitle').text("Error"); //show error headline
-                    document.getElementById("dialogErrorMessage").innerHTML = ErrorMsg;;
-                    $('#abortButton').text("Close");
-                    document.getElementById("abortButton").style.display = "block";
+                    document.getElementById("CreateContractDialogMessage").innerHTML = ErrorMsg;
+                    document.getElementById("closeButton").style.display = "block";
+                    return;
                 }
-            
-        }
+            $("#DeployContractForm").submit()
 
+        }
 
 
         function getPriceInILS(EthPrice)
@@ -206,26 +223,22 @@
             var IlsPriceToReturn = IlsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return IlsPriceToReturn;
         }
-
-
         function SetIlsPrice()
         {
             var priceETH = $('#PriceEthTxt').val();
-            var priceILS = getPriceInILS(priceETH); 
+            var priceILS = getPriceInILS(priceETH);
             $('#PriceIlsTxt').val(priceILS);
         }
-
-
-
         window.onload = function ()
         {
         var eSelect = document.getElementById('AssetSelector');
-        
+
             eSelect.onchange = function ()
             {
                 var getAssetJson = eSelect.options[eSelect.selectedIndex].value;
                 if (getAssetJson == "Deafult")
                 {
+                    $('#AssetIdTxt').val("");
                     $('#OwnerIdTxt').val("")
                     $('#OwnerPublicKeyTxt').val("")
                     $('#LoactionTxt').val("")
@@ -234,22 +247,54 @@
                     $('#PriceIlsTxt').val("")
                     $('#PriceEthTxt').val("");
                     //$('#PriceEthTxt').val(asset.Price)
-                    document.getElementById("lastPriceLabel").textContent = "" ; 
+                    document.getElementById("lastPriceLabel").textContent = "" ;
                     document.getElementById("lastPriceLabel").style.display = "none";
-                    document.getElementById("PriceEthTxt").disabled = true;  
-                    document.getElementById("BuyerAddressTxt").disabled = true; 
+                    document.getElementById("PriceEthTxt").disabled = true;
+                    document.getElementById("BuyerAddressTxt").disabled = true;
                     document.getElementById("PriceEthTxt").placeholder = "";
                     document.getElementById("BuyerAddressTxt").placeholder = "";
                     document.getElementById("TimeSelector").disabled = true;
                     document.getElementById("deployContractBtn").disabled = true;
                     document.getElementById("imageAssetForm").setAttribute("src", "");
-                    document.getElementById("TimeSelector").value="Deafult";
+                    document.getElementById("TimeSelector").value = "Deafult";
+                    document.getElementById("AssetIdTxt").disabled = true;
+                    document.getElementById("AssetIdTxt").readOnly = false; 
+                    document.getElementById("OwnerIdTxt").disabled = true;
+                    document.getElementById("OwnerIdTxt").readOnly = false; 
+                    document.getElementById("OwnerPublicKeyTxt").disabled = true;
+                    document.getElementById("OwnerPublicKeyTxt").readOnly = false; 
+                    document.getElementById("LoactionTxt").disabled = true;
+                    document.getElementById("LoactionTxt").readOnly = false; 
+                    document.getElementById("AreaInTxt").disabled = true;
+                    document.getElementById("AreaInTxt").readOnly = false; 
+                    document.getElementById("RoomsTxt").disabled = true;
+                    document.getElementById("RoomsTxt").readOnly = false; 
+                    document.getElementById("PriceIlsTxt").disabled = true;
+                    document.getElementById("PriceIlsTxt").readOnly = false; 
                     return;
                 }
-                    
+
+                document.getElementById("AssetIdTxt").disabled = false;
+                document.getElementById("AssetIdTxt").readOnly = true; 
+                document.getElementById("OwnerIdTxt").disabled = false;
+                document.getElementById("OwnerIdTxt").readOnly = true; 
+                document.getElementById("OwnerPublicKeyTxt").disabled = false;
+                document.getElementById("OwnerPublicKeyTxt").readOnly = true; 
+                document.getElementById("LoactionTxt").disabled = false;
+                document.getElementById("LoactionTxt").readOnly = true; 
+                document.getElementById("AreaInTxt").disabled = false;
+                document.getElementById("AreaInTxt").readOnly = true; 
+                document.getElementById("RoomsTxt").disabled = false;
+                document.getElementById("RoomsTxt").readOnly = true; 
+                document.getElementById("PriceIlsTxt").disabled = false;
+                document.getElementById("PriceIlsTxt").readOnly = true; 
+
+
+
+
                 var asset = JSON.parse(getAssetJson);
                 //console.log(asset);
-                
+                $('#AssetIdTxt').val(asset.AssetID);
                 $('#OwnerIdTxt').val(asset.OwnerID)
                 $('#OwnerPublicKeyTxt').val(asset.OwnerPublicKey)
                 $('#LoactionTxt').val(asset.Loaction)
@@ -257,21 +302,18 @@
                 $('#RoomsTxt').val(asset.Rooms)
                 $('#PriceIlsTxt').val("0")
                 //$('#PriceEthTxt').val(asset.Price)
-                document.getElementById("lastPriceLabel").textContent = "Last purchase price: " + asset.Price + "ETH | ₪"+getPriceInILS(asset.Price); 
+                document.getElementById("lastPriceLabel").textContent = "Last purchase price: " + asset.Price + "ETH | ₪"+getPriceInILS(asset.Price);
                 document.getElementById("lastPriceLabel").style.display = "block";
-                document.getElementById("PriceEthTxt").disabled = false;  
-                document.getElementById("BuyerAddressTxt").disabled = false; 
+                document.getElementById("PriceEthTxt").disabled = false;
+                document.getElementById("BuyerAddressTxt").disabled = false;
                 document.getElementById("PriceEthTxt").placeholder = "Insert Price";
                 document.getElementById("BuyerAddressTxt").placeholder = "Insert Buyer Address";
                 document.getElementById("TimeSelector").disabled = false;
                 document.getElementById("deployContractBtn").disabled = false;
                 document.getElementById("imageAssetForm").setAttribute("src", asset.ImageURL);
-        
 
             }
         }
-    
-
 
     </script>
 }

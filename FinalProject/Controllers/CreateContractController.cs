@@ -56,5 +56,21 @@ namespace FinalProject.Controllers
             double buyerBalance = await account.get_ETH_BalanceOfAnyAccount(BuyerPublicKey);
             return buyerBalance;
         }
+
+        [HttpPost]
+        public string DeployContract (ContractOffer offer )
+        {
+            DappAccount account = DappAccountController.myAccount;
+            foreach(Asset asset in account.OwnAssetsList)
+            {
+                if(asset.AssetID ==offer.AssetID)
+                {
+                    offer.ImageURL = asset.ImageURL;
+                }
+            }
+                  
+            int i = 0;
+            return "vv"; 
+        }
     }
 }
