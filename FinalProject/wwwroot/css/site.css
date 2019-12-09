@@ -24,7 +24,7 @@ html {
 
 body {
     /* Margin bottom by footer height */
-    margin-bottom: 64px;
+    padding-bottom: 64px;
 }
 
 .footer {
@@ -34,7 +34,6 @@ body {
     text-align: center;
     line-height: 64px; /* Vertically center the text there */
 }
-
 @media only screen and (max-width: 576px) {
     .footer {
         line-height: 22px; /* Vertically center the text there */

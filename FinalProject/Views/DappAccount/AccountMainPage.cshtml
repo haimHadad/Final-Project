@@ -5,8 +5,6 @@
 }
 
 <br />
-<h1>Your Assets</h1>
-<div style="max-height:320px; overflow: auto">
     <table class=" table table-hover">
         <thead align="center">
             <tr>
@@ -24,16 +22,10 @@
                     <td>@a.AssetID</td>
                     <td>@a.Loaction</td>
                     <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="ViewAssetDeteils( @AssetSerialModel)">View Details</button></td>
-
                 </tr>
-
             }
         </tbody>
     </table>
-</div>
-
-
-
 <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -52,7 +44,6 @@
                 <p id="dialogAreaIn"></p>
                 <p id="dialogRooms"></p>
                 <p id="dialogPrice"></p>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -64,12 +55,10 @@
 {
 
     <script type="text/javascript">
-
         $(document).ready(function () {
             document.getElementById("assetsNavBar").style.textDecoration = "underline";
             document.getElementById("assetsNavBar").style.fontWeight = "bold";
         });
-
         function getPriceInILS(EthPrice)
         {
             var exchangeRate = @Model.getExchangeRate_ETH_To_ILS();
@@ -78,15 +67,12 @@
             var IlsPriceToReturn = IlsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return IlsPriceToReturn;
         }
-
-
         function ViewAssetDeteils(assetJson) {
             var fullPublicKey = assetJson.OwnerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
             var partTwo = " . . . ";
             var partThree = fullPublicKey.substring(32, fullPublicKey.length);
             var publicKeyToShow = "" + partOne + partTwo + partThree;
-
             document.getElementById("dialogAssetID").innerHTML = "Asset No : ".bold() + assetJson.AssetID;
             document.getElementById("dialogOwnerID").innerHTML = "Your ID : ".bold() + assetJson.OwnerID;
             document.getElementById("dialogOwnerPublicKey").innerHTML = "Your PublicKey :\n".bold() + publicKeyToShow;//param.OwnerPublicKey ;
@@ -95,7 +81,6 @@
             document.getElementById("dialogRooms").innerHTML = "Rooms : ".bold() + assetJson.Rooms;
             document.getElementById("dialogImageURL").setAttribute("src", assetJson.ImageURL);
             document.getElementById("dialogPrice").innerHTML = "Purchace Price : ".bold() + assetJson.Price + " ETH / ₪" + getPriceInILS(assetJson.Price);
-
             $('.table tbody').on('click', '.btn', function () {
                 var row = $(this).closest('tr');
                 var col = row.find('td:eq(1)').text();
@@ -107,4 +92,3 @@
         })
     </script>
 }
-

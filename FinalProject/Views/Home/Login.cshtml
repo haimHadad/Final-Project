@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
 <script language="javascript">
 
     function SendLoginData() {
@@ -21,12 +20,7 @@
 
         });
     }
-
-
-
 </script>
-
-
 <div class="container">
     @using (Html.BeginForm("AccountMainPage", "DappAccount", FormMethod.Post, new { @id = "myform" }))
     {
@@ -37,14 +31,11 @@
             @Html.TextBoxFor(m => m.privateKey, new { id = "private_key_input", placeholder = "Ethereum Private Key", required = "required", type = "password" })
         </div> <br />
         <div class="row justify-content-center">
-                   <img id="loader" style="display: none;" src="https://s5.gifyu.com/images/Loader5a73d3b26568dbc4.gif" alt="Loader5a73d3b26568dbc4.gif" border="0" />
+            <img id="loader" style="display: none;" src="https://s5.gifyu.com/images/Loader5a73d3b26568dbc4.gif" alt="Loader5a73d3b26568dbc4.gif" border="0" />
         </div> <br />
     }
-
     <div class="row justify-content-center">
         <input id="submit" type="button" value="Login" class="btn btn-primary" onclick="SendLoginData()" />
     </div>
     <label id="LoginErrorLabel" style="color: red; display: none;">*Wrong login detail !</label>
-
-
 </div>

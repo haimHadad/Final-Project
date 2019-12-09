@@ -15,14 +15,10 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Home<span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item active">
-                        <a id="assetsNavBar" class="nav-link" asp-area="" asp-controller="Home" asp-action="Login" >Assets<span class="sr-only">(current)</span></a>
+                        <a id="assetsNavBar" class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Assets<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
                         <a id="createContractNavBar" class="nav-link" asp-area="" asp-controller="CreateContract" asp-action="CreateContract">Create Contract<span class="sr-only">(current)</span></a>
@@ -30,21 +26,38 @@
                     <li class="nav-item active">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Contracts Status<span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="nav-item active" style="display:flex">
-                        <input id="PublicKeyInput" class="form-control p-0" type="text" value=@Model.publicKey readonly>
-                        <input type="button" class="btn btn-warning pr-1 pl-1" value="Copy" onclick="copyToClipBoard()" />
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Logout">Logout<span class="sr-only">(current)</span></a>
                     </li>
-                    <li class="pl-0 mr-0 ml-2">
-                        <img class="img-responsive pull-right" style="width: 3%" src="~/img/ETH-Icon.png" />
-                        <label><strong>@await Model.get_ETH_Balance() ETH</strong></label>
-                        <label class="ml-2"><strong>|</strong></label>
-                        <label id="ilsBalance" class="ml-2"></label>
+                </ul>
+                <ul class="navbar-nav" dir="rtl">
+                    <li class="nav-item active">
+                        <input type="button" class="btn btn-warning nav-item" value="Copy" onclick="copyToClipBoard()" />
                     </li>
-
-
+                    <li class="nav-item active">
+                        <input id="PublicKeyInput" class="form-control" type="text" value=@Model.publicKey readonly>
+                    </li>
+                    <li class="nav-item active">
+                        <strong class="pr-2 nav-link" style="color:white !important;"><label id="ilsBalance"></label> | @await Model.get_ETH_Balance() ETH</strong>
+                    </li>
                 </ul>
             </div>
         </nav>
+        <div class="modal" id="dialogCopy">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Public-Key</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Public Key has been copied to clipboard.</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -65,15 +78,13 @@
                 </div>
             </div>
             <script type="text/javascript">
-
                 (function ()
                 {
                     var accountBalance = @await Model.get_ILS_Balance()
                    accountBalance = accountBalance.toFixed(2);
                     var accountBalance = accountBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    document.getElementById("ilsBalance").innerHTML = "₪ "+accountBalance.bold();                  
+                    document.getElementById("ilsBalance").innerHTML = "₪ "+accountBalance.bold();
                 })();
-
                 function copyToClipBoard() {
                     var copyText = document.getElementById("PublicKeyInput");
                     copyText.select();
@@ -81,17 +92,16 @@
                     document.execCommand("copy");
                     $('#dialogCopy').modal('show');
                 }
-
             </script>
         </main>
-    </div >
+    </div>
 
-                <footer class="border-top footer text-muted">
-                    <div class="container">- Assets Purchase & Selling through Blockchain based Smart Contracts -</div>
-                </footer>
-                <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-                <script src="~/js/site.js" asp-append-version="true"></script>
-                @RenderSection("Scripts", required: false)
+    <footer class="border-top footer text-muted">
+        <div class="container">- Assets Purchase & Selling through Blockchain based Smart Contracts -</div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
