@@ -81,7 +81,7 @@
                     <td></td>
                     <td>
                         <label>Price [ETH]:</label>
-                        <input  name="PriceETH" required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
+                        <input name="PriceETH" required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
                         <br />
                     </td>
                     <td></td>
@@ -111,8 +111,10 @@
             <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
             <br />
 
-            <input id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" value="Sign&Deploy Contract" disabled />
-
+            <div style="display:flex">
+                <input id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" value="Sign&Deploy Contract" disabled />
+                <img style="display:none" id="DeployLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+            </div>
         }
     </div>
     <div style="float:left">
@@ -226,6 +228,7 @@
 
             document.getElementById("AssetSelector").disabled = true;
             DisableForm();
+            document.getElementById("DeployLoader").style.display = "block";
             $.ajax(
                 {
                     url: "/CreateContract/DeployContract",
@@ -240,9 +243,9 @@
                         document.getElementById("EtherscanURL").style.display = "block";
                         document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer successfully!";
                         document.getElementById("DialogDeployContractMessageContent").innerHTML = "The contract deployed into the Blockchain successfully!</br>You can track it-";
-                            
                         document.getElementById("EtherscanURL").href = "http://www.cnn.com/";
                         $('#DialogDeployContractMessage').modal('show');
+                        document.getElementById("DeployLoader").style.display = "none";
                         document.getElementById("AssetSelector").disabled = false;
                         DeleteFormContent();
                         document.getElementById("AssetSelector").selectedIndex = "0";
