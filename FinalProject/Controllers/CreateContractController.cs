@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FinalProject.Data;
 using FinalProject.Models;
@@ -68,9 +69,9 @@ namespace FinalProject.Controllers
                     offer.ImageURL = asset.ImageURL;
                 }
             }
-                  
+            Thread.Sleep(4000);
             int i = 0;
-            return "vv"; 
+            return "We did it!"; 
         }
     }
 }
