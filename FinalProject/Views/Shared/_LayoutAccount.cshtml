@@ -72,7 +72,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <h5>Your public-key been copied to clipboard.</h5>
+                            <h5 id="generalDialogContent">Public Key has been copied to clipboard.</h5>
                         </div>
                     </div>
                 </div>
@@ -85,7 +85,8 @@
                     var accountBalance = accountBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     document.getElementById("ilsBalance").innerHTML = "₪"+accountBalance.bold() +" | ETH";
                 })();
-                function copyToClipBoard() {
+                function copyToClipBoard()
+                {
                     var copyText = document.getElementById("PublicKeyInput");
                     copyText.select();
                     copyText.setSelectionRange(0, 99999);
