@@ -239,7 +239,7 @@
                         document.getElementById("DialogDeployContractMessageContent").innerHTML = "";
                         document.getElementById("EtherscanURL").style.display = "block";
                         document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer successfully!";
-                        document.getElementById("DialogDeployContractMessageContent").innerHTML = "You can watch your contract-";
+                        document.getElementById("DialogDeployContractMessageContent").innerHTML = "The contract deployed into the Blockchain successfully!</br>You can track it-";
                             
                         document.getElementById("EtherscanURL").href = "http://www.cnn.com/";
                         $('#DialogDeployContractMessage').modal('show');
@@ -294,7 +294,7 @@
             document.getElementById("lastPriceLabel").textContent = "" ;
             document.getElementById("lastPriceLabel").style.display = "none";
             document.getElementById("TimeSelector").selectedIndex = "0";
-            //document.getElementById("TimeSelector").value = "Deafult";
+            document.getElementById("imageAssetForm").setAttribute("src", "");
         }
 
         function DisableForm()
@@ -306,7 +306,6 @@
             document.getElementById("BuyerAddressTxt").placeholder = "";
             document.getElementById("TimeSelector").disabled = true;
             document.getElementById("deployContractBtn").disabled = true;
-            document.getElementById("imageAssetForm").setAttribute("src", "");
             document.getElementById("AssetIdTxt").disabled = true;
             document.getElementById("AssetIdTxt").readOnly = false;
             document.getElementById("OwnerIdTxt").disabled = true;
