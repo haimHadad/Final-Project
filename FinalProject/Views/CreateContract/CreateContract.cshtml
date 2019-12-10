@@ -129,7 +129,8 @@
 <small class="text-danger">• Make sure all details are correct - All offers are final!</small>
 <br />
 <small class="text-danger">• The owner declares the asset is proper for residence. </small>
-
+<br />
+<small class="text-danger">• Contract deployment may take a few minutes. </small>
 
 
 
@@ -249,10 +250,10 @@
                         document.getElementById("AssetSelector").disabled = false;
                         DeleteFormContent();
                         document.getElementById("AssetSelector").selectedIndex = "0";
-                    }, 
-                     
+                    },
+
                     error: function (xhr, text, error)
-                    {              
+                    {
                         document.getElementById("DialogDeployContractMessageTitle").innerHTML = "";
                         document.getElementById("DialogDeployContractMessageContent").innerHTML = "";
                         document.getElementById("EtherscanURL").style.display = "none";
@@ -302,7 +303,7 @@
 
         function DisableForm()
         {
-            
+
             document.getElementById("PriceEthTxt").disabled = true;
             document.getElementById("BuyerAddressTxt").disabled = true;
             document.getElementById("PriceEthTxt").placeholder = "";
@@ -324,8 +325,8 @@
             document.getElementById("PriceIlsTxt").disabled = true;
             document.getElementById("PriceIlsTxt").readOnly = false;
             document.getElementById("BuyerAddressTxt").disabled = true;
-            document.getElementById("BuyerAddressTxt").readOnly = false; 
-            
+            document.getElementById("BuyerAddressTxt").readOnly = false;
+
         }
 
         function EnableForm(getAssetJson)
@@ -381,7 +382,7 @@
                     return;
                 }
                 assetReturnedFromFailedDeplyment = getAssetJson;
-                EnableForm(getAssetJson);     
+                EnableForm(getAssetJson);
             }
         }
 
