@@ -88,11 +88,13 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div style="display:flex">
-                                <!--<h5 id="DialogDeployContractMessageContent"><a id="EtherscanURL">Here.</a></h5>-->
-                                <h5 id="DialogDeployContractMessageContent"></h5>
-                                <a id="EtherscanURL">Here.</a>
-                            </div>
+                                <h5 id="DialogDeployContractMessageContent">The contract uploaded to the Blockchain.</h5>
+                                <div style="display:flex">
+                                    <h5 id="DialogDeployContractMessageContent">You can track it</h5>
+                                    <a style="font-size:16px" target="_blank" id="EtherscanURL" href="">&nbsp Here.</a>
+                                </div>
+                            <h5 style="display:none" id="DialogDeployContractErrorMessageContent">Failed to send to the buyer!</h5>
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" id="closeButtonDeploy" class="btn btn-danger" data-dismiss="modal">Close</button>

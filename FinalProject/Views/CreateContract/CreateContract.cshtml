@@ -111,9 +111,10 @@
             <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
             <br />
 
-            <div style="display:flex">
+            <div style="display:flex ; ">
                 <input id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" value="Sign&Deploy Contract" disabled />
                 <img style="display:none" id="DeployLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+                
             </div>
         }
     </div>
@@ -238,12 +239,11 @@
                     data : $('#DeployContractForm').serialize(),
                     success: function (data)
                     {
-                    console.log("Buyer balance"+data)
-                        document.getElementById("DialogDeployContractMessageTitle").innerHTML = "";
-                        document.getElementById("DialogDeployContractMessageContent").innerHTML = "";
+                        console.log("Buyer balance" + data)
+                        document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer sucessfully";
+                        document.getElementById("DialogDeployContractMessageContent").style.display = "block";
+                        document.getElementById("DialogDeployContractErrorMessageContent").style.display = "none";
                         document.getElementById("EtherscanURL").style.display = "block";
-                        document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer successfully!";
-                        document.getElementById("DialogDeployContractMessageContent").innerHTML = "The contract deployed into the Blockchain successfully!</br>You can track it-";
                         document.getElementById("EtherscanURL").href = "http://www.cnn.com/";
                         $('#DialogDeployContractMessage').modal('show');
                         document.getElementById("DeployLoader").style.display = "none";
@@ -254,11 +254,12 @@
 
                     error: function (xhr, text, error)
                     {
-                        document.getElementById("DialogDeployContractMessageTitle").innerHTML = "";
-                        document.getElementById("DialogDeployContractMessageContent").innerHTML = "";
+                        document.getElementById("DialogDeployContractMessageTitle").innerHTML = "Error";
+                        document.getElementById("DialogDeployContractMessageContent").style.display = "none";
+                        document.getElementById("DialogDeployContractErrorMessageContent").style.display = "block";
                         document.getElementById("EtherscanURL").style.display = "none";
-                        document.getElementById("DialogDeployContractMessageTitle").innerHTML = "Failed to send to the buyer!";
-                        document.getElementById("DialogDeployContractMessageContent").innerHTML = "Try again later";
+                        document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Failed to send to the buyer!";
+                        document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Try again later";
                         $('#DialogDeployContractMessage').modal('show');
                         EnableForm(assetReturnedFromFailedDeplyment);
                     }
