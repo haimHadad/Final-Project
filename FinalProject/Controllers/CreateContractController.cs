@@ -65,7 +65,7 @@ namespace FinalProject.Controllers
         {
             try
             {
-                InsertAssetInContractToDB(offer, "Busy");             
+                InsertAssetInContractToDB(offer, "Busy");  
                 var account = DappAccountController.myAccount;
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
                 Thread.Sleep(15000);
@@ -95,27 +95,18 @@ namespace FinalProject.Controllers
             newOffer.Reason = "None";
             _context.AssetsInContract.Add(newOffer);
             _context.SaveChanges();
-            int i = 0;
         }
 
         private void RemoveBusyAssetInContractFromDB(ContractOffer offer)
         {
-            AssetInContract newOffer = new AssetInContract
-            {
-                AssetID = offer.AssetID,
-                ContractAddress = "Busy",
-                SellerPublicKey = offer.SellerPublicKey,
-                BuyerPublicKey = offer.BuyerPublicKey,
-                Status = "Ongoing",
-                DeniedBy = "None",
-                Reason = "None",
-            };
 
-            _context.AssetsInContract.Attach(newOffer);
-            _context.AssetsInContract.Remove(newOffer);
+            var report = (from d in _context.AssetsInContract
+                          where d.AssetID == offer.AssetID && d.ContractAddress=="Busy"
+                          select d).Single();
+
+            _context.AssetsInContract.Remove(report);
             _context.SaveChanges();
 
-            int i = 0;
         }
 
     }

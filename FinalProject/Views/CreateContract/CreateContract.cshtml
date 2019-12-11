@@ -255,6 +255,7 @@
                         if (data != "Error") {
                             document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer sucessfully";
                             document.getElementById("DialogDeployContractMessageContent").style.display = "block";
+                            document.getElementById("DialogDeployContractMessageContent2").style.display = "block";
                             document.getElementById("DialogDeployContractErrorMessageContent").style.display = "none";
                             document.getElementById("EtherscanURL").style.display = "block";
                             document.getElementById("EtherscanURL").href = "https://ropsten.etherscan.io/address/" + data;
@@ -267,24 +268,13 @@
                             document.getElementById("AssetSelector").selectedIndex = "0";
                         }
 
-                        else
-                        {
-                            document.getElementById("DialogDeployContractMessageTitle").innerHTML = "Error";
-                            document.getElementById("DialogDeployContractMessageContent").style.display = "none";
-                            document.getElementById("DialogDeployContractErrorMessageContent").style.display = "block";
-                            document.getElementById("EtherscanURL").style.display = "none";
-                            document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Failed to send to the buyer!";
-                            document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Try again later";
-                            $('#DialogDeployContractMessage').modal('show');
-                            EnableForm(assetReturnedFromFailedDeplyment);
-                        }
-                        
                     },
 
                     error: function (xhr, text, error)
                     {
                         document.getElementById("DialogDeployContractMessageTitle").innerHTML = "Error";
                         document.getElementById("DialogDeployContractMessageContent").style.display = "none";
+                        document.getElementById("DialogDeployContractMessageContent2").style.display = "none";
                         document.getElementById("DialogDeployContractErrorMessageContent").style.display = "block";
                         document.getElementById("EtherscanURL").style.display = "none";
                         document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Failed to send to the buyer!";
