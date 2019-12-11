@@ -12,7 +12,7 @@ namespace FinalProject.Data
         public AssetsInContractContext(DbContextOptions<AssetsInContractContext> options) : base(options) { }
 
 
-        public DbSet<AssetInContract> AssetInContract { get; set; }
+        public DbSet<AssetInContract> AssetsInContract { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

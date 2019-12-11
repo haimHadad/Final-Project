@@ -8,7 +8,7 @@ namespace FinalProject.Models
     public class ContractOffer
     {
         
-        public int AssetID { get; set; }
+        public int AssetID { get; set; } 
 
         public int OwnertID { get; set; }
 

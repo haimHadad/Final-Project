@@ -55,8 +55,25 @@ namespace FinalProject.Models
             return salesContractAddress;
         }
 
+        public static async Task<string> Deploy(DappAccount yourAccount, ContractOffer offer)
+        {
+            uint hoursTimeAmount =  (uint)offer.TimeToBeOpen;
+            uint assetID = (uint)offer.AssetID; 
+            string assetLoaction = offer.Loaction;
+            uint assetRooms = (uint)offer.Rooms;
+            uint assetAreaIn = (uint)offer.AreaIn;
+            string assetURL = offer.ImageURL;
+            double assetPrice = (uint)offer.PriceETH;
+            string buyerAddress = offer.BuyerPublicKey;
+            var ContractAddresss =await Deploy(yourAccount, hoursTimeAmount , assetID, assetLoaction , assetRooms , assetAreaIn , assetURL, assetPrice, buyerAddress);
+            return ContractAddresss;
+        }
 
-        public async Task<string> getAssetDestails() //Buyer the asset that included in the deal
+
+
+
+
+            public async Task<string> getAssetDestails() //Buyer the asset that included in the deal
         {
             var contractHandlerAsBuyer = accountCaller.Blockchain.Eth.GetContractHandler(ContractAddress);                   
             var getAssetDetailsOutputDTOAsBuyer = await contractHandlerAsBuyer.QueryDeserializingToObjectAsync<GetAssetDetailsFunction, GetAssetDetailsOutputDTO>();

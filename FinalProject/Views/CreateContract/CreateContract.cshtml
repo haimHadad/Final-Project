@@ -119,7 +119,7 @@
         }
     </div>
     <div style="float:left">
-        <img class="w-75" style="float:right" id="imageAssetForm" />
+        <img name="ImageURL" class="w-75" style="float:right" id="imageAssetForm" />
     </div>
 </div>
 <!--data-toggle="modal" data-target="#dialogOfferContract"-->
@@ -173,7 +173,7 @@
             var accountBalance = @await Model.get_ETH_Balance();
             var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
             var sellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
-
+            
             if (buyerPublicKey == sellerPublicKey)
             {
                 ErrorMsg = ErrorMsg + "You cannot offer the contract to yourself.<br>";
@@ -227,6 +227,19 @@
                     return;
                 }
 
+            //AssetID OwnertID SellerPublicKey Loaction AreaIn Rooms BuyerPublicKey PriceETH TimeToBeOpen
+
+            var AssetID = document.getElementById("AssetIdTxt").value;
+            var OwnertID = document.getElementById("OwnerIdTxt").value;
+            var SellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
+            var Loaction = document.getElementById("LoactionTxt").value;
+            var AreaIn =  document.getElementById("AreaInTxt").value;
+            var Rooms = document.getElementById("RoomsTxt").value;
+            var BuyerPublicKey = document.getElementById("BuyerAddressTxt").value;
+            var PriceETH = document.getElementById("PriceEthTxt").value;
+            var PriceILS = document.getElementById("PriceIlsTxt").value;;
+            var TimeToBeOpen = document.getElementById("TimeSelector").value;
+            var ImageURL = document.getElementById("imageAssetForm").src
 
             document.getElementById("AssetSelector").disabled = true;
             DisableForm();
@@ -236,20 +249,36 @@
                     url: "/CreateContract/DeployContract",
                     type: 'POST',
                     async: true,
-                    data : $('#DeployContractForm').serialize(),
+                    data : { AssetID, OwnertID, SellerPublicKey, Loaction, AreaIn, Rooms , BuyerPublicKey, PriceETH , PriceILS , TimeToBeOpen, ImageURL },
                     success: function (data)
                     {
-                        console.log("Buyer balance" + data)
-                        document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer sucessfully";
-                        document.getElementById("DialogDeployContractMessageContent").style.display = "block";
-                        document.getElementById("DialogDeployContractErrorMessageContent").style.display = "none";
-                        document.getElementById("EtherscanURL").style.display = "block";
-                        document.getElementById("EtherscanURL").href = "http://www.cnn.com/";
-                        $('#DialogDeployContractMessage').modal('show');
-                        document.getElementById("DeployLoader").style.display = "none";
-                        document.getElementById("AssetSelector").disabled = false;
-                        DeleteFormContent();
-                        document.getElementById("AssetSelector").selectedIndex = "0";
+                        if (data != "Error") {
+                            document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer sucessfully";
+                            document.getElementById("DialogDeployContractMessageContent").style.display = "block";
+                            document.getElementById("DialogDeployContractErrorMessageContent").style.display = "none";
+                            document.getElementById("EtherscanURL").style.display = "block";
+                            document.getElementById("EtherscanURL").href = "https://ropsten.etherscan.io/address/" + data;
+                            $('#DialogDeployContractMessage').modal('show');
+                            document.getElementById("DeployLoader").style.display = "none";
+                            document.getElementById("AssetSelector").disabled = false;
+                            DeleteFormContent();
+                            var AvailableAssetsList = document.getElementById("AssetSelector");
+                            AvailableAssetsList.remove(AvailableAssetsList.selectedIndex); 
+                            document.getElementById("AssetSelector").selectedIndex = "0";
+                        }
+
+                        else
+                        {
+                            document.getElementById("DialogDeployContractMessageTitle").innerHTML = "Error";
+                            document.getElementById("DialogDeployContractMessageContent").style.display = "none";
+                            document.getElementById("DialogDeployContractErrorMessageContent").style.display = "block";
+                            document.getElementById("EtherscanURL").style.display = "none";
+                            document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Failed to send to the buyer!";
+                            document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Try again later";
+                            $('#DialogDeployContractMessage').modal('show');
+                            EnableForm(assetReturnedFromFailedDeplyment);
+                        }
+                        
                     },
 
                     error: function (xhr, text, error)
@@ -265,7 +294,7 @@
                     }
                 });
 
-
+        
         }
 
 

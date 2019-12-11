@@ -8,12 +8,12 @@ using FinalProject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace FinalProject.Controllers
 {
     public class CreateContractController : Controller
     {
         private AssetsInContractContext _context;
-
 
         public CreateContractController(AssetsInContractContext context)
         {
@@ -26,7 +26,7 @@ namespace FinalProject.Controllers
             List<AssetInContract> openContractsToCheck = new List<AssetInContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
             List<int> AssetsNumsIncludedInDeals = new List<int>();
             List<Asset> AssetsToDelete = new List<Asset>();
-            openContractsToCheck = await _context.AssetInContract.FromSqlRaw("select * from AssetsInContract where SellerPublicKey = {0} and (Status ='Ongoing' or Status ='Pending' )", account.publicKey).ToListAsync();
+            openContractsToCheck = await _context.AssetsInContract.FromSqlRaw("select * from AssetsInContract where SellerPublicKey = {0} and (Status ='Ongoing' or Status ='Pending' )", account.publicKey).ToListAsync();
             
             foreach (AssetInContract cnrt in openContractsToCheck) //Here we take all the assets ID that included in open contracts
             {
@@ -59,19 +59,33 @@ namespace FinalProject.Controllers
         }
 
         [HttpPost]
-        public string DeployContract (ContractOffer offer )
+        public async Task<string> DeployContractAsync (ContractOffer offer )
         {
-            DappAccount account = DappAccountController.myAccount;
-            foreach(Asset asset in account.OwnAssetsList)
+            try 
             {
-                if(asset.AssetID ==offer.AssetID)
-                {
-                    offer.ImageURL = asset.ImageURL;
-                }
+                //string myContractAddress = await SalesContract.Deploy(myWallet, 2, 1122, "Hadas 6 Haifa", 3, 110, "www.google.co.il", 1, buyerAddress);
+                var account = DappAccountController.myAccount;
+                //string myContractAddress = await SmartContractService.Deploy(account, 2, 1122, "Hadas 6 Haifa", 3, 110, "www.google.co.il", 1, offer.BuyerPublicKey);
+                var ContractAddress =await SmartContractService.Deploy(account, offer);
+                Thread.Sleep(15000);
+                AssetInContract newOffer = new AssetInContract();
+                newOffer.AssetID = offer.AssetID;
+                newOffer.ContractAddress = "" + ContractAddress;
+                newOffer.SellerPublicKey = offer.SellerPublicKey;
+                newOffer.BuyerPublicKey = offer.BuyerPublicKey;
+                newOffer.Status = "Ongoing";
+                newOffer.DeniedBy = "None";
+                newOffer.Reason = "None";
+                _context.AssetsInContract.Add(newOffer);
+                _context.SaveChanges();
+                return newOffer.ContractAddress;
+            } 
+
+            catch(Exception e) 
+            {
+                return "Error";
             }
-            Thread.Sleep(4000);
-            int i = 0;
-            return "We did it!"; 
+             
         }
     }
 }
