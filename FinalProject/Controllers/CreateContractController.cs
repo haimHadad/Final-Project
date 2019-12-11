@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FinalProject.Data;
 using FinalProject.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,7 @@ namespace FinalProject.Controllers
                 {
                     AssetsToDelete.Add(ast);
                 }
+
             }
 
             foreach (Asset astDel in AssetsToDelete) //We return to our assets list, and delete all the assets that we collected before (assets that included in the deal)
@@ -61,31 +63,60 @@ namespace FinalProject.Controllers
         [HttpPost]
         public async Task<string> DeployContractAsync (ContractOffer offer )
         {
-            try 
+            try
             {
-                //string myContractAddress = await SalesContract.Deploy(myWallet, 2, 1122, "Hadas 6 Haifa", 3, 110, "www.google.co.il", 1, buyerAddress);
+                InsertAssetInContractToDB(offer, "Busy");             
                 var account = DappAccountController.myAccount;
-                //string myContractAddress = await SmartContractService.Deploy(account, 2, 1122, "Hadas 6 Haifa", 3, 110, "www.google.co.il", 1, offer.BuyerPublicKey);
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
                 Thread.Sleep(15000);
-                AssetInContract newOffer = new AssetInContract();
-                newOffer.AssetID = offer.AssetID;
-                newOffer.ContractAddress = "" + ContractAddress;
-                newOffer.SellerPublicKey = offer.SellerPublicKey;
-                newOffer.BuyerPublicKey = offer.BuyerPublicKey;
-                newOffer.Status = "Ongoing";
-                newOffer.DeniedBy = "None";
-                newOffer.Reason = "None";
-                _context.AssetsInContract.Add(newOffer);
-                _context.SaveChanges();
-                return newOffer.ContractAddress;
+                InsertAssetInContractToDB(offer, ContractAddress);
+                RemoveBusyAssetInContractFromDB(offer);
+                return ContractAddress;
             } 
 
             catch(Exception e) 
             {
+                RemoveBusyAssetInContractFromDB(offer);
                 return "Error";
             }
              
         }
+
+
+        private void InsertAssetInContractToDB(ContractOffer offer, string contractAddress)
+        {
+            AssetInContract newOffer = new AssetInContract();
+            newOffer.AssetID = offer.AssetID;
+            newOffer.ContractAddress = "" + contractAddress;
+            newOffer.SellerPublicKey = offer.SellerPublicKey;
+            newOffer.BuyerPublicKey = offer.BuyerPublicKey;
+            newOffer.Status = "Ongoing";
+            newOffer.DeniedBy = "None";
+            newOffer.Reason = "None";
+            _context.AssetsInContract.Add(newOffer);
+            _context.SaveChanges();
+            int i = 0;
+        }
+
+        private void RemoveBusyAssetInContractFromDB(ContractOffer offer)
+        {
+            AssetInContract newOffer = new AssetInContract
+            {
+                AssetID = offer.AssetID,
+                ContractAddress = "Busy",
+                SellerPublicKey = offer.SellerPublicKey,
+                BuyerPublicKey = offer.BuyerPublicKey,
+                Status = "Ongoing",
+                DeniedBy = "None",
+                Reason = "None",
+            };
+
+            _context.AssetsInContract.Attach(newOffer);
+            _context.AssetsInContract.Remove(newOffer);
+            _context.SaveChanges();
+
+            int i = 0;
+        }
+
     }
 }
