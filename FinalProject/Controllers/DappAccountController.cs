@@ -30,7 +30,7 @@ namespace FinalProject.Controllers
             account.ConnectToBlockchain();
             if (String.Compare(account.publicKey, REGULATOR_PUBLIC_KEY) == 0)
             {// account is regulator
-                return RedirectToAction("RegulatorMainPage", "Regulator");
+                return RedirectToAction("RegulatorMainPage", "Regulator", account);
             }
             else
             {// Account is either buyer / seller
