@@ -1,31 +1,30 @@
-﻿@model FinalProject.Models.DappAccount
+﻿@model FinalProject.Models.Regulator
 @{
-    ViewData["Title"] = "AccountMainPage";
-    Layout = "~/Views/Shared/_LayoutAccount.cshtml";
+    ViewData["Title"] = "RegulatorMainPage";
+    Layout = "~/Views/Shared/_LayoutRegulator.cshtml";
 }
-
 <br />
-    <table class=" table table-hover">
-        <thead align="center">
-            <tr>
-                <th scope="col">AssetID</th>
-                <th scope="col">Loaction</th>
-                <th scope="col">Action</th>
+<table class=" table table-hover">
+    <thead align="center">
+        <tr>
+            <th scope="col">AssetID</th>
+            <th scope="col">Loaction</th>
+            <th scope="col">Action</th>
 
+        </tr>
+    </thead>
+    <tbody align="center">
+        @foreach (var a in @Model.assetsList)
+        {
+            var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);                                                                                //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
+            <tr>
+                <td>@a.AssetID</td>
+                <td>@a.Loaction</td>
+                <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="ViewAssetDeteils( @AssetSerialModel)">View Details</button></td>
             </tr>
-        </thead>
-        <tbody align="center">
-            @foreach (var a in @Model.OwnAssetsList)
-            {
-                var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);                                                                                //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
-                <tr>
-                    <td>@a.AssetID</td>
-                    <td>@a.Loaction</td>
-                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="ViewAssetDeteils( @AssetSerialModel)">View Details</button></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
 <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -45,8 +44,10 @@
                 <p id="dialogRooms"></p>
                 <p id="dialogPrice"></p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <div class="modal-footer justify-content-around">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
             </div>
         </div>
     </div>
@@ -59,14 +60,6 @@
             document.getElementById("assetsNavBar").style.textDecoration = "underline";
             document.getElementById("assetsNavBar").style.fontWeight = "bold";
         });
-        function getPriceInILS(EthPrice)
-        {
-            var exchangeRate = @Model.getExchangeRate_ETH_To_ILS();
-            var IlsPrice = exchangeRate * EthPrice;
-            IlsPrice = IlsPrice.toFixed(2);
-            var IlsPriceToReturn = IlsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            return IlsPriceToReturn;
-        }
         function ViewAssetDeteils(assetJson) {
             var fullPublicKey = assetJson.OwnerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
@@ -90,4 +83,4 @@
             $('#myInput').trigger('focus')
         })
     </script>
-}
+    }
