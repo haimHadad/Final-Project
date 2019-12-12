@@ -68,7 +68,9 @@
             var IlsPriceToReturn = IlsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return IlsPriceToReturn;
         }
-        function ViewAssetDeteils(assetJson) {
+
+        function ViewAssetDeteils(assetJson)
+        {
             var fullPublicKey = assetJson.OwnerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
             var partTwo = " . . . ";
