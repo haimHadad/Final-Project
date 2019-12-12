@@ -174,20 +174,20 @@
                         <table>
                             <tr>
                                 <td>
-                                    <h5 id="DialogDeployContractMessageContent2"></h5>
+                                    <h5 id="DialogDeployContractMessageContent1"></h5>
                                     <h5 style="display:none" id="DialogDeployContractErrorMessageContent">Failed to send to the buyer!</h5>
                                 </td>
                             </tr>
 
                             <tr>
                                 <td>
-                                    <h5 id="DialogDeployContractMessageContent"></h5>
+                                    <h5 id="DialogDeployContractMessageContent2"></h5>
                                 </td>    
                             </tr>
                             <tr>
                                 <td>
                                     <div style="display:flex">
-                                        <h5 id="DialogDeployContractMessageContent2">You can track it</h5>
+                                        <h5 id="DialogDeployContractMessageContent3">You can track it</h5>
                                         <a style="font-size:16px" target="_blank" id="EtherscanURL" href="">&nbsp Here.</a>
                                     </div>
 
@@ -304,12 +304,13 @@
                     {
                         if (data != "Error") {
                             document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer sucessfully";
-                            document.getElementById("DialogDeployContractMessageContent").style.display = "block";
+                            document.getElementById("DialogDeployContractMessageContent1").style.display = "block";
                             document.getElementById("DialogDeployContractMessageContent2").style.display = "block";
+                            document.getElementById("DialogDeployContractMessageContent3").style.display = "block";
                             document.getElementById("DialogDeployContractErrorMessageContent").style.display = "none";
                             document.getElementById("EtherscanURL").style.display = "block";
                             document.getElementById("EtherscanURL").href = "https://ropsten.etherscan.io/address/" + data;
-                            document.getElementById("DialogDeployContractMessageContent").innerHTML = "The contract uploaded to the Blockchain.";
+                            document.getElementById("DialogDeployContractMessageContent1").innerHTML = "The contract uploaded to the Blockchain.";
                             document.getElementById("DialogDeployContractMessageContent2").innerHTML ="AssetID".bold() +" : "+ AssetID + "."+"</br>"+ "Loaction".bold()+" : " + Loaction+".";
                              document.getElementById("deployConfirmation").src = "/img/V-symbol.png"; 
                             updateAccountBalance();
@@ -326,15 +327,19 @@
 
                     error: function (xhr, text, error)
                     {
+                        document.getElementById("deployConfirmation").src = "/img/X-symbol.png";
                         document.getElementById("DialogDeployContractMessageTitle").innerHTML = "Error";
-                        document.getElementById("DialogDeployContractMessageContent").style.display = "none";
+                        document.getElementById("DialogDeployContractMessageContent1").style.display = "none";
                         document.getElementById("DialogDeployContractMessageContent2").style.display = "none";
+                        document.getElementById("DialogDeployContractMessageContent3").style.display = "none";
                         document.getElementById("DialogDeployContractErrorMessageContent").style.display = "block";
                         document.getElementById("EtherscanURL").style.display = "none";
                         document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Failed to send to the buyer!";
                         document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Try again later";
                         $('#DialogDeployContractMessage').modal('show');
-                        EnableForm(assetReturnedFromFailedDeplyment);
+                        document.getElementById("DeployLoader").style.display = "none";
+                        EnableForm(assetReturnedFromFailedDeplyment);  
+                        document.getElementById("AssetSelector").disabled = false;
                     }
                 });
 

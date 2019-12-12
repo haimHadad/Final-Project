@@ -65,7 +65,7 @@ namespace FinalProject.Controllers
         {
             
             try
-            {       
+            {
                 InsertAssetInContractToDB(offer, "Busy");  
                 var account = DappAccountController.myAccount;
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
