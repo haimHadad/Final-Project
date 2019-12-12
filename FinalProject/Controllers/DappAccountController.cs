@@ -36,7 +36,7 @@ namespace FinalProject.Controllers
 
 
         [HttpPost]
-        public async Task<bool> CheckAccountAsync(String PublicKey, string PrivateKey)
+        public bool CheckAccount(String PublicKey, string PrivateKey)
         {
             DappAccount account = new DappAccount();
             bool IsValidated = account.CheckLogin(PublicKey, PrivateKey); //here we just check the login, the model is not initilized in the key properties
@@ -48,10 +48,9 @@ namespace FinalProject.Controllers
             return false;
         }
 
-      
+
     }
 
-    
 
 }
 

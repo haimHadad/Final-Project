@@ -3,6 +3,7 @@
 
 // Write your JavaScript code.
 
+
 function offerContract() {
     document.getElementById("CreateContractDialogMessage").innerHTML = "";
     ErrorMsg = checkErrors();
@@ -50,8 +51,8 @@ function offerContract() {
                     document.getElementById("DialogDeployContractMessageContent1").innerHTML = "The contract uploaded to the Blockchain.";
                     document.getElementById("DialogDeployContractMessageContent2").innerHTML = "AssetID".bold() + " : " + AssetID + "." + "</br>" + "Loaction".bold() + " : " + Loaction + ".";
                     document.getElementById("deployConfirmation").src = "/img/V-symbol.png";
-                    updateAccountBalance();
                     $('#DialogDeployContractMessage').modal('show');
+                    updateAccountBalance()
                     document.getElementById("DeployLoader").style.display = "none";
                     document.getElementById("AssetSelector").disabled = false;
                     DeleteFormContent();
@@ -193,10 +194,45 @@ $('#myModal').on('shown.bs.modal', function () {
 })
 
 
-function copyToClipBoard() {
+function copyToClipBoard()
+{
     var copyText = document.getElementById("PublicKeyInput");
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     document.execCommand("copy");
     $('#dialogCopy').modal('show');
+}
+
+
+
+function SendLoginData() {
+    var url = "/DappAccount/CheckAccount";
+    $.post(url, { PublicKey: $("#public_key_input").val(), PrivateKey: $("#private_key_input").val() }, function (data) {
+        if (data == false) {
+            $("#public_key_input").val("Wrong Credentials");
+            document.getElementById("public_key_input").style.color = "red";
+            $("#private_key_input").val("");
+            document.getElementById("public_key_input").addEventListener("click", ResetInputPublicKey);
+
+            return;
+        }
+        else {
+            document.getElementById("loader").style.display = "block";
+            $("#myform").submit()
+        }
+
+        function ResetInputPublicKey() {
+            document.getElementById("public_key_input").style.color = "black";
+            $("#public_key_input").val("");
+        }
+    });
+}
+
+function wait(ms) {
+    var d = new Date();
+    var d2 = null;
+    do {
+        d2 = new Date();
+    }
+    while (d2 - d < ms);
 }

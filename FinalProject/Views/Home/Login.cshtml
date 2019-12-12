@@ -3,24 +3,9 @@
     ViewData["Title"] = "Home Page";
 }
 <script language="javascript">
-
-    function SendLoginData() {
-        document.getElementById("LoginErrorLabel").style.display = "none";
-        var url = "/DappAccount/CheckAccount";
-
-        $.post(url, { PublicKey: $("#public_key_input").val(), PrivateKey: $("#private_key_input").val() }, function (data) {
-            if (data == false) {
-                document.getElementById("LoginErrorLabel").style.display = "block";
-                return;
-            }
-            else {
-                document.getElementById("loader").style.display = "block";
-                $("#myform").submit()
-            }
-
-        });
-    }
 </script>
+
+
 <div class="container">
     @using (Html.BeginForm("AccountMainPage", "DappAccount", FormMethod.Post, new { @id = "myform" }))
     {
@@ -37,5 +22,4 @@
     <div class="row justify-content-center">
         <input id="submit" type="button" value="Login" class="btn btn-primary" onclick="SendLoginData()" />
     </div>
-    <label id="LoginErrorLabel" style="color: red; display: none;">*Wrong login detail !</label>
 </div>

@@ -22,6 +22,13 @@ namespace FinalProject.Controllers
         {
             return View();
         }
+
+        public IActionResult Logout()
+        {
+            DappAccountController.myAccount = null;
+            return View("Login");
+        }
+
         public IActionResult testLayout1()
         {
             return View();
@@ -37,5 +44,6 @@ namespace FinalProject.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
 }
