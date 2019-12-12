@@ -19,6 +19,7 @@ namespace FinalProject.Controllers
             _context = context;
         }
 
+        [HttpGet]
         [HttpPost]
         public async Task<IActionResult> AccountMainPage(DappAccount account) //here the login succeeded , e initialized the key
         { 
@@ -46,9 +47,12 @@ namespace FinalProject.Controllers
             }
             return false;
         }
- 
 
-        }
+      
+    }
+
+    
+
 }
 
 /* account.OwnAssetsList = await _context.assets.FromSqlRaw("SELECT Assets2.AssetID, Accounts.ID as OwnerID, Assets2.OwnerPublicKey,"

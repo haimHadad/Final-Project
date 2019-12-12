@@ -18,7 +18,9 @@
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a id="assetsNavBar" class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Assets<span class="sr-only">(current)</span></a>
+                        <!--<a id="assetsNavBar" class="nav-link" asp-area="" asp-controller="DappAccount" asp-action="ShowAssetPage">Assets<span class="sr-only">(current)</span></a>-->
+
+                        <a id="assetsNavBar" class="nav-link" asp-area="" asp-controller="DappAccount" asp-action="AccountMainPage" asp-route-account.publicKey="@Model.publicKey" asp-route-account.privateKey="@Model.privateKey">Assets<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
                         <a id="createContractNavBar" class="nav-link" asp-area="" asp-controller="CreateContract" asp-action="CreateContract">Create Contract<span class="sr-only">(current)</span></a>
