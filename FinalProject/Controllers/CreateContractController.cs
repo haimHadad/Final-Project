@@ -63,8 +63,9 @@ namespace FinalProject.Controllers
         [HttpPost]
         public async Task<string> DeployContractAsync (ContractOffer offer )
         {
+            
             try
-            {
+            {       
                 InsertAssetInContractToDB(offer, "Busy");  
                 var account = DappAccountController.myAccount;
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
@@ -83,7 +84,7 @@ namespace FinalProject.Controllers
         }
 
 
-        private void InsertAssetInContractToDB(ContractOffer offer, string contractAddress)
+        private bool InsertAssetInContractToDB(ContractOffer offer, string contractAddress)
         {
             AssetInContract newOffer = new AssetInContract();
             newOffer.AssetID = offer.AssetID;
@@ -95,6 +96,7 @@ namespace FinalProject.Controllers
             newOffer.Reason = "None";
             _context.AssetsInContract.Add(newOffer);
             _context.SaveChanges();
+            return true;
         }
 
         private void RemoveBusyAssetInContractFromDB(ContractOffer offer)
@@ -106,7 +108,7 @@ namespace FinalProject.Controllers
 
             _context.AssetsInContract.Remove(report);
             _context.SaveChanges();
-
+            
         }
 
     }

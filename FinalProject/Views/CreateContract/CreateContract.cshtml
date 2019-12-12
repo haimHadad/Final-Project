@@ -168,13 +168,35 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <h5 id="DialogDeployContractMessageContent">The contract uploaded to the Blockchain.</h5>
-                <div style="display:flex">
-                    <h5 id="DialogDeployContractMessageContent2">You can track it</h5>
-                    <a style="font-size:16px" target="_blank" id="EtherscanURL" href="">&nbsp Here.</a>
-                </div>
-                <h5 style="display:none" id="DialogDeployContractErrorMessageContent">Failed to send to the buyer!</h5>
+            <div style="display:flex" class="modal-body">
+                
+                    
+                        <table>
+                            <tr>
+                                <td>
+                                    <h5 id="DialogDeployContractMessageContent2"></h5>
+                                    <h5 style="display:none" id="DialogDeployContractErrorMessageContent">Failed to send to the buyer!</h5>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <h5 id="DialogDeployContractMessageContent"></h5>
+                                </td>    
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display:flex">
+                                        <h5 id="DialogDeployContractMessageContent2">You can track it</h5>
+                                        <a style="font-size:16px" target="_blank" id="EtherscanURL" href="">&nbsp Here.</a>
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <img id="deployConfirmation" style="width:70px; height:70px; margin-left:auto"  />                     
 
             </div>
             <div class="modal-footer">
@@ -201,7 +223,7 @@
             var accountBalance = @await Model.get_ETH_Balance();
             var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
             var sellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
-            
+
             if (buyerPublicKey == sellerPublicKey)
             {
                 ErrorMsg = ErrorMsg + "You cannot offer the contract to yourself.<br>";
@@ -287,12 +309,16 @@
                             document.getElementById("DialogDeployContractErrorMessageContent").style.display = "none";
                             document.getElementById("EtherscanURL").style.display = "block";
                             document.getElementById("EtherscanURL").href = "https://ropsten.etherscan.io/address/" + data;
+                            document.getElementById("DialogDeployContractMessageContent").innerHTML = "The contract uploaded to the Blockchain.";
+                            document.getElementById("DialogDeployContractMessageContent2").innerHTML ="AssetID".bold() +" : "+ AssetID + "."+"</br>"+ "Loaction".bold()+" : " + Loaction+".";
+                             document.getElementById("deployConfirmation").src = "/img/V-symbol.png"; 
+                            updateAccountBalance();
                             $('#DialogDeployContractMessage').modal('show');
                             document.getElementById("DeployLoader").style.display = "none";
                             document.getElementById("AssetSelector").disabled = false;
                             DeleteFormContent();
                             var AvailableAssetsList = document.getElementById("AssetSelector");
-                            AvailableAssetsList.remove(AvailableAssetsList.selectedIndex); 
+                            AvailableAssetsList.remove(AvailableAssetsList.selectedIndex);
                             document.getElementById("AssetSelector").selectedIndex = "0";
                         }
 
@@ -312,7 +338,7 @@
                     }
                 });
 
-        
+
         }
 
 
