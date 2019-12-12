@@ -7,12 +7,12 @@ Password(For metamask): chahad1155
 
 ----------------------------------------------------------------------------------------------------------------------------
 Account2: Buyer
-Public-Key: 0xe9A7a73DdE51D08c62847c15A5eA6741F2a4f1D5 
+Public-Key: 0xe9A7a73DdE51D08c62847c15A5eA6741F2a4f1D5
 Private-Key: 3a856ee64a38464eef3aa0cdd3e6e15e32ca3ac55c0e99467634221500504a64
 Password(For metamask): chahad1155
 ----------------------------------------------------------------------------------------------------------------------------
 Account3: Regulator (Also called Govrenment)
-Public-Key: 0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80 
+Public-Key: 0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80
 Private-Key: ce155c9664386764ee49f72aa0e5d2820c7dee301154b545e26e69f6408f4d34
 
 ----------------------------------------------------------------------------------------------------------------------------
