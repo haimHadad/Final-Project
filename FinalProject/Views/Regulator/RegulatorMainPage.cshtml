@@ -4,6 +4,10 @@
     Layout = "~/Views/Shared/_LayoutRegulator.cshtml";
 }
 <br />
+@if (@Model.assetsList == null)
+{
+    <div class="row justify-content-center">There are NO Ongoing Requests.</div>
+}
 <table class=" table table-hover">
     <thead align="center">
         <tr>
@@ -83,4 +87,4 @@
             $('#myInput').trigger('focus')
         })
     </script>
-    }
+}
