@@ -9,7 +9,10 @@ namespace FinalProject.Models
     {
         public string publicKey { get; set; }
         public string privateKey { get; set; }
-        
         public List<Asset> assetsList { get; set; }
+        public Regulator()
+        {
+
+        }
     }
 }
