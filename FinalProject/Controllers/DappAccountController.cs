@@ -13,6 +13,7 @@ namespace FinalProject.Controllers
     {
         private AssetContext _context;
         public static DappAccount myAccount;
+        private const string REGULATOR_PUBLIC_KEY = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
 
         public DappAccountController(AssetContext context)
         {
@@ -27,9 +28,16 @@ namespace FinalProject.Controllers
                 return RedirectToAction("Login", "Home");
 
             account.ConnectToBlockchain();
-            myAccount = account; //and save this account in static account so the other controllers be able to read it
-            myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
-            return View(account);
+            if (String.Compare(account.publicKey, REGULATOR_PUBLIC_KEY) == 0)
+            {// account is regulator
+                return RedirectToAction("RegulatorMainPage", "Regulator");
+            }
+            else
+            {// Account is either buyer / seller
+                myAccount = account; //and save this account in static account so the other controllers be able to read it
+                myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
+                return View(account);
+            }
 
         }
 
