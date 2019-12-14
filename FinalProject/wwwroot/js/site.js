@@ -52,7 +52,7 @@ function offerContract() {
                     document.getElementById("DialogDeployContractMessageContent2").innerHTML = "AssetID".bold() + " : " + AssetID + "." + "</br>" + "Loaction".bold() + " : " + Loaction + ".";
                     document.getElementById("deployConfirmation").src = "/img/V-symbol.png";
                     $('#DialogDeployContractMessage').modal('show');
-                    updateAccountBalance()
+                    updateAccountBalanceAfterBlockchainOperation();
                     document.getElementById("DeployLoader").style.display = "none";
                     document.getElementById("AssetSelector").disabled = false;
                     DeleteFormContent();

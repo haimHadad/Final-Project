@@ -69,7 +69,7 @@ namespace FinalProject.Controllers
                 InsertAssetInContractToDB(offer, "Busy");  
                 var account = DappAccountController.myAccount;
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
-                Thread.Sleep(15000);
+                //Thread.Sleep(15000);
                 InsertAssetInContractToDB(offer, ContractAddress);
                 RemoveBusyAssetInContractFromDB(offer);
                 return ContractAddress;
@@ -110,6 +110,8 @@ namespace FinalProject.Controllers
             _context.SaveChanges();
             
         }
+
+        
 
     }
 }

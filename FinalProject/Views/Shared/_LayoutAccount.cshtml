@@ -90,16 +90,51 @@
 
                 function updateAccountBalance()
                 {
-                    var accountBalanceILS = @await Model.get_ILS_Balance();
-                    var accountBalanceETH = @await Model.get_ETH_Balance();
-                    accountBalanceILS = accountBalanceILS.toFixed(2);
-                    accountBalanceETH = accountBalanceETH.toFixed(2);
-                    accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
-                    document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
+                    var accountBalanceILS=null;
+                    var accountBalanceETH=null;
+                    const myFirstPromise = new Promise((resolve, reject) =>
+                    {
+                        accountBalanceILS = @await Model.get_ILS_Balance();
+                        accountBalanceETH = @await Model.get_ETH_Balance();
+                        console.log("ETH-Balance:" + accountBalanceETH);
+                        console.log("ILS-Balance:"+accountBalanceILS);
+                        
+                    })
+
+                        accountBalanceILS = accountBalanceILS.toFixed(2);
+                        accountBalanceETH = accountBalanceETH.toFixed(2);
+                        accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
+                        document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
+                    
                 }
-                
-                
+
+                function updateAccountBalanceAfterBlockchainOperation()
+                {
+                    var accountBalanceILS=null;
+                    var accountBalanceETH = null;
+                    var echangeRate = @Model.getExchangeRate_ETH_To_ILS();
+                    $.ajax(
+                    {
+                        url: "/DappAccount/RecheckBalanceAfterBlockchainOperation",
+                        type: 'POST',
+                        async: true,
+                        data: {},
+                        success: function (data)
+                        {
+                            var accountBalanceETH = data;
+                            var accountBalanceILS = accountBalanceETH * echangeRate;               
+                            accountBalanceILS = accountBalanceILS.toFixed(2);
+                            accountBalanceETH = accountBalanceETH.toFixed(2);
+                            accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
+                            document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
+
+                        },
+
+                        error: function (xhr, text, error) { }    
+                    });
+                }
 
                 
             </script>

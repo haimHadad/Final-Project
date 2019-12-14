@@ -48,6 +48,13 @@ namespace FinalProject.Controllers
             return false;
         }
 
+        [HttpPost]
+        public async Task<double> RecheckBalanceAfterBlockchainOperation()
+        {
+            DappAccount account = DappAccountController.myAccount;
+            double balanceETH = await account.get_ETH_Balance();
+            return balanceETH;
+        }
 
     }
 
