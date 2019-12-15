@@ -23,6 +23,7 @@ namespace FinalProject.Controllers
 
         public async Task<IActionResult> CreateContract()
         {
+            await DappAccountController.RefreshAccountData();
             DappAccount account =  DappAccountController.myAccount;
             List<AssetInContract> openContractsToCheck = new List<AssetInContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
             List<int> AssetsNumsIncludedInDeals = new List<int>();
@@ -53,10 +54,10 @@ namespace FinalProject.Controllers
         }
 
 
-        public async Task<double> CheckBuyerPublicKeyLegalityAsync(string BuyerPublicKey)
+        public async Task<double> CheckBuyerPublicKeyLegality(string BuyerPublicKey)
         {
             DappAccount account = DappAccountController.myAccount;
-            double buyerBalance = await account.get_ETH_BalanceOfAnyAccount(BuyerPublicKey);
+            double buyerBalance = await DappAccountController.get_ETH_BalanceOfAnyAccount(BuyerPublicKey);
             return buyerBalance;
         }
 

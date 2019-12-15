@@ -40,7 +40,7 @@
                         <input id="PublicKeyInput" class="form-control" type="text" value=@Model.publicKey readonly>
                     </li>
                     <li class="nav-item active">
-                        <strong class="pr-2 nav-link" style="color:white !important;"> <label id="ilsBalance"></label> <label id="ethBalance" ></label></strong>
+                        <strong class="pr-2 nav-link" style="color:white !important;"> <label id="ilsBalance"></label> <label id="ethBalance"></label></strong>                     
                     </li>
                 </ul>
             </div>
@@ -90,30 +90,29 @@
 
                 function updateAccountBalance()
                 {
+                    
+
                     var accountBalanceILS=null;
                     var accountBalanceETH=null;
-                    const myFirstPromise = new Promise((resolve, reject) =>
-                    {
-                        accountBalanceILS = @await Model.get_ILS_Balance();
-                        accountBalanceETH = @await Model.get_ETH_Balance();
-                        console.log("ETH-Balance:" + accountBalanceETH);
-                        console.log("ILS-Balance:"+accountBalanceILS);
-                        
-                    })
-
-                        accountBalanceILS = accountBalanceILS.toFixed(2);
-                        accountBalanceETH = accountBalanceETH.toFixed(2);
-                        accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                        document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
-                        document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
-                    
+                    accountBalanceILS = @Model.IlsBalance;
+                    accountBalanceETH = @Model.EthBalance;
+                    console.log("ETH-Balance:" + accountBalanceETH);
+                    console.log("ILS-Balance:"+accountBalanceILS);
+                    accountBalanceILS = accountBalanceILS.toFixed(2);
+                    accountBalanceETH = accountBalanceETH.toFixed(2);
+                    accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
+                    document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
                 }
+
+                
+
 
                 function updateAccountBalanceAfterBlockchainOperation()
                 {
-                    var accountBalanceILS=null;
-                    var accountBalanceETH = null;
-                    var echangeRate = @Model.getExchangeRate_ETH_To_ILS();
+
+
+                    var echangeRate = @Model.exchangeRateETH_ILS;
                     $.ajax(
                     {
                         url: "/DappAccount/RecheckBalanceAfterBlockchainOperation",
@@ -123,7 +122,7 @@
                         success: function (data)
                         {
                             var accountBalanceETH = data;
-                            var accountBalanceILS = accountBalanceETH * echangeRate;               
+                            var accountBalanceILS = accountBalanceETH * echangeRate;
                             accountBalanceILS = accountBalanceILS.toFixed(2);
                             accountBalanceETH = accountBalanceETH.toFixed(2);
                             accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -132,11 +131,11 @@
 
                         },
 
-                        error: function (xhr, text, error) { }    
+                        error: function (xhr, text, error) { }
                     });
                 }
 
-                
+
             </script>
         </main>
     </div>

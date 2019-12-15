@@ -239,7 +239,7 @@
         function checkErrors()
         {
             var ErrorMsg = "";
-            var accountBalance = @await Model.get_ETH_Balance();
+            var accountBalance = @Model.EthBalance;
             var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
             var sellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
 
@@ -284,7 +284,7 @@
 
         function getPriceInILS(EthPrice)
         {
-            var exchangeRate = @Model.getExchangeRate_ETH_To_ILS();
+            var exchangeRate = @Model.exchangeRateETH_ILS;
             var IlsPrice = exchangeRate * EthPrice;
             IlsPrice = IlsPrice.toFixed(2);
             var IlsPriceToReturn = IlsPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
