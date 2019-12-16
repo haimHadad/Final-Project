@@ -64,16 +64,34 @@ namespace FinalProject.Controllers
         [HttpPost]
         public async Task<string> DeployContractAsync (ContractOffer offer )
         {
-            
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance();
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance();
+            double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
+            double afterBalanceETH;
+            double afterBalanceILS;
+            double feeETH;
+            double feeILS;
             try
             {
                 InsertAssetInContractToDB(offer, "Busy");  
                 var account = DappAccountController.myAccount;
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
-                //Thread.Sleep(15000);
+                afterBalanceETH = await DappAccountController.get_ETH_Balance();
+                afterBalanceILS = await DappAccountController.get_ILS_Balance();
+                feeETH = beforeBalanceETH - afterBalanceETH;
+                feeILS = beforeBalanceILS - afterBalanceILS;
+                
                 InsertAssetInContractToDB(offer, ContractAddress);
                 RemoveBusyAssetInContractFromDB(offer);
-                return ContractAddress;
+
+                DeploymentRecipt recipt = new DeploymentRecipt();
+                recipt.ContractAddress = ContractAddress;
+                recipt.feeETH = feeETH;
+                feeILS = Math.Truncate(feeILS * 100) / 100; //make the double number to be with 3 digits after dot               
+                recipt.feeILS = feeILS;
+                var ReciptJson = Newtonsoft.Json.JsonConvert.SerializeObject(recipt);
+
+                return ReciptJson;
             } 
 
             catch(Exception e) 
@@ -113,6 +131,16 @@ namespace FinalProject.Controllers
         }
 
         
+
+    }
+
+    internal class DeploymentRecipt
+    {
+        public string ContractAddress { get; set; }
+
+        public double feeETH { get; set; }
+
+        public double feeILS { get; set; }
 
     }
 }

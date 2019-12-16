@@ -39,18 +39,22 @@ function offerContract() {
             type: 'POST',
             async: true,
             data: { AssetID, OwnertID, SellerPublicKey, Loaction, AreaIn, Rooms, BuyerPublicKey, PriceETH, PriceILS, TimeToBeOpen, ImageURL },
-            success: function (data) {
-                if (data != "Error") {
+            success: function (data)
+            {
+                    var result = JSON.parse(data);
+                    var feeILS = result.feeILS;
                     document.getElementById("DialogDeployContractMessageTitle").innerHTML = "The contract sent to the buyer sucessfully";
                     document.getElementById("DialogDeployContractMessageContent1").style.display = "block";
                     document.getElementById("DialogDeployContractMessageContent2").style.display = "block";
                     document.getElementById("DialogDeployContractMessageContent3").style.display = "block";
+                    document.getElementById("DialogDeployContractMessageContent4").style.display = "block";
                     document.getElementById("DialogDeployContractErrorMessageContent").style.display = "none";
                     document.getElementById("EtherscanURL").style.display = "block";
-                    document.getElementById("EtherscanURL").href = "https://ropsten.etherscan.io/address/" + data;
+                    document.getElementById("EtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
                     document.getElementById("DialogDeployContractMessageContent1").innerHTML = "The contract uploaded to the Blockchain.";
                     document.getElementById("DialogDeployContractMessageContent2").innerHTML = "AssetID".bold() + " : " + AssetID + "." + "</br>" + "Loaction".bold() + " : " + Loaction + ".";
                     document.getElementById("deployConfirmation").src = "/img/V-symbol.png";
+                    document.getElementById("DialogDeployContractMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;             
                     $('#DialogDeployContractMessage').modal('show');
                     updateAccountBalanceAfterBlockchainOperation();
                     document.getElementById("DeployLoader").style.display = "none";
@@ -59,7 +63,7 @@ function offerContract() {
                     var AvailableAssetsList = document.getElementById("AssetSelector");
                     AvailableAssetsList.remove(AvailableAssetsList.selectedIndex);
                     document.getElementById("AssetSelector").selectedIndex = "0";
-                }
+                    
 
             },
 
@@ -69,6 +73,7 @@ function offerContract() {
                 document.getElementById("DialogDeployContractMessageContent1").style.display = "none";
                 document.getElementById("DialogDeployContractMessageContent2").style.display = "none";
                 document.getElementById("DialogDeployContractMessageContent3").style.display = "none";
+                document.getElementById("DialogDeployContractMessageContent4").style.display = "none";
                 document.getElementById("DialogDeployContractErrorMessageContent").style.display = "block";
                 document.getElementById("EtherscanURL").style.display = "none";
                 document.getElementById("DialogDeployContractErrorMessageContent").innerHTML = "Failed to send to the buyer!";
