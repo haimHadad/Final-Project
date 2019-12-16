@@ -28,9 +28,21 @@ namespace FinalProject.Models
         
         public float PriceILS { get; set; }
 
-        
         public int TimeToBeOpen { get; set; }
 
         public string ImageURL { get; set; }
+
+        public bool SellerSign { get; set; }
+
+        public bool BuyerSign { get; set; }
+
+        public bool RegulatorSign { get; set; }
+
+        public string NewOwnerPublicKey { get; set; }
+
+        public bool IsDeniedByBuyer { get; set; }
+
+        public bool IsDeniedByRegulator { get; set; }
+
     }
 }

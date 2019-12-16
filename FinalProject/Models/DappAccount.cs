@@ -33,7 +33,9 @@ namespace FinalProject.Models
 
         public List<Asset> OwnAssetsList { get; set; }
 
-        public List<AssetInContract> ContractsList { get; set; }
+        public List<AssetInContract> ContractsList { get; set; } //here we read the data from the db, in order to get the contract's address
+
+        public List<ContractOffer> DeployedContractList { get; set; } //here the data will be loaded from the blockchain (contract address)
 
         public DappAccount()
         {
