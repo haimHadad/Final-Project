@@ -18,10 +18,8 @@ function SendLoginData()
             return;
         }
         else {
-            $("#loader").style.display = "block";
-            $("#public_key_input").val("");
-            $("#private_key_input").val("");
-            $("#myform").submit()
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("myform").submit();
         }
     });
 }
