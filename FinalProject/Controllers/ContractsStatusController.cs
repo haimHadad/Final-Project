@@ -6,6 +6,7 @@ using FinalProject.Data;
 using FinalProject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace FinalProject.Controllers
 {
@@ -24,6 +25,25 @@ namespace FinalProject.Controllers
             DappAccount account = DappAccountController.myAccount;
             List<AssetInContract> openContractsFromDB = new List<AssetInContract>();
             openContractsFromDB = await _context.AssetsInContract.FromSqlRaw("select * from AssetsInContract where ( SellerPublicKey = {0} or BuyerPublicKey = {0} )", account.publicKey).ToListAsync();
+            
+            foreach (AssetInContract assCon in openContractsFromDB)
+            {
+                ContractOffer offer = new ContractOffer();
+                string contractAddress = assCon.ContractAddress;
+                SmartContractService deployedContract = new SmartContractService(account, contractAddress);
+                Asset assetInContractJson = await deployedContract.getAssetDestails();
+               
+                
+
+                int i = 0;
+
+            }
+
+
+
+
+
+
             return View(DappAccountController.myAccount);
         }
     }

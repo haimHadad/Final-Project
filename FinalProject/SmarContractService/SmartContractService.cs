@@ -73,7 +73,7 @@ namespace FinalProject.Models
 
 
 
-            public async Task<string> getAssetDestails() //Buyer the asset that included in the deal
+            public async Task<Asset> getAssetDestails() //Buyer the asset that included in the deal
         {
             var contractHandlerAsBuyer = accountCaller.Blockchain.Eth.GetContractHandler(ContractAddress);                   
             var getAssetDetailsOutputDTOAsBuyer = await contractHandlerAsBuyer.QueryDeserializingToObjectAsync<GetAssetDetailsFunction, GetAssetDetailsOutputDTO>();
@@ -83,9 +83,16 @@ namespace FinalProject.Models
             BigInteger assetAreaIn = getAssetDetailsOutputDTOAsBuyer.AssetAreaIn;
             string assetImageUrl = getAssetDetailsOutputDTOAsBuyer.AssetImageURL;
             BigInteger assetPriceAtWie = getAssetDetailsOutputDTOAsBuyer.AssetPrice;
-            //var assetPriceAtEther = Web3.Convert.FromWei(assetPriceAtWie);      
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(getAssetDetailsOutputDTOAsBuyer);
-            return json;
+            var assetPriceAtEther = Web3.Convert.FromWei(assetPriceAtWie);
+
+            Asset AssetFromDeployedContract = new Asset();
+            AssetFromDeployedContract.AssetID = (int)assetID;
+            AssetFromDeployedContract.Loaction = assetLoaction;
+            AssetFromDeployedContract.Rooms = (int)assetRooms;
+            AssetFromDeployedContract.AreaIn = (int)assetAreaIn;
+            AssetFromDeployedContract.ImageURL = assetImageUrl;
+            AssetFromDeployedContract.Price = Convert.ToDouble(assetPriceAtEther);       
+            return AssetFromDeployedContract;
 
             //string assetDetialsAllTogether = "" + assetID + ", " + assetLoaction + ", " + assetRooms + ", " + assetAreaIn + ", " + assetImageUrl + ", " + assetPriceAtEther;
         }
