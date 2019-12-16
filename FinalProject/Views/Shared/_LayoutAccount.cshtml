@@ -23,10 +23,10 @@
                         <a id="assetsNavBar" class="nav-link" asp-area="" asp-controller="DappAccount" asp-action="AccountMainPage" asp-route-account.publicKey="@Model.publicKey" asp-route-account.privateKey="@Model.privateKey">Assets<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a id="createContractNavBar" class="nav-link" asp-area="" asp-controller="CreateContract" asp-action="CreateContract">Create Contract<span class="sr-only">(current)</span></a>
+                        <a id="createContractNavBar" class="nav-link" asp-area="" asp-controller="CreateContract" asp-action="CreateContractPage">Create Contract<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Contracts Status<span class="sr-only">(current)</span></a>
+                        <a class="nav-link" asp-area="" asp-controller="ContractsStatus" asp-action="ContractsStatusPage">Contracts Status<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Logout">Logout<span class="sr-only">(current)</span></a>

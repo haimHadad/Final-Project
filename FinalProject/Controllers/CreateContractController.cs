@@ -21,7 +21,7 @@ namespace FinalProject.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> CreateContract()
+        public async Task<IActionResult> CreateContractPage()
         {
             await DappAccountController.RefreshAccountData();
             DappAccount account =  DappAccountController.myAccount;
