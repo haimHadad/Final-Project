@@ -9,19 +9,19 @@ function SendLoginData()
         if (data == false)
         {
             $("#public_key_input").val("Wrong Credentials");
-            document.getElementById("public_key_input").style.color = "red";
+            $("#public_key_input").css("color", "red");
             $("#private_key_input").val("");
-            document.getElementById("public_key_input").addEventListener("click", ResetInputPublicKey); 
-            
+            document.getElementById("public_key_input").addEventListener("click", function () {
+                $("#public_key_input").val("");
+                $("#public_key_input").css("color", "black");
+            });
             return;
         }
         else {
-            document.getElementById("loader").style.display = "block";
+            $("#loader").style.display = "block";
+            $("#public_key_input").val("");
+            $("#private_key_input").val("");
             $("#myform").submit()
-        }
-
-        function ResetInputPublicKey() {
-            document.getElementById("public_key_input").style.color = "black";
         }
     });
 }
