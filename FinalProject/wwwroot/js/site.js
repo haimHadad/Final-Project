@@ -83,11 +83,7 @@ function offerContract() {
 
 }
 
-function SetIlsPrice() {
-    var priceETH = $('#PriceEthTxt').val();
-    var priceILS = getPriceInILS(priceETH);
-    $('#PriceIlsTxt').val(priceILS);
-}
+
 
 
 function DeleteFormContent() {
@@ -101,7 +97,9 @@ function DeleteFormContent() {
     $('#PriceEthTxt').val("");
     $('#BuyerAddressTxt').val("");
     document.getElementById("lastPriceLabel").textContent = "";
+    document.getElementById("TaxLabel").textContent = "";
     document.getElementById("lastPriceLabel").style.display = "none";
+    document.getElementById("TaxLabel").style.display = "none";
     document.getElementById("TimeSelector").selectedIndex = "0";
     document.getElementById("imageAssetForm").setAttribute("src", "");
 }
@@ -159,6 +157,8 @@ function EnableForm(getAssetJson) {
     $('#PriceIlsTxt').val("0")
     document.getElementById("lastPriceLabel").textContent = "Last purchase price: " + asset.Price + "ETH | ₪" + getPriceInILS(asset.Price);
     document.getElementById("lastPriceLabel").style.display = "block";
+    document.getElementById("TaxLabel").textContent = "Tax amount: 0 ETH | ₪0";
+    document.getElementById("TaxLabel").style.display = "block";
     document.getElementById("PriceEthTxt").disabled = false;
     document.getElementById("BuyerAddressTxt").disabled = false;
     document.getElementById("PriceEthTxt").placeholder = "Insert Price";

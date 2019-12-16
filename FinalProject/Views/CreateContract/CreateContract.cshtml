@@ -104,17 +104,19 @@
                         </select>
 
                     </td>
+
                 </tr>
             </table>
 
             <br />
             <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
+            <span style="font-size:14px; display:none" id="TaxLabel" class="badge badge-warning"></span>
             <br />
-
+            <br />
             <div style="display:flex ; ">
                 <input id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" value="Sign&Deploy Contract" disabled />
                 <img style="display:none" id="DeployLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
-                
+
             </div>
         }
     </div>
@@ -124,7 +126,7 @@
 </div>
 <!--data-toggle="modal" data-target="#dialogOfferContract"-->
 <br />
-<br />
+
 <small class="text-danger">• The buyer and the Land Administration needs to approve your offer.</small>
 <br />
 <small class="text-danger">• Make sure all details are correct - All offers are final!</small>
@@ -230,11 +232,31 @@
                     DeleteFormContent();
                     return;
                 }
+
+                document.getElementById("TimeSelector").selectedIndex = "0";
+                $('#PriceIlsTxt').val("")
+                $('#PriceEthTxt').val("");
+                $('#BuyerAddressTxt').val("");
+                document.getElementById("TaxLabel").textContent = "Tax amount: 0 ETH | ₪0";
                 assetReturnedFromFailedDeplyment = getAssetJson;
                 EnableForm(getAssetJson);
             }
 
         });
+
+
+        function SetIlsPrice()
+        {
+            var priceETH = $('#PriceEthTxt').val();
+            var priceILS = getPriceInILS(priceETH);
+            $('#PriceIlsTxt').val(priceILS);
+            var taxAmountETH = priceETH * 0.17;
+            var taxAmountILS = priceETH *@Model.exchangeRateETH_ILS * 0.17;
+            taxAmountETH = taxAmountETH.toFixed(2);
+            taxAmountILS = taxAmountILS.toFixed(2);
+            taxAmountILS = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById("TaxLabel").textContent = "Tax amount: " + taxAmountETH + " ETH | ₪" + taxAmountILS;
+        }
 
         function checkErrors()
         {
