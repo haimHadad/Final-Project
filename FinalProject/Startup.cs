@@ -31,7 +31,9 @@ namespace FinalProject
             services.AddDbContext<AssetContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DataBase")));
             services.AddDbContext<AssetsInContractContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DataBase")));   
+            options.UseSqlServer(Configuration.GetConnectionString("DataBase")));
+            services.AddDbContext<AccountsContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DataBase")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

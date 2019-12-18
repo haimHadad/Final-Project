@@ -75,7 +75,7 @@
                 <tr>
                     <td>
                         <label>Buyer Public Key</label>
-                        <input name="BuyerPublicKey" required class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
+                        <input onchange="getBuyerID()" name="BuyerPublicKey" required class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
                         <br />
                     </td>
                     <td></td>
@@ -94,7 +94,14 @@
                 <tr></tr>
                 <tr>
                     <td>
-                        <select name="TimeToBeOpen" class="custom-select w-auto pt-0 pb-0" id="TimeSelector" required disabled>
+                        <label>BuyerID:</label>
+                        <input name="BuyerID" class="form-control form-control-sm w-auto" id="BuyerIdTxt" disabled>
+                    </td>
+                    <td></td>
+                    
+                    <td>
+                        <br />
+                        <select style="position:relative; top:4px" name="TimeToBeOpen" class="  custom-select w-auto" id="TimeSelector" required disabled>
                             <option value="">Choose Time</option>
                             <option value="1">1 Hour</option>
                             <option value="2">2 Hours</option>
@@ -238,6 +245,7 @@
                 $('#PriceIlsTxt').val("")
                 $('#PriceEthTxt').val("");
                 $('#BuyerAddressTxt').val("");
+                $('#BuyerIdTxt').val("N/A");
                 document.getElementById("TaxLabel").textContent = "Tax amount: 0 ETH | ₪0";
                 assetReturnedFromFailedDeplyment = getAssetJson;
                 EnableForm(getAssetJson);
@@ -245,6 +253,7 @@
 
         });
 
+        
 
         function SetIlsPrice()
         {
@@ -278,7 +287,9 @@
                     type: 'POST',
                     async: false,
                     data : { BuyerPublicKey: buyerPublicKey },
-                    success: function(data){
+                    success: function (data)
+                    {
+                    
                     console.log("Buyer balance"+data)
                     if (data == -1)
                     {

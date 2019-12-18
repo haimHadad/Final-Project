@@ -15,10 +15,12 @@ namespace FinalProject.Controllers
     public class CreateContractController : Controller
     {
         private AssetsInContractContext _context;
+        private AccountsContext _context2;
 
-        public CreateContractController(AssetsInContractContext context)
+        public CreateContractController(AssetsInContractContext context, AccountsContext context2)
         {
             _context = context;
+            _context2 = context2;
         }
 
         public async Task<IActionResult> CreateContractPage()
@@ -56,8 +58,8 @@ namespace FinalProject.Controllers
 
         public async Task<double> CheckBuyerPublicKeyLegality(string BuyerPublicKey)
         {
-            DappAccount account = DappAccountController.myAccount;
-            double buyerBalance = await DappAccountController.get_ETH_BalanceOfAnyAccount(BuyerPublicKey);
+            DappAccount account = DappAccountController.myAccount;        
+            double buyerBalance = await DappAccountController.get_ETH_BalanceOfAnyAccount(BuyerPublicKey); 
             return buyerBalance;
         }
 
@@ -130,7 +132,16 @@ namespace FinalProject.Controllers
             
         }
 
-        
+
+        public async Task<int> GetAddressIDAsync(string PublicKey)
+        {
+            List<AccountID> result = new List<AccountID>();
+            result = await _context2.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync(); 
+            if(result.Count==0)
+                return 0;
+
+            return result[0].ID;
+        }
 
     }
 
@@ -143,4 +154,6 @@ namespace FinalProject.Controllers
         public double feeILS { get; set; }
 
     }
+
+    
 }

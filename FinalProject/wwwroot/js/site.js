@@ -29,6 +29,7 @@ function offerContract() {
     var PriceILS = document.getElementById("PriceIlsTxt").value;;
     var TimeToBeOpen = document.getElementById("TimeSelector").value;
     var ImageURL = document.getElementById("imageAssetForm").src
+    var BuyerID = document.getElementById("BuyerIdTxt").value;
 
     document.getElementById("AssetSelector").disabled = true;
     DisableForm();
@@ -38,7 +39,7 @@ function offerContract() {
             url: "/CreateContract/DeployContract",
             type: 'POST',
             async: true,
-            data: { AssetID, OwnertID, SellerPublicKey, Loaction, AreaIn, Rooms, BuyerPublicKey, PriceETH, PriceILS, TimeToBeOpen, ImageURL },
+            data: { AssetID, OwnertID, SellerPublicKey, Loaction, AreaIn, Rooms, BuyerPublicKey, PriceETH, PriceILS, TimeToBeOpen, BuyerID, ImageURL },
             success: function (data)
             {
                     var result = JSON.parse(data);
@@ -91,7 +92,7 @@ function offerContract() {
 
 
 
-function DeleteFormContent() {
+function DeleteFormContent() { //for deployment
     $('#AssetIdTxt').val("");
     $('#OwnerIdTxt').val("")
     $('#OwnerPublicKeyTxt').val("")
@@ -101,6 +102,7 @@ function DeleteFormContent() {
     $('#PriceIlsTxt').val("")
     $('#PriceEthTxt').val("");
     $('#BuyerAddressTxt').val("");
+    $('#BuyerIdTxt').val("");
     document.getElementById("lastPriceLabel").textContent = "";
     document.getElementById("TaxLabel").textContent = "";
     document.getElementById("lastPriceLabel").style.display = "none";
@@ -109,7 +111,7 @@ function DeleteFormContent() {
     document.getElementById("imageAssetForm").setAttribute("src", "");
 }
 
-function DisableForm() {
+function DisableForm() { //for deployment
 
     document.getElementById("PriceEthTxt").disabled = true;
     document.getElementById("BuyerAddressTxt").disabled = true;
@@ -133,10 +135,12 @@ function DisableForm() {
     document.getElementById("PriceIlsTxt").readOnly = false;
     document.getElementById("BuyerAddressTxt").disabled = true;
     document.getElementById("BuyerAddressTxt").readOnly = false;
+    document.getElementById("BuyerIdTxt").disabled = true;
+    document.getElementById("BuyerIdTxt").readOnly = false;
 
 }
 
-function EnableForm(getAssetJson) {
+function EnableForm(getAssetJson) { //for deployemnt
     document.getElementById("AssetIdTxt").disabled = false;
     document.getElementById("AssetIdTxt").readOnly = true;
     document.getElementById("OwnerIdTxt").disabled = false;
@@ -151,7 +155,10 @@ function EnableForm(getAssetJson) {
     document.getElementById("RoomsTxt").readOnly = true;
     document.getElementById("PriceIlsTxt").disabled = false;
     document.getElementById("PriceIlsTxt").readOnly = true;
-
+    document.getElementById("BuyerIdTxt").disabled = false;
+    document.getElementById("BuyerIdTxt").readOnly = true;
+    document.getElementById("BuyerIdTxt").disabled = false;
+    document.getElementById("BuyerIdTxt").readOnly = true;
     var asset = JSON.parse(getAssetJson);
     $('#AssetIdTxt').val(asset.AssetID);
     $('#OwnerIdTxt').val(asset.OwnerID)
@@ -172,6 +179,45 @@ function EnableForm(getAssetJson) {
     document.getElementById("deployContractBtn").disabled = false;
     document.getElementById("imageAssetForm").setAttribute("src", asset.ImageURL);
 
+}
+
+function getBuyerID() {
+    var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
+    var sellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
+
+    if (buyerPublicKey == sellerPublicKey) {
+        var OwnerID = document.getElementById("OwnerIdTxt").value;
+        $('#BuyerIdTxt').val("Error: buyer is owner!");
+        document.getElementById("BuyerIdTxt").style.color = "red";
+        return;
+    }
+
+    if (buyerPublicKey == "") {
+        $('#BuyerIdTxt').val("");
+        document.getElementById("BuyerIdTxt").style.color = "black";
+        return;
+    }
+
+    if (buyerPublicKey != "") {
+        $.ajax({
+            url: "/CreateContract/GetAddressID",
+            type: 'POST',
+            async: false,
+            data: { PublicKey: buyerPublicKey },
+            success: function (data) {
+                if (data == 0) {
+                    $('#BuyerIdTxt').val("Error- buyer is not recognized");
+                    document.getElementById("BuyerIdTxt").style.color = "red";
+                }
+
+                else {
+                    $('#BuyerIdTxt').val(data);
+                    document.getElementById("BuyerIdTxt").style.color = "black";
+                }
+
+            }
+        });
+    }
 }
 
 function ViewAssetDeteils(assetJson) {
