@@ -27,7 +27,7 @@ namespace FinalProject.Models
         
         public double PriceILS { get; set; }
 
-        public string BuyerID { get; set; }
+        public int BuyerID { get; set; }
 
         public int TimeToBeOpen { get; set; }
 
