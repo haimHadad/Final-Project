@@ -21,8 +21,7 @@ namespace FinalProject.Models
         public int Rooms { get; set; }
 
         public string BuyerPublicKey { get; set; }
-
-        
+   
         public double PriceETH { get; set; }
 
         
@@ -43,6 +42,8 @@ namespace FinalProject.Models
         public bool IsDeniedByBuyer { get; set; }
 
         public bool IsDeniedByRegulator { get; set; }
+
+        public string DenyReason { get; set; }
 
     }
 }

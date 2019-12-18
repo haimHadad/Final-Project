@@ -5,6 +5,100 @@
 }
 
 <br />
-<br />
-<h1>ContractsStatus</h1>
+<h1>Contracts Status</h1>
 
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#OpenContractsTab">Open Contracts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#ClosedContractsTab">Closed Contracts</a>
+    </li>
+   
+</ul>
+
+<br />
+<br />
+
+<div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade active show" id="OpenContractsTab">
+
+        <table class=" table table-hover">
+            <thead align="center">
+                <tr>
+                    <th scope="col">Loaction</th>
+                    <th scope="col">Your Role</th>
+                    <th scope="col">Tracking</th>
+                    <th scope="col">Action</th>
+
+                </tr>
+            </thead>
+            <tbody align="center">
+                @foreach (var a in @Model.OwnAssetsList)
+                {
+                    var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                }
+                <tr>
+                    <td>Hadas 6 Haifa</td>
+                    <td>Seller</td>
+                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x121F4e119a84BF7077D967B52F515E06f4949e89">Here</a></td>
+                    <td><label>Awaiting for buyer</label></td>
+                </tr>
+
+                <tr>
+                    <td>Galil 70 Yavne</td>
+                    <td>Buyer</td>
+                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x575CE2d395b1ee43A4949e68Eb296A75Ec7B008F">Here</a></td>
+                    <td><label>Awaiting for Regulator</label></td>
+                </tr>
+
+                <tr>
+                    <td>Gefen 33 Tiberias</td>
+                    <td>Buyer</td>
+                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x575CE2d395b1ee43A4949e68Eb296A75Ec7B008F">Here</a></td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">Open</button></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+    </div> <!--End of Open contracts tab-->
+
+    <div class="tab-pane fade" id="ClosedContractsTab">
+
+        <table class=" table table-hover">
+            <thead align="center">
+                <tr>
+                    <th scope="col">Loaction</th>
+                    <th scope="col">Your Role</th>
+                    <th scope="col">Tracking</th>
+                    <th scope="col">Result</th>
+
+                </tr>
+            </thead>
+            <tbody align="center">
+                @foreach (var a in @Model.OwnAssetsList)
+                {
+                    var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                }
+                <tr>
+                    <td>Givati 20 /3 Holon</td>
+                    <td>Seller</td>
+                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x48276877C37733Ac8f4bDbA46415F5fa24FBb1E9">Here</a></td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">View Details</button></td>
+                </tr>
+                <tr>
+                    <td>Narkis 20 Nof HaGalil</td>
+                    <td>Buyer</td>
+                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x2165d028623ff7B59CD25C0D7a517CC8Ff699226">Here</a></td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">View Details</button></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+    </div> <!--End of closed contracts tab-->
+   
+</div>

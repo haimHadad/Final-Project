@@ -26,13 +26,23 @@ namespace FinalProject.Controllers
             List<AssetInContract> openContractsFromDB = new List<AssetInContract>();
             openContractsFromDB = await _context.AssetsInContract.FromSqlRaw("select * from AssetsInContract where ( SellerPublicKey = {0} or BuyerPublicKey = {0} )", account.publicKey).ToListAsync();
             
+
             foreach (AssetInContract assCon in openContractsFromDB)
             {
-                ContractOffer offer = new ContractOffer();
-                string contractAddress = assCon.ContractAddress;
-                SmartContractService deployedContract = new SmartContractService(account, contractAddress);
-                Asset assetInContractJson = await deployedContract.getAssetDestails();
-               
+                if (!assCon.Status.Equals("Denied"))  //For the non-destroyed contracts, "Denied" => Self Destruction
+                {
+                    ContractOffer offer = new ContractOffer();
+                    string contractAddress = assCon.ContractAddress;
+                    SmartContractService deployedContract = new SmartContractService(account, contractAddress);
+                    Asset assetInContract = await deployedContract.getAssetDestails();
+                    
+                    
+                }
+
+                else
+                {
+
+                }
                 
 
                 int i = 0;
