@@ -34,9 +34,39 @@ namespace FinalProject.Controllers
                     ContractOffer offer = new ContractOffer();
                     string contractAddress = assCon.ContractAddress;
                     SmartContractService deployedContract = new SmartContractService(account, contractAddress);
-                    Asset assetInContract = await deployedContract.getAssetDestails();
-                    
-                    
+                    Asset assetInContract = await deployedContract.getAssetDestails(); //read from blockchain
+                    offer.AssetID = assetInContract.AssetID;
+                    offer.Loaction = assetInContract.Loaction;
+                    offer.Rooms = assetInContract.Rooms;
+                    offer.AreaIn = assetInContract.AreaIn;
+                    offer.ImageURL = assetInContract.ImageURL;
+                    offer.PriceETH = assetInContract.Price;
+                    offer.PriceILS = offer.PriceETH * account.exchangeRateETH_ILS;
+                    offer.PriceILS = Math.Truncate(offer.PriceILS * 1000) / 1000;
+                    offer.BuyerPublicKey = await deployedContract.getBuyerAddress();
+                    offer.SellerPublicKey = await deployedContract.getOldAssetOwner();
+                    offer.SellerSign = await deployedContract.getSellerSign();
+                    offer.BuyerSign = await deployedContract.getBuyerSign();
+                    offer.RegulatorSign = await deployedContract.getRegulatorSign();
+                    offer.Tax = await deployedContract.getTax();
+                    if (assCon.Status.Equals("Approved"))
+                        offer.NewOwnerPublicKey = await deployedContract.getNewAssetOwner();
+                    if (assCon.Status.Equals("Ongoing"))
+                    {
+                        ulong time = await deployedContract.getTimeLeftInSeconds();
+                        int timeLeft = (int)time;
+                        offer.TimeToBeOpen = timeLeft;
+                    }
+                        
+                    //DenyReason
+                    //IsDeniedByBuyer
+                    //IsDeniedByRegulator
+                    //OwnerID
+                    //TimeToBeOpen
+
+
+
+                    int k = 0;
                 }
 
                 else

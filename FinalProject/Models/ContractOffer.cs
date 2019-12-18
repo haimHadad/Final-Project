@@ -25,7 +25,7 @@ namespace FinalProject.Models
         public double PriceETH { get; set; }
 
         
-        public float PriceILS { get; set; }
+        public double PriceILS { get; set; }
 
         public int TimeToBeOpen { get; set; }
 
@@ -43,7 +43,10 @@ namespace FinalProject.Models
 
         public bool IsDeniedByRegulator { get; set; }
 
+        public double Tax { get; set; }
+
         public string DenyReason { get; set; }
+
 
     }
 }
