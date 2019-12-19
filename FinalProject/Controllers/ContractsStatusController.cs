@@ -56,15 +56,17 @@ namespace FinalProject.Controllers
                     offer.BuyerID = await GetAddressID(offer.BuyerPublicKey);                    
                     offer.OwnertID = await GetAddressID(offer.SellerPublicKey);
                     if (assCon.Status.Equals("Approved"))
+                    {       
                         offer.NewOwnerPublicKey = await deployedContract.getNewAssetOwner();
+                        offer.NewOwnerID = await GetAddressID(offer.NewOwnerPublicKey);
+                    }
+                        
                     if (assCon.Status.Equals("Ongoing"))
                     {
                         ulong time = await deployedContract.getTimeLeftInSeconds();
                         int timeLeft = (int)time;
                         offer.TimeToBeOpen = timeLeft;
                     }
-
-                    deployedContractsFromBlockchain.Add(offer);
 
                 }
 
@@ -101,10 +103,10 @@ namespace FinalProject.Controllers
                     offer.ImageURL = AssetsInDB[0].ImageURL;
                     offer.DenyReason = assCon.Reason;
 
+                }
 
-                    deployedContractsFromBlockchain.Add(offer);
-
-                } 
+                offer.EtherscanURL = "https://ropsten.etherscan.io/address/"+assCon.ContractAddress;
+                deployedContractsFromBlockchain.Add(offer);
             }
 
             account.DeployedContractList = deployedContractsFromBlockchain;

@@ -14,7 +14,7 @@
     <li class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#ClosedContractsTab">Closed Contracts</a>
     </li>
-   
+
 </ul>
 
 <br />
@@ -56,12 +56,15 @@
                     <td>Gefen 33 Tiberias</td>
                     <td>Buyer</td>
                     <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x575CE2d395b1ee43A4949e68Eb296A75Ec7B008F">Here</a></td>
-                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">Open</button></td>
+                    <td><button onclick="setDate(3600)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">Open</button></td>
                 </tr>
 
             </tbody>
         </table>
 
+        <br />
+        <br />
+        <label id="timeLeft"> </label>
 
     </div> <!--End of Open contracts tab-->
 
@@ -78,27 +81,261 @@
                 </tr>
             </thead>
             <tbody align="center">
-                @foreach (var a in @Model.OwnAssetsList)
+                @foreach (var a in @Model.DeployedContractList)
                 {
-                    var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                    if(a.RegulatorSign==true || a.IsDeniedByBuyer==true ||a.IsDeniedByRegulator==true)
+                    {
+                        var role="";
+                        var yourPublicKey = Model.publicKey;
+                        if (yourPublicKey.Equals(a.SellerPublicKey))
+                         role = "Seller";
+                        else
+                            role = "Buyer";
+                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                    <tr>
+                        <td>@a.Loaction</td>  
+                        <td>@role</td>
+                        <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                        <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#cloasedContractModalDialong">View Details</button></td>
+                    </tr>
+                    }
                 }
-                <tr>
-                    <td>Givati 20 /3 Holon</td>
-                    <td>Seller</td>
-                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x48276877C37733Ac8f4bDbA46415F5fa24FBb1E9">Here</a></td>
-                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">View Details</button></td>
-                </tr>
-                <tr>
-                    <td>Narkis 20 Nof HaGalil</td>
-                    <td>Buyer</td>
-                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x2165d028623ff7B59CD25C0D7a517CC8Ff699226">Here</a></td>
-                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">View Details</button></td>
-                </tr>
-
             </tbody>
         </table>
 
 
+        <div class="modal fade" id="cloasedContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="cloasedContractModalDialongTitle" aria-hidden="true" style="">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="closedContractDialogTitle">Closed Contract</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="closedContract_dialog_body">
+                        <center><img class="w-50 p-3" id="closedContractImageURL"></center>
+                        <p id="closedContractdialogAssetID"></p>
+                        <p id="closedContractdialogLoaction"></p>
+                        <p id="closedContractdialogAreaIn"></p>
+                        <p id="closedContractdialogRooms"></p>
+                        <p id="closedContractdialogPrice"></p>
+                        <p id="">------------------------------------</p>
+                        <p id="closedContractdialogOwnerID"></p>
+                        <p id="closedContractdialogOwnerPublicKey"></p>
+                        <p id="">------------------------------------</p>
+                        <p id="closedContractdialogBuyerID"></p>
+                        <p id="closedContractdialogBuyerPublicKey"></p>
+                        <p id="">----------------------------------</p>
+                        <p id="closedContractdialogNewOwnerID"></p>
+                        <p id="closedContractdialogNewOwnerPublicKey"></p>
+                        <h5 id="closedContractdialogResult"></h5>              
+                        <textarea id="closedContractdialogNotes" rows="4" cols="50"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
     </div> <!--End of closed contracts tab-->
-   
+
 </div>
+
+
+@section scripts
+    {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            document.getElementById("contractsStatusNavBar").style.textDecoration = "underline";
+            document.getElementById("contractsStatusNavBar").style.fontWeight = "bold";
+        });
+
+        function setDate(timeLeft)
+        {
+            document.getElementById("timeLeft").innerHTML = timeLeft;
+
+        }
+
+        function LoadClosedContractDetails(offer)
+        {
+            var fullOwnerPublicKey = offer.SellerPublicKey;
+            var partOne = fullOwnerPublicKey.substring(0, 12);
+            var partTwo = " . . . ";
+            var partThree = fullOwnerPublicKey.substring(32, fullOwnerPublicKey.length);
+            var ownerPublicKeyToShow = "" + partOne + partTwo + partThree;
+
+            var fullBuyerPublicKey = offer.BuyerPublicKey;
+            partOne = fullBuyerPublicKey.substring(0, 12);
+            partTwo = " . . . ";
+            partThree = fullBuyerPublicKey.substring(32, fullBuyerPublicKey.length);
+            var buyerPublicKeyToShow = "" + partOne + partTwo + partThree;
+
+            var newOwnerPublicKey = offer.NewOwnerPublicKey;
+            var yourPublicKey = @Model.publicKey;
+            var sellerPublicKey = ownerPublicKeyToShow;
+            var sellerID = offer.OwnertID;
+            var buyerPublicKey = buyerPublicKeyToShow;
+            var buyerID = offer.BuyerID;
+
+            if (yourPublicKey == offer.SellerPublicKey) {
+                sellerPublicKey = sellerPublicKey + "  &nbsp (You)";
+                sellerID = sellerID + " &nbsp (You)";
+            }
+
+            else
+            {
+                buyerPublicKey = buyerPublicKey + "  &nbsp (You)";
+                buyerID = buyerID + " &nbsp (You)";
+            }
+
+            document.getElementById("closedContractImageURL").setAttribute("src", offer.ImageURL);
+            document.getElementById("closedContractdialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
+            document.getElementById("closedContractdialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
+            document.getElementById("closedContractdialogAreaIn").innerHTML = "AreaIn : ".bold() + offer.AreaIn +"&nbsp m^2";
+            document.getElementById("closedContractdialogRooms").innerHTML = "Rooms : ".bold() + offer.Rooms;
+            document.getElementById("closedContractdialogOwnerID").innerHTML = "Seller ID : ".bold() + sellerID;
+            document.getElementById("closedContractdialogOwnerPublicKey").innerHTML = "Seller Public-Key : ".bold() + sellerPublicKey;
+            document.getElementById("closedContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
+            document.getElementById("closedContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;
+            document.getElementById("closedContractdialogNotes").innerHTML = ""+offer.DenyReason;
+            
+            if (offer.RegulatorSign == true)
+            {
+                var newOwnerID = offer.NewOwnerID;
+                partOne = newOwnerPublicKey.substring(0, 12);
+                partTwo = " . . . ";
+                partThree = newOwnerPublicKey.substring(32, newOwnerPublicKey.length);
+                var newOwnerPublicKeyToShow = "" + partOne + partTwo + partThree;
+                if (yourPublicKey == offer.NewOwnerPublicKey)
+                {
+                newOwnerPublicKeyToShow = newOwnerPublicKeyToShow + "  &nbsp (You)";
+                newOwnerID = newOwnerID + "  &nbsp (You)";
+                }
+                document.getElementById("closedContractdialogNewOwnerID").innerHTML = "New Owner Public-key: ".bold() + newOwnerID;
+                document.getElementById("closedContractdialogNewOwnerPublicKey").innerHTML = "New Owner ID : ".bold() +newOwnerPublicKeyToShow ;
+                document.getElementById("closedContractdialogResult").innerHTML = "Approved".bold();
+                document.getElementById("closedContractdialogResult").style.color = "green";
+                document.getElementById("closedContractdialogPrice").innerHTML = "Price : ".bold() + offer.PriceETH + " ETH / ₪" + offer.PriceILS;
+                document.getElementById("closedContractdialogNotes").style.display = "none";   
+            }
+            
+
+            else if (offer.IsDeniedByBuyer == true)
+            {
+                document.getElementById("closedContractdialogResult").innerHTML = "Denied By Buyer".bold();
+                document.getElementById("closedContractdialogResult").style.color = "red";
+                document.getElementById("closedContractdialogNotes").style.display = "block";
+                document.getElementById("closedContractdialogPrice").innerHTML = "";
+                document.getElementById("closedContractdialogNewOwnerID").innerHTML = "";
+                document.getElementById("closedContractdialogNewOwnerPublicKey").innerHTML = "";
+
+            }
+
+            else if (offer.IsDeniedByRegulator == true)
+            {
+                document.getElementById("closedContractdialogResult").innerHTML = "Denied By Regulator".bold();
+                document.getElementById("closedContractdialogResult").style.color = "red";
+                document.getElementById("closedContractdialogNotes").style.display = "block";
+                document.getElementById("closedContractdialogPrice").innerHTML = "";
+                document.getElementById("closedContractdialogNewOwnerID").innerHTML = "";
+                document.getElementById("closedContractdialogNewOwnerPublicKey").innerHTML = "";
+            }
+
+            /*$('.table tbody').on('click', '.btn', function ()
+            {
+                var row = $(this).closest('tr');
+                var col = row.find('td:eq(1)').text();
+                //document.getElementById("asset_dialog_body").innerHTML("vddv");
+            })*/
+        }
+
+
+
+
+        /*
+        function setTimer()
+        {
+            document.getElementById("demo").innerHTML="";
+            var timeSpan = convert();
+            var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+            var countDownDate = new Date(timeSpan).getTime();
+
+            // Update the count down every 1 second
+            var x = setInterval(function() 
+            {
+
+            // Get today's date and time
+            var now = new Date().getTime();
+    
+            // Find the distance between now and the count down date
+            var distance = countDownDate - now;
+    
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+            // Output the result in an element with id="demo"
+            document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s ";
+    
+            // If the count down is over, write some text 
+            if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("demo").innerHTML = "EXPIRED";
+            }
+            }, 1000);
+
+
+        }
+
+    function convert()
+    {
+        var now = new Date()  
+        var secondsSinceEpoch = Math.round(now.getTime() / 1000)  
+
+        // Unixtimestamp
+        var unixtimestamp = document.getElementById('timestamp').value;
+        unixtimestamp = parseInt(unixtimestamp);
+        secondsSinceEpoch = parseInt(secondsSinceEpoch);
+        unixtimestamp = unixtimestamp +  secondsSinceEpoch;
+        // Months array
+        var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+        // Convert timestamp to milliseconds
+        var date = new Date(unixtimestamp*1000);
+
+        // Year
+        var year = date.getFullYear();
+
+        // Month
+        var month = months_arr[date.getMonth()];
+
+        // Day
+        var day = date.getDate();
+
+        // Hours
+        var hours = date.getHours();
+
+        // Minutes
+        var minutes = "0" + date.getMinutes();
+
+ // Seconds
+ var seconds = "0" + date.getSeconds();
+
+ // Display date time in MM-dd-yyyy h:m:s format
+ var convdataTime = month+' '+day+', '+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+ //"Jan 5, 2021 15:37:25"
+ document.getElementById('datetime').innerHTML = convdataTime;
+ return convdataTime;
+}*/
+
+        </script>
+    }

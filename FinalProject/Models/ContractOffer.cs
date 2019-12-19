@@ -41,6 +41,8 @@ namespace FinalProject.Models
 
         public string NewOwnerPublicKey { get; set; }
 
+        public int NewOwnerID { get; set; }
+
         public bool IsDeniedByBuyer { get; set; }
 
         public bool IsDeniedByRegulator { get; set; }
@@ -49,6 +51,6 @@ namespace FinalProject.Models
 
         public string DenyReason { get; set; }
 
-
+        public string EtherscanURL { get; set; }
     }
 }
