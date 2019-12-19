@@ -40,12 +40,16 @@
                     if (Model.publicKey.ToLower().Equals(a.BuyerPublicKey) && a.IsDeniedByBuyer == false && a.BuyerSign == false) //if I am a buyer, and I didn`t sign
                     {
                         var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-
+                        var btnID = "openContract" + a.AssetID;
+                        var lblID = "resultOpenContract" + a.AssetID;
                         <tr>
                             <td>@a.Loaction</td>
                             <td>Buyer</td>
                             <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                            <td><button onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#openContractModalDialong">Open Contract</button></td>
+                            <td>
+                            <button id=@btnID onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#openContractModalDialong">Open Contract</button>
+                            <label style="display:none;" id=@lblID></label>
+                            </td>
                         </tr>
                     }
 
@@ -119,7 +123,7 @@
                         <p id="">------------------------------------</p>
                         <p id="openContractdialogBuyerID"></p>
                         <p id="openContractdialogBuyerPublicKey"></p>
-                        <p id="">----------------------------------</p>
+                        <p id="">------------------------------------</p>
 
                         <input onclick="AllowNotes()" type="checkbox" id="openContractCheckBos"  > Add Deny Notes<br>
                         <textarea disabled id="openContractdialogNotes" rows="4" cols="50"></textarea>
@@ -195,7 +199,7 @@
                             <p id="">------------------------------------</p>
                             <p id="closedContractdialogBuyerID"></p>
                             <p id="closedContractdialogBuyerPublicKey"></p>
-                            <p id="">----------------------------------</p>
+                            <p id="">------------------------------------</p>
                             <p id="closedContractdialogNewOwnerID"></p>
                             <p id="closedContractdialogNewOwnerPublicKey"></p>
                             <h5 id="closedContractdialogResult"></h5>
