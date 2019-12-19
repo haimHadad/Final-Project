@@ -65,6 +65,8 @@ namespace FinalProject.Controllers
                     {
                         ulong time = await deployedContract.getTimeLeftInSeconds();
                         int timeLeft = (int)time;
+                        if (timeLeft > 21)
+                            timeLeft = timeLeft - 20;
                         offer.TimeToBeOpen = timeLeft;
                     }
 
