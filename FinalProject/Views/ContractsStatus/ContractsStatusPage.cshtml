@@ -28,43 +28,76 @@
                 <tr>
                     <th scope="col">Loaction</th>
                     <th scope="col">Your Role</th>
-                    <th scope="col">Tracking</th>
+                    <th scope="col">Tracking</th>              
                     <th scope="col">Action</th>
 
                 </tr>
             </thead>
             <tbody align="center">
-                @foreach (var a in @Model.OwnAssetsList)
+                @foreach (var a in @Model.DeployedContractList)
                 {
-                    var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                    if (Model.publicKey.ToLower().Equals(a.BuyerPublicKey) && a.IsDeniedByBuyer == false && a.BuyerSign == false) //if I am a buyer, and I didn`t sign
+                    {
+                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                        <tr>
+                            <td>@a.Loaction</td>
+                            <td>Buyer</td>
+                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                            <td><button onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#openContractModalDialong">Open Contract</button></td>
+                        </tr>
+                    }
+
+                            if (Model.publicKey.ToLower().Equals(a.SellerPublicKey) && a.IsDeniedByBuyer == false && a.BuyerSign == false) //if I am a seller
+                            {
+                                var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                                <tr>
+                                <td>@a.Loaction</td>
+                                <td>Seller</td>
+                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                                 @{
+                                    if (a.TimeToBeOpen > 0)
+                                    {
+                                    var idAwaitForBuyer = "AwaitFor" + a.AssetID;
+                                    <td><label id=@idAwaitForBuyer>Awaiting for buyer signing </label></td>
+                                    }
+                                     else
+                                    {
+                                        <td><button onclick="CancelContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal" data-target="#cloasedContractModalDialong">Cancel Contract</button></td>
+                                    }
+                                  }
+
+                                </tr>
+                            }
+
+                                if (a.BuyerSign == true && a.RegulatorSign == false && a.IsDeniedByRegulator == false) //if I am a buyer, and I didn`t sign
+                                {
+                                    var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                                    <tr>
+                                    <td>@a.Loaction</td>
+                                    @{
+                                        if (a.SellerPublicKey.ToLower().Equals(a.SellerPublicKey))
+                                        {
+                                            <td>Seller</td>
+                                        }
+                                        else
+                                        {
+                                            <td>Buyer</td>
+                                        }
+                                    }
+
+                                    <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                                    <td>Awaiting for regulator signing</td>
+                                    </tr>
+                                }
                 }
-                <tr>
-                    <td>Hadas 6 Haifa</td>
-                    <td>Seller</td>
-                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x121F4e119a84BF7077D967B52F515E06f4949e89">Here</a></td>
-                    <td><label>Awaiting for buyer</label></td>
-                </tr>
-
-                <tr>
-                    <td>Galil 70 Yavne</td>
-                    <td>Buyer</td>
-                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x575CE2d395b1ee43A4949e68Eb296A75Ec7B008F">Here</a></td>
-                    <td><label>Awaiting for Regulator</label></td>
-                </tr>
-
-                <tr>
-                    <td>Gefen 33 Tiberias</td>
-                    <td>Buyer</td>
-                    <td><a target="_blank" href="https://ropsten.etherscan.io/address/0x575CE2d395b1ee43A4949e68Eb296A75Ec7B008F">Here</a></td>
-                    <td><button onclick="setDate(3600)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong">Open</button></td>
-                </tr>
-
             </tbody>
         </table>
 
-        <br />
-        <br />
-        <label id="timeLeft"> </label>
+       
 
     </div> <!--End of Open contracts tab-->
 
@@ -83,7 +116,7 @@
             <tbody align="center">
                 @foreach (var a in @Model.DeployedContractList)
                 {
-                    if(a.RegulatorSign==true || a.IsDeniedByBuyer==true ||a.IsDeniedByRegulator==true)
+                    if(a.RegulatorSign == true || a.IsDeniedByBuyer == true || a.IsDeniedByRegulator == true)
                     {
                         var role="";
                         var yourPublicKey = Model.publicKey;
@@ -96,7 +129,7 @@
                         <td>@a.Loaction</td>  
                         <td>@role</td>
                         <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                        <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#cloasedContractModalDialong">View Details</button></td>
+                        <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
                     </tr>
                     }
                 }
@@ -104,7 +137,7 @@
         </table>
 
 
-        <div class="modal fade" id="cloasedContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="cloasedContractModalDialongTitle" aria-hidden="true" style="">
+        <div class="modal fade" id="closedContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="cloasedContractModalDialongTitle" aria-hidden="true" style="">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -156,11 +189,7 @@
             document.getElementById("contractsStatusNavBar").style.fontWeight = "bold";
         });
 
-        function setDate(timeLeft)
-        {
-            document.getElementById("timeLeft").innerHTML = timeLeft;
-
-        }
+        
 
         function LoadClosedContractDetails(offer)
         {
@@ -247,29 +276,24 @@
                 document.getElementById("closedContractdialogNewOwnerPublicKey").innerHTML = "";
             }
 
-            /*$('.table tbody').on('click', '.btn', function ()
-            {
-                var row = $(this).closest('tr');
-                var col = row.find('td:eq(1)').text();
-                //document.getElementById("asset_dialog_body").innerHTML("vddv");
-            })*/
         }
 
 
 
 
-        /*
-        function setTimer()
+    var interval;
+    function setTimer(timeLeftInSeconds, labelID)
+    {
+
+        clearInterval(interval)
+
+        var timeSpan = convert(timeLeftInSeconds);
+        //var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+        var countDownDate = new Date(timeSpan).getTime();
+    
+        // Update the count down every 1 second
+        interval = setInterval(function() 
         {
-            document.getElementById("demo").innerHTML="";
-            var timeSpan = convert();
-            var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
-            var countDownDate = new Date(timeSpan).getTime();
-
-            // Update the count down every 1 second
-            var x = setInterval(function() 
-            {
-
             // Get today's date and time
             var now = new Date().getTime();
     
@@ -283,27 +307,32 @@
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
     
             // Output the result in an element with id="demo"
-            document.getElementById("demo").innerHTML = days + "d " + hours + "h "
-            + minutes + "m " + seconds + "s ";
+            //document.getElementById("demo").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            document.getElementById(labelID).innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
     
             // If the count down is over, write some text 
-            if (distance < 0) {
-            clearInterval(x);
-            document.getElementById("demo").innerHTML = "EXPIRED";
+            if (distance < 0)
+            {
+                clearInterval(interval);
+                //document.getElementById("demo").innerHTML = "EXPIRED";
+                document.getElementById(labelID).innerHTML = "EXPIRED";
+
             }
             }, 1000);
 
 
-        }
+    }
 
-    function convert()
+    function convert(unixtimestamp)
     {
-        var now = new Date()  
+        var now = new Date(unixtimestamp)  
         var secondsSinceEpoch = Math.round(now.getTime() / 1000)  
 
         // Unixtimestamp
-        var unixtimestamp = document.getElementById('timestamp').value;
-        unixtimestamp = parseInt(unixtimestamp);
+        //var unixtimestamp = document.getElementById('timestamp').value;
+        if(typeof unixtimestamp =="string")
+            unixtimestamp = parseInt(unixtimestamp);
         secondsSinceEpoch = parseInt(secondsSinceEpoch);
         unixtimestamp = unixtimestamp +  secondsSinceEpoch;
         // Months array
@@ -327,15 +356,15 @@
         // Minutes
         var minutes = "0" + date.getMinutes();
 
- // Seconds
- var seconds = "0" + date.getSeconds();
+        // Seconds
+        var seconds = "0" + date.getSeconds();
 
- // Display date time in MM-dd-yyyy h:m:s format
- var convdataTime = month+' '+day+', '+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
- //"Jan 5, 2021 15:37:25"
- document.getElementById('datetime').innerHTML = convdataTime;
- return convdataTime;
-}*/
+        // Display date time in MM-dd-yyyy h:m:s format
+        var convdataTime = month+' '+day+', '+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        //"Jan 5, 2021 15:37:25"
+        document.getElementById('datetime').innerHTML = convdataTime;
+        return convdataTime;
+    }
 
         </script>
     }
