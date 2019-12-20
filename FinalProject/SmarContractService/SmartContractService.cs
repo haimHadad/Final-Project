@@ -14,7 +14,7 @@ namespace FinalProject.Models
     public class SmartContractService
     {
         public string ContractAddress;
-        
+
         public Web3 Blockchain { get; set; }
 
         //public static string ABI = @"[{""constant"":false,""inputs"":[],""name"":""denyContract"",""outputs"":[],""payable"":false,""stateMutability"":""nonpayable"",""type"":""function""},{""constant"":false,""inputs"":[],""name"":""setIsExpired"",""outputs"":[],""payable"":false,""stateMutability"":""nonpayable"",""type"":""function""},{""constant"":false,""inputs"":[],""name"":""cancelContract"",""outputs"":[],""payable"":false,""stateMutability"":""nonpayable"",""type"":""function""},{""constant"":false,""inputs"":[{""internalType"":""uint256"",""name"":""_taxPay"",""type"":""uint256""}],""name"":""approveAndExcecuteContract"",""outputs"":[{""internalType"":""bool"",""name"":"""",""type"":""bool""}],""payable"":false,""stateMutability"":""nonpayable"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getAssetDetails"",""outputs"":[{""internalType"":""uint256"",""name"":""AssetID"",""type"":""uint256""},{""internalType"":""string"",""name"":""AssetLoaction"",""type"":""string""},{""internalType"":""uint256"",""name"":""AssetRooms"",""type"":""uint256""},{""internalType"":""uint256"",""name"":""AssetAreaIn"",""type"":""uint256""},{""internalType"":""string"",""name"":""AssetImageURL"",""type"":""string""},{""internalType"":""uint256"",""name"":""AssetPrice"",""type"":""uint256""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getOldAssetOwner"",""outputs"":[{""internalType"":""address"",""name"":"""",""type"":""address""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getContractBalance"",""outputs"":[{""internalType"":""uint256"",""name"":"""",""type"":""uint256""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":false,""inputs"":[],""name"":""abortContract"",""outputs"":[],""payable"":false,""stateMutability"":""nonpayable"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getAssetBuyer"",""outputs"":[{""internalType"":""address"",""name"":"""",""type"":""address""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getOwnerSigning"",""outputs"":[{""internalType"":""bool"",""name"":"""",""type"":""bool""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getIsExpired"",""outputs"":[{""internalType"":""bool"",""name"":"""",""type"":""bool""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":false,""inputs"":[],""name"":""setBuyerSigning"",""outputs"":[],""payable"":false,""stateMutability"":""nonpayable"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getNewAssetOwner"",""outputs"":[{""internalType"":""address"",""name"":"""",""type"":""address""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""isTimerOver"",""outputs"":[{""internalType"":""bool"",""name"":"""",""type"":""bool""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""TimeLeft"",""outputs"":[{""internalType"":""uint256"",""name"":"""",""type"":""uint256""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""constant"":true,""inputs"":[],""name"":""getBuyerSigning"",""outputs"":[{""internalType"":""bool"",""name"":"""",""type"":""bool""}],""payable"":false,""stateMutability"":""view"",""type"":""function""},{""inputs"":[{""internalType"":""uint256"",""name"":""_timeToBeOpen"",""type"":""uint256""},{""internalType"":""uint256"",""name"":""_Id"",""type"":""uint256""},{""internalType"":""string"",""name"":""_Loaction"",""type"":""string""},{""internalType"":""uint256"",""name"":""_Rooms"",""type"":""uint256""},{""internalType"":""uint256"",""name"":""_AreaIn"",""type"":""uint256""},{""internalType"":""string"",""name"":""_Image"",""type"":""string""},{""internalType"":""uint256"",""name"":""_price"",""type"":""uint256""},{""internalType"":""address payable"",""name"":""_buyer"",""type"":""address""}],""payable"":false,""stateMutability"":""nonpayable"",""type"":""constructor""},{""payable"":true,""stateMutability"":""payable"",""type"":""fallback""},{""anonymous"":false,""inputs"":[{""indexed"":false,""internalType"":""address"",""name"":""fromContract"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""toBuyer"",""type"":""address""}],""name"":""notifyNewOffer"",""type"":""event""},{""anonymous"":false,""inputs"":[{""indexed"":false,""internalType"":""address"",""name"":""fromContract"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""toSeller"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""toBuyer"",""type"":""address""}],""name"":""notifyContractApproved"",""type"":""event""},{""anonymous"":false,""inputs"":[{""indexed"":false,""internalType"":""address"",""name"":""fromContract"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""toGovrenment"",""type"":""address""}],""name"":""notifyContractSigned"",""type"":""event""},{""anonymous"":false,""inputs"":[{""indexed"":false,""internalType"":""address"",""name"":""fromContract"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""fromBuyer"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""toSeller"",""type"":""address""}],""name"":""notifyDenyOffer"",""type"":""event""},{""anonymous"":false,""inputs"":[{""indexed"":false,""internalType"":""address"",""name"":""fromContract"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""toBuyer"",""type"":""address""},{""indexed"":false,""internalType"":""address"",""name"":""toSeller"",""type"":""address""},{""indexed"":false,""internalType"":""uint256"",""name"":""codeAction"",""type"":""uint256""}],""name"":""notifyCancelOffer"",""type"":""event""}]";
@@ -29,7 +29,7 @@ namespace FinalProject.Models
 
         public string EtherscanURL;
 
-        Contract deployedContractIsntance; 
+        Contract deployedContractIsntance;
 
         public SmartContractService(DappAccount _yourAccount, string contractAddress)
         {
@@ -41,35 +41,35 @@ namespace FinalProject.Models
 
         public static async Task<string> Deploy(DappAccount yourAccount, uint hoursTimeAmount, uint assetID, string assetLoaction, uint assetRooms, uint assetAreaIn, string assetURL, double assetPrice, string buyerAddress)
         {
-              var TimeHours = hoursTimeAmount;
-              var ID = assetID;
-              var Loaction = assetLoaction;
-              var Rooms = assetRooms;
-              var AreaIn = assetAreaIn;
-              var Image = assetURL;
-              var Price = UnitConversion.Convert.ToWei(assetPrice);
-              var Buyer = buyerAddress;
+            var TimeHours = hoursTimeAmount;
+            var ID = assetID;
+            var Loaction = assetLoaction;
+            var Rooms = assetRooms;
+            var AreaIn = assetAreaIn;
+            var Image = assetURL;
+            var Price = UnitConversion.Convert.ToWei(assetPrice);
+            var Buyer = buyerAddress;
 
-              object[] contractParams = new object[]{ TimeHours, ID, Loaction, Rooms, AreaIn, Image, Price, Buyer };
+            object[] contractParams = new object[] { TimeHours, ID, Loaction, Rooms, AreaIn, Image, Price, Buyer };
 
             //-----------------Seller create a contract and sign it---------------------
             var estimateGasForDeploy = await yourAccount.Blockchain.Eth.DeployContract.EstimateGasAsync(ABI, ByteCode, yourAccount.publicKey, contractParams);
-            var receiptSalesContract = await yourAccount.Blockchain.Eth.DeployContract.SendRequestAndWaitForReceiptAsync(ABI, ByteCode, yourAccount.publicKey, estimateGasForDeploy, null, contractParams); 
+            var receiptSalesContract = await yourAccount.Blockchain.Eth.DeployContract.SendRequestAndWaitForReceiptAsync(ABI, ByteCode, yourAccount.publicKey, estimateGasForDeploy, null, contractParams);
             var salesContractAddress = receiptSalesContract.ContractAddress; //after deployment, we get contract address. 
             return salesContractAddress;
         }
 
         public static async Task<string> Deploy(DappAccount yourAccount, ContractOffer offer)
         {
-            uint hoursTimeAmount =  (uint)offer.TimeToBeOpen;
-            uint assetID = (uint)offer.AssetID; 
+            uint hoursTimeAmount = (uint)offer.TimeToBeOpen;
+            uint assetID = (uint)offer.AssetID;
             string assetLoaction = offer.Loaction;
             uint assetRooms = (uint)offer.Rooms;
             uint assetAreaIn = (uint)offer.AreaIn;
             string assetURL = offer.ImageURL;
             double assetPrice = (uint)offer.PriceETH;
             string buyerAddress = offer.BuyerPublicKey;
-            var ContractAddresss =await Deploy(yourAccount, hoursTimeAmount , assetID, assetLoaction , assetRooms , assetAreaIn , assetURL, assetPrice, buyerAddress);
+            var ContractAddresss = await Deploy(yourAccount, hoursTimeAmount, assetID, assetLoaction, assetRooms, assetAreaIn, assetURL, assetPrice, buyerAddress);
             return ContractAddresss;
         }
 
@@ -77,9 +77,9 @@ namespace FinalProject.Models
 
 
 
-            public async Task<Asset> getAssetDestails() //Buyer the asset that included in the deal
+        public async Task<Asset> getAssetDestails() //Buyer the asset that included in the deal
         {
-            var contractHandlerAsBuyer = accountCaller.Blockchain.Eth.GetContractHandler(ContractAddress);                   
+            var contractHandlerAsBuyer = accountCaller.Blockchain.Eth.GetContractHandler(ContractAddress);
             var getAssetDetailsOutputDTO = await contractHandlerAsBuyer.QueryDeserializingToObjectAsync<GetAssetDetailsFunction, GetAssetDetailsOutputDTO>();
             BigInteger assetID = getAssetDetailsOutputDTO.AssetID;
             string assetLoaction = getAssetDetailsOutputDTO.AssetLoaction;
@@ -95,7 +95,7 @@ namespace FinalProject.Models
             AssetFromDeployedContract.Rooms = (int)assetRooms;
             AssetFromDeployedContract.AreaIn = (int)assetAreaIn;
             AssetFromDeployedContract.ImageURL = assetImageUrl;
-            AssetFromDeployedContract.Price = Convert.ToDouble(assetPriceAtEther);       
+            AssetFromDeployedContract.Price = Convert.ToDouble(assetPriceAtEther);
             return AssetFromDeployedContract;
 
             //string assetDetialsAllTogether = "" + assetID + ", " + assetLoaction + ", " + assetRooms + ", " + assetAreaIn + ", " + assetImageUrl + ", " + assetPriceAtEther;
@@ -147,9 +147,9 @@ namespace FinalProject.Models
                 if (this.getBuyerAddress().Equals(this.accountCaller.publicKey))
                     return false;
                 var payTransaction = await accountCaller.Blockchain.Eth.GetEtherTransferService().TransferEtherAndWaitForReceiptAsync(this.ContractAddress, EtherToPay, 4, new BigInteger(45000));
-                
+
             }
-            catch(Exception e) //can fail if the acount not belong to the buyer, or if the didn`t send the exact amount of money
+            catch (Exception e) //can fail if the acount not belong to the buyer, or if the didn`t send the exact amount of money
             {
                 return false; //send failed;
             }
@@ -159,11 +159,11 @@ namespace FinalProject.Models
         public async Task<double> getBalance()
         {
             double returnedEther;
-            var getContractBalanceFunction = deployedContractIsntance.GetFunction("getContractBalance");        
-                var salesContractBalanceAsBuyer = await getContractBalanceFunction.CallAsync<UInt64>();
-                var assetPriceAtEther = Web3.Convert.FromWei(salesContractBalanceAsBuyer);
-                returnedEther = Convert.ToDouble(assetPriceAtEther);
-                return returnedEther;
+            var getContractBalanceFunction = deployedContractIsntance.GetFunction("getContractBalance");
+            var salesContractBalanceAsBuyer = await getContractBalanceFunction.CallAsync<UInt64>();
+            var assetPriceAtEther = Web3.Convert.FromWei(salesContractBalanceAsBuyer);
+            returnedEther = Convert.ToDouble(assetPriceAtEther);
+            return returnedEther;
         }
 
         public async Task<string> getNewAssetOwner()
@@ -187,14 +187,14 @@ namespace FinalProject.Models
 
             return timeLeft;
         }
-  
+
 
         public async Task<bool> cancelDeal() //For regulator (=Govrenment)
         {
             string GovrenmentAddress = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
             if (!GovrenmentAddress.Equals(accountCaller.publicKey)) //if the caller is not the regulator
                 return false;
-            try 
+            try
             {
                 var cancelContractFunction = deployedContractIsntance.GetFunction("cancelContract");  //find the method of the contract 
                 var gasEstimationForCancel = await cancelContractFunction.EstimateGasAsync(accountCaller.publicKey, null, null);
@@ -213,7 +213,7 @@ namespace FinalProject.Models
             string GovrenmentAddress = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
             if (!GovrenmentAddress.Equals(accountCaller.publicKey)) //if the caller is not the regulator
                 return false;
-            try 
+            try
             {
                 double salesContractBalance = await getBalance();
                 double contractBalanceAsDouble = Convert.ToDouble(salesContractBalance); ;
@@ -230,11 +230,11 @@ namespace FinalProject.Models
                 else
                     return false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return false;
             }
-            
+
 
             return true;
         }
@@ -263,10 +263,10 @@ namespace FinalProject.Models
             }
             return true;
         }
-        
+
         public async Task<bool> abort() //in case buyer didnt take action in time
         {
-            string SellerAddress = await getOldAssetOwner(); 
+            string SellerAddress = await getOldAssetOwner();
             bool BuyerSign = await getBuyerSign();
             ulong timeLeft = await getTimeLeftInSeconds();
 
@@ -312,6 +312,28 @@ namespace FinalProject.Models
             return true;
         }
 
+        public async Task<bool> setBuyerSign() //For regulator (=Govrenment)
+        {      
+            string buyerAccount = await getBuyerAddress();
+            string myBuyerAddress = accountCaller.publicKey.ToLower();
+            if (myBuyerAddress.Equals(buyerAccount))
+            {
+                try
+                {
+                    var setBuyerSigningFunction = deployedContractIsntance.GetFunction("setBuyerSigning");  //find the method of the contract 
+                    var gasEstimationForSigning = await setBuyerSigningFunction.EstimateGasAsync(accountCaller.publicKey, null, null);
+                    var receiptSetIsExpired = await setBuyerSigningFunction.SendTransactionAndWaitForReceiptAsync(accountCaller.publicKey, gasEstimationForSigning, null, null);
+
+                }
+
+                catch (Exception e)
+                {
+                    return false;
+                }
+
+            }
+            return true;
+        }
     }
 
     internal partial class GetAssetDetailsFunction : GetAssetDetailsFunctionBase { } //this is Ethereum API - no need to check this module!!

@@ -74,9 +74,9 @@
                                 else
                                 {
                                     <td>
-                                        <button id=@btnCancelID onclick="CancelContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal" >Cancel Contract</button>
+                                        <button id=@btnCancelID onclick="CancelContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal">Cancel Contract</button>
                                         <img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
-                                        <label style="display:none" id= @lblCancelID >Canceled</label>
+                                        <label style="display:none" id=@lblCancelID>Canceled</label>
                                     </td>
                                 }
                             }
@@ -143,7 +143,7 @@
                     <div class="modal-footer">
 
                         <button onclick="DenyContract()" id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
-                        <button id="openContractSignBtn" type="button" class="btn btn-success" data-dismiss="modal">Sign</button>
+                        <button onclick="CheckIfSure()" id="openContractSignBtn" type="button" class="btn btn-success" data-dismiss="modal">Sign</button>
                     </div>
                 </div>
             </div>
@@ -298,16 +298,41 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >Error</h4><!--Contract Offer Details-->
+                    <h4 class="modal-title">Error</h4><!--Contract Offer Details-->
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body" >
-                    <h5 >You running out of ETH, please deposit more ETH.</h5>
+                <div class="modal-body">
+                    <h5>You running out of ETH, please deposit more ETH.</h5>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="closeButton" class="btn btn-danger"  data-dismiss="modal">Close</button>
+                    <button type="button" id="closeButton" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="DialogBlockchainBeforeApprove" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Are You Sure?</h4><!--Contract Offer Details-->
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5><strong>After this operation - There is no coming back!!</strong></h5>
+                    <h5>-----------------------------------------------------------------------</h5>
+                    <h6 id="additionalWarningForSigning"></h6>
+                    <small class="text-danger">*The payment will be send to the contract first.</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    <button onclick="ApproveDeal()" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+
                 </div>
             </div>
         </div>
@@ -327,18 +352,115 @@
             document.getElementById("contractsStatusNavBar").style.fontWeight = "bold";
         });
 
+        function checkEthForDeal(offer)
+        {
+            var ErrorMsg = "";
+            var dealPrice = parseFloat(offer.PriceETH);
+            var accountBalance = @Model.EthBalance;
+            var moneyNeed = accountBalance - dealPrice;
+            console.log("Account Balance = "+accountBalance)
+            console.log("Money of deal = "+dealPrice)
+            console.log("Money that needed = "+moneyNeed)
+            if (moneyNeed < 0.005)
+            {
+                ErrorMsg = ErrorMsg + "You running out of ETH, please deposit more ETH.<br>";
+            }
+            return ErrorMsg;
+        }
+
+
+
+
+
+
+
+        function ApproveDeal()
+        {
+            var offer = currentContract;
+            var ErrorMsg = "";
+            ErrorMsg = checkEthForDeal(offer);
+
+            if (ErrorMsg != "") {
+                $('#DialogBlockchainError').modal('show');
+                console.log(offer);
+                return;
+            }
+
+
+
+            var btnIdApprove = "openContract" + offer.AssetID;
+            var lblIdApprove = "resultOpenContract" + offer.AssetID;
+            var loaderIdApprove = "DeployLoader" + offer.AssetID;
+            document.getElementById(btnIdApprove).style.display = "none";
+            document.getElementById(loaderIdApprove).style.display = "block";
+
+            $.ajax({
+                    url: "/ContractsStatus/ApproveContract",
+                    type: 'POST',
+                    async: true,
+                    data : { ContractAddress: offer.ContractAddress},
+                    success: function (data)
+                    {
+
+                        document.getElementById(lblIdApprove).innerHTML = "Awaiting for regulator signing";
+                        document.getElementById(lblIdApprove).style.color = "lightgreen";
+                        document.getElementById(lblIdApprove).style.display = "block";
+                        document.getElementById(loaderIdApprove).style.display = "none";
+                        updateAccountBalanceAfterBlockchainOperation();
+                        var result = JSON.parse(data);
+                        var feeILS = result.feeILS;
+                        document.getElementById("actionDealDialogTitle").innerHTML = "The contract approved sucessfully";
+                        document.getElementById("actionDealDialogMessageContent1").style.display = "block";
+                        document.getElementById("actionDealDialogMessageContent2").style.display = "block";
+                        document.getElementById("actionDealDialogMessageContent3").style.display = "block";
+                        document.getElementById("actionDealDialogMessageContent4").style.display = "block";
+                        document.getElementById("actionDealDialogEtherscanURL").style.display = "block";
+                        document.getElementById("actionDealDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+                        document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract been approved.";
+                        document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+                        document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
+                        var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "You paid : ".bold()+offer.PriceETH +" ETH | ₪"+dealPriceILS;
+                        $('#actionDealDialog').modal('show');
+                        
+
+
+                    }
+                });
+
+
+            
+        }
+
+        function CheckIfSure()
+        {
+            var offer = currentContract;
+            var accountBalanceETH = @Model.EthBalance;
+            var accountBalanceILS = @Model.IlsBalance;
+            accountBalanceILS = accountBalanceILS.toFixed(2);
+            accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            accountBalanceETH = accountBalanceETH.toFixed(2);
+
+            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            
+            document.getElementById("additionalWarningForSigning").innerHTML ="Your balance : ".bold() + accountBalanceETH+" ETH |" + " ₪" +accountBalanceILS+"."
+                +"</br></br>" + "Deal cost : ".bold() + offer.PriceETH + " ETH |" + " ₪" + dealPriceILS+"."
+                + "</br></br>" + "You will pay now : ".bold() + offer.PriceETH + " ETH |" + " ₪" + dealPriceILS+".";
+            $('#DialogBlockchainBeforeApprove').modal('show');
+        }
 
         var currentContract;
 
 
-        function DenyContract(offer) //for buyer
+
+        function DenyContract() //for buyer
         {
              var offer = currentContract;
 
             var checkError = checkEthForFee();
             if (checkError != "")
             {
-                $('#DialogBlockchainError').modal('show'); 
+                $('#DialogBlockchainError').modal('show');
                 console.log(offer);
                 return;
             }
@@ -363,9 +485,9 @@
                         document.getElementById(lblDenyID).style.display = "block";
                         document.getElementById(lblDenyID).innerHTML = "Denied by the buyer (You)";
                         document.getElementById(lblDenyID).style.color = "red";
-                        timeLeftInView = data;
+                        //timeLeftInView = data;
                         var result = JSON.parse(data);
-                        var feeILS = result.feeILS; 
+                        var feeILS = result.feeILS;
                         document.getElementById("actionDealDialogTitle").innerHTML = "The contract denied sucessfully";
                         document.getElementById("actionDealDialogMessageContent1").style.display = "block";
                         document.getElementById("actionDealDialogMessageContent2").style.display = "block";
@@ -376,22 +498,13 @@
                         document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract has denied.";
                         document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
                         document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
-                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;             
+                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;
                         $('#actionDealDialog').modal('show');
                         updateAccountBalanceAfterBlockchainOperation();
-                        
+
 
                     }
                 });
-
-
-
-
-
-            
-
-
-
 
 
         }
@@ -415,7 +528,7 @@
             var checkError = checkEthForFee();
             if (checkError != "")
             {
-                $('#DialogBlockchainError').modal('show'); 
+                $('#DialogBlockchainError').modal('show');
                 return;
             }
 
@@ -438,7 +551,7 @@
                         document.getElementById(loaderID).style.display = "none";
                         timeLeftInView = data;
                         var result = JSON.parse(data);
-                        var feeILS = result.feeILS; 
+                        var feeILS = result.feeILS;
                         document.getElementById("actionDealDialogTitle").innerHTML = "The contract canceled sucessfully";
                         document.getElementById("actionDealDialogMessageContent1").style.display = "block";
                         document.getElementById("actionDealDialogMessageContent2").style.display = "block";
@@ -449,7 +562,7 @@
                         document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract has canceled.";
                         document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
                         document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
-                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;             
+                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;
                         $('#actionDealDialog').modal('show');
                         updateAccountBalanceAfterBlockchainOperation();
 
@@ -458,16 +571,16 @@
 
 
 
-             
+
         }
 
 
         function AllowNotes()
-        { 
+        {
             checkBox = document.getElementById("openContractCheckBox").checked;
             if (checkBox == true)
             {
-                
+
                 $('#openContractSignBtn').disabled = true;
                 document.getElementById("openContractdialogNotes").placeholder = "Add your notes";
                 document.getElementById("openContractdialogNotes").value = "";
@@ -510,7 +623,7 @@
                     data : { ContractAddress: contractAddress },
                     success: function (data)
                     {
-                    
+
                         timeLeftInView = data;
                     }
                 });
@@ -548,6 +661,10 @@
                 buyerID = buyerID + " &nbsp (You)";
             }
 
+            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var dealPriceETH = offer.PriceETH
+            var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+
             document.getElementById("openContractImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("openContractdialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
             document.getElementById("openContractdialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
@@ -556,10 +673,10 @@
             document.getElementById("openContractdialogOwnerID").innerHTML = "Seller ID : ".bold() + sellerID;
             document.getElementById("openContractdialogOwnerPublicKey").innerHTML = "Seller Public-Key : ".bold() + sellerPublicKey;
             document.getElementById("openContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
-            document.getElementById("openContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;           
-            
-            
-               
+            document.getElementById("openContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;
+            document.getElementById("openContractdialogPrice").innerHTML = "Price : ".bold() + dealPrice
+
+
             $('#openContractModalDialong').modal('show');
 
         }
@@ -607,7 +724,7 @@
             document.getElementById("closedContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
             document.getElementById("closedContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;
             document.getElementById("closedContractdialogNotes").innerHTML = ""+offer.DenyReason;
-            
+
             if (offer.RegulatorSign == true)
             {
                 var newOwnerID = offer.NewOwnerID;
@@ -625,9 +742,9 @@
                 document.getElementById("closedContractdialogResult").innerHTML = "Approved".bold();
                 document.getElementById("closedContractdialogResult").style.color = "green";
                 document.getElementById("closedContractdialogPrice").innerHTML = "Price : ".bold() + offer.PriceETH + " ETH / ₪" + offer.PriceILS;
-                document.getElementById("closedContractdialogNotes").style.display = "none";   
+                document.getElementById("closedContractdialogNotes").style.display = "none";
             }
-            
+
 
             else if (offer.IsDeniedByBuyer == true)
             {
@@ -665,13 +782,13 @@
         console.log(timeSpan);
         //var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
         var countDownDate = new Date(timeSpan).getTime();
-    
+
         // Update the count down every 1 second
-        interval = setInterval(function() 
+        interval = setInterval(function()
         {
             // Get today's date and time
             var now = new Date().getTime();
-    
+
             // Find the distance between now and the count down date
             var distance = countDownDate - now;
             document.getElementById("openContractDialogTime").style.color = "lightgreen";
@@ -689,13 +806,13 @@
             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    
+
             // Output the result in an element with id="demo"
             //document.getElementById("demo").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
             document.getElementById("openContractDialogTime").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
-    
-            // If the count down is over, write some text 
+
+            // If the count down is over, write some text
             if (distance < 0)
             {
                 clearInterval(interval);
@@ -712,8 +829,8 @@
 
     function convert(timeLeft)
     {
-    var now = new Date()  
-    var secondsSinceEpoch = Math.round(now.getTime() / 1000)  
+    var now = new Date()
+    var secondsSinceEpoch = Math.round(now.getTime() / 1000)
 
      // Unixtimestamp
      var unixtimestamp = timeLeft;
@@ -752,5 +869,5 @@
      return convdataTime;
     }
 
-        </script>
+    </script>
     }
