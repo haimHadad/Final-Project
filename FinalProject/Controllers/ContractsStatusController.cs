@@ -157,7 +157,7 @@ namespace FinalProject.Controllers
                 afterBalanceILS = await DappAccountController.get_ILS_Balance();
                 feeETH = beforeBalanceETH - afterBalanceETH;
                 feeILS = beforeBalanceILS - afterBalanceILS;
-                DeploymentRecipt recipt = new DeploymentRecipt();
+                ConfirmationRecipt recipt = new ConfirmationRecipt();
                 recipt.ContractAddress = ContractAddress;
                 recipt.feeETH = feeETH;
                 feeILS = Math.Truncate(feeILS * 100) / 100; //make the double number to be with 3 digits after dot               
@@ -182,7 +182,7 @@ namespace FinalProject.Controllers
 
     }
 
-    internal class CancelAsSellerRecipt
+    internal class ConfirmationRecipt
     {
         public string ContractAddress { get; set; }
 
