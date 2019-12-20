@@ -169,11 +169,27 @@
             <tbody align="center">
                 @foreach (var a in @Model.DeployedContractList)
                 {
-                    if (a.RegulatorSign == true || a.IsDeniedByBuyer == true || a.IsDeniedByRegulator == true)
+                    if (a.RegulatorSign == true)
                     {
                         var role = "";
                         var yourPublicKey = Model.publicKey;
                         if (yourPublicKey.ToLower().Equals(a.SellerPublicKey))
+                            role = "Seller";
+                        else
+                            role = "Buyer";
+                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                        <tr>
+                            <td>@a.Loaction</td>
+                            <td>@role</td>
+                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                            <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
+                        </tr>
+                    }
+                    else if (a.IsDeniedByBuyer == true || a.IsDeniedByRegulator == true)
+                    {
+                        var role = "";
+                        var yourPublicKey = Model.publicKey;
+                        if (yourPublicKey.Equals(a.SellerPublicKey))
                             role = "Seller";
                         else
                             role = "Buyer";
@@ -346,6 +362,7 @@
                         document.getElementById(loaderDenyID).style.display = "none";
                         document.getElementById(lblDenyID).style.display = "block";
                         document.getElementById(lblDenyID).innerHTML = "Denied by the buyer (You)";
+                        document.getElementById(lblDenyID).style.color = "red";
                         timeLeftInView = data;
                         var result = JSON.parse(data);
                         var feeILS = result.feeILS; 
@@ -356,7 +373,7 @@
                         document.getElementById("actionDealDialogMessageContent4").style.display = "block";
                         document.getElementById("actionDealDialogEtherscanURL").style.display = "block";
                         document.getElementById("actionDealDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
-                        document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract has canceled.";
+                        document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract has denied.";
                         document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
                         document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
                         document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;             
@@ -417,6 +434,7 @@
                     success: function (data)
                     {
                         document.getElementById(lblCancelID).style.display = "block";
+                        document.getElementById(lblCancelID).style.color = "red";
                         document.getElementById(loaderID).style.display = "none";
                         timeLeftInView = data;
                         var result = JSON.parse(data);
