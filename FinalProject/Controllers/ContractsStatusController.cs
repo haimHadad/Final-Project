@@ -180,6 +180,60 @@ namespace FinalProject.Controllers
             _context.SaveChanges();
         }
 
+        public async Task<string> CancelDealAsBuyer(string ContractAddress, string Notes)
+        {
+            DappAccount account = DappAccountController.myAccount;
+            SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance();
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance();
+            double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
+            double afterBalanceETH;
+            double afterBalanceILS;
+            double feeETH;
+            double feeILS;
+            bool isDenied = false;
+            isDenied = await deployedContract.denyDeal();
+            if (isDenied == true)
+            {
+                afterBalanceETH = await DappAccountController.get_ETH_Balance();
+                afterBalanceILS = await DappAccountController.get_ILS_Balance();
+                feeETH = beforeBalanceETH - afterBalanceETH;
+                feeILS = beforeBalanceILS - afterBalanceILS;
+                ConfirmationRecipt recipt = new ConfirmationRecipt();
+                recipt.ContractAddress = ContractAddress;
+                recipt.feeETH = feeETH;
+                feeILS = Math.Truncate(feeILS * 100) / 100; //make the double number to be with 3 digits after dot               
+                recipt.feeILS = feeILS;
+                var ReciptJson = Newtonsoft.Json.JsonConvert.SerializeObject(recipt);
+                updateOfferToDenied(ContractAddress, Notes);
+                return ReciptJson;
+            }
+
+            return "Fail";
+        }
+
+        public void updateOfferToDenied(string ContractAddress, string Notes)
+        {
+            var report = (from d in _context.AssetsInContract
+                          where d.ContractAddress == ContractAddress
+                          select d).Single();
+            report.Status = "Denied";
+            report.DeniedBy = "Buyer";
+            if(Notes.Equals(""))
+            {
+                report.Reason = "None";
+            }
+            else
+            {
+                report.Reason = Notes;
+            }
+
+            _context.AssetsInContract.Update(report);
+            //_context.AssetsInContract.Remove(report);
+            _context.SaveChanges();
+        }
+
+
     }
 
     internal class ConfirmationRecipt

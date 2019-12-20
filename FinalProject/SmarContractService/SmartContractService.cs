@@ -240,7 +240,7 @@ namespace FinalProject.Models
         }
 
 
-        public async Task<bool> denyDeal() //For regulator (=Govrenment)
+        public async Task<bool> denyDeal() //for the buyer
         {
             string BuyerAddress = await getBuyerAddress();
             bool BuyerSign = await getBuyerSign();
@@ -248,7 +248,7 @@ namespace FinalProject.Models
             if (BuyerSign == true) //if buyer already signed the deal!
                 return false;
 
-            if (!BuyerAddress.Equals(accountCaller.publicKey)) //if the caller is not the buyer
+            if (!BuyerAddress.Equals(accountCaller.publicKey.ToLower())) //if the caller is not the buyer
                 return false;
             try
             {

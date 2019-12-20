@@ -142,7 +142,7 @@
                     </div>
                     <div class="modal-footer">
 
-                        <button id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+                        <button onclick="DenyContract()" id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
                         <button id="openContractSignBtn" type="button" class="btn btn-success" data-dismiss="modal">Sign</button>
                     </div>
                 </div>
@@ -311,7 +311,78 @@
             document.getElementById("contractsStatusNavBar").style.fontWeight = "bold";
         });
 
-        function checkPreConditionErrors()
+
+        var currentContract;
+
+
+        function DenyContract(offer) //for buyer
+        {
+             var offer = currentContract;
+
+            var checkError = checkEthForFee();
+            if (checkError != "")
+            {
+                $('#DialogBlockchainError').modal('show'); 
+                console.log(offer);
+                return;
+            }
+            var notes = document.getElementById("openContractdialogNotes").value;
+
+            var loaderDenyID = "DeployLoader" + offer.AssetID;
+            var lblDenyID = "resultOpenContract" + offer.AssetID;
+            var btnOpenContractID = "openContract" + offer.AssetID;
+
+            document.getElementById(btnOpenContractID).style.display = "none";
+            document.getElementById(loaderDenyID).style.display = "block";
+
+            $.ajax({
+                    url: "/ContractsStatus/CancelDealAsBuyer",
+                    type: 'POST',
+                    async: true,
+                    data : { ContractAddress: offer.ContractAddress, Notes: notes },
+                    success: function (data)
+                    {
+
+                        document.getElementById(loaderDenyID).style.display = "none";
+                        document.getElementById(lblDenyID).style.display = "block";
+                        document.getElementById(lblDenyID).innerHTML = "Denied by the buyer (You)";
+                        timeLeftInView = data;
+                        var result = JSON.parse(data);
+                        var feeILS = result.feeILS; 
+                        document.getElementById("actionDealDialogTitle").innerHTML = "The contract denied sucessfully";
+                        document.getElementById("actionDealDialogMessageContent1").style.display = "block";
+                        document.getElementById("actionDealDialogMessageContent2").style.display = "block";
+                        document.getElementById("actionDealDialogMessageContent3").style.display = "block";
+                        document.getElementById("actionDealDialogMessageContent4").style.display = "block";
+                        document.getElementById("actionDealDialogEtherscanURL").style.display = "block";
+                        document.getElementById("actionDealDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+                        document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract has canceled.";
+                        document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+                        document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
+                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;             
+                        $('#actionDealDialog').modal('show');
+                        updateAccountBalanceAfterBlockchainOperation();
+                        
+
+                    }
+                });
+
+
+
+
+
+            
+
+
+
+
+
+        }
+
+
+
+
+        function checkEthForFee()
         {
             var ErrorMsg = "";
             var accountBalance = @Model.EthBalance;
@@ -322,9 +393,9 @@
             return ErrorMsg;
         }
 
-        function CancelContract(offer)
+        function CancelContract(offer) //for seller
         {
-            var checkError = checkPreConditionErrors();
+            var checkError = checkEthForFee();
             if (checkError != "")
             {
                 $('#DialogBlockchainError').modal('show'); 
@@ -363,10 +434,6 @@
                         document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;             
                         $('#actionDealDialog').modal('show');
                         updateAccountBalanceAfterBlockchainOperation();
-
-
-
-
 
                     }
                 });
@@ -408,6 +475,7 @@
 
         function LoadOpenContractDetails(offer)
         {
+            currentContract = offer;
             document.getElementById("openContractDenyBtn").disabled = true;
             document.getElementById("openContractSignBtn").disabled = true;
             document.getElementById("openContractdialogNotes").placeholder = "";
