@@ -173,7 +173,7 @@
                     {
                         var role = "";
                         var yourPublicKey = Model.publicKey;
-                        if (yourPublicKey.Equals(a.SellerPublicKey))
+                        if (yourPublicKey.ToLower().Equals(a.SellerPublicKey))
                             role = "Seller";
                         else
                             role = "Buyer";
