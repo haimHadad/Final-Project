@@ -47,7 +47,7 @@
                             <td>Buyer</td>
                             <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
                             <td>
-                            <button id=@btnID onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#openContractModalDialong">Open Contract</button>
+                            <button id=@btnID onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" >Open Contract</button>
                             <label style="display:none;" id=@lblID></label>
                             </td>
                         </tr>
@@ -105,12 +105,15 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="closedContractDialogTitle">Contract Offer</h4>
+                        <h4 class="modal-title" id="openContractDialogTitle">Contract Offer - &nbsp</h4>
+                        <h4 class="modal-title" id="openContractDialogTime" ></h4>
+
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body" id="openContract_dialog_body">
+
                         <center><img class="w-50 p-3" id="openContractImageURL"></center>
                         <p id="openContractdialogAssetID"></p>
                         <p id="openContractdialogLoaction"></p>
@@ -125,13 +128,14 @@
                         <p id="openContractdialogBuyerPublicKey"></p>
                         <p id="">------------------------------------</p>
 
-                        <input onclick="AllowNotes()" type="checkbox" id="openContractCheckBos"  > Add Deny Notes<br>
+                        <input onclick="AllowNotes()" type="checkbox" id="openContractCheckBox"> Add Deny Notes<br>
                         <textarea disabled id="openContractdialogNotes" rows="4" cols="50"></textarea>
 
                     </div>
                     <div class="modal-footer">
-                        <button id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
-                        <button id="openContractSignBtn" type="button" class="btn btn-success" data-dismiss="modal">Sign</button>
+
+                        <button  id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+                        <button  id="openContractSignBtn" type="button" class="btn btn-success" data-dismiss="modal">Sign</button>
                     </div>
                 </div>
             </div>
@@ -231,7 +235,7 @@
 
         function AllowNotes()
         { 
-            checkBox = document.getElementById("openContractCheckBos").checked;
+            checkBox = document.getElementById("openContractCheckBox").checked;
             if (checkBox == true)
             {
                 
@@ -249,11 +253,41 @@
                 document.getElementById("openContractdialogNotes").value = "";
                 document.getElementById("openContractSignBtn").disabled = false;
             }
+            var checkTimeLeft = document.getElementById("openContractDialogTime").textContent;
+            if (checkTimeLeft == "EXPIRED")
+            {
+                document.getElementById("openContractDenyBtn").disabled = true;
+                document.getElementById("openContractSignBtn").disabled = true;
+            }
         }
 
 
         function LoadOpenContractDetails(offer)
         {
+            document.getElementById("openContractDenyBtn").disabled = true;
+            document.getElementById("openContractSignBtn").disabled = true;
+            document.getElementById("openContractdialogNotes").placeholder = "";
+            document.getElementById("openContractdialogNotes").value = "";
+            document.getElementById("openContractdialogNotes").disabled = true;
+            var timeLeftInView = offer.TimeToBeOpen;
+            var contractAddress = offer.ContractAddress;
+            if (timeLeftInView != 0)
+            {
+                $.ajax({
+                    url: "/ContractsStatus/GetTimeLeft",
+                    type: 'POST',
+                    async: false,
+                    data : { ContractAddress: contractAddress },
+                    success: function (data)
+                    {
+                    
+                        timeLeftInView = data;
+                    }
+                });
+            }
+
+            setTimer(timeLeftInView);
+            document.getElementById("openContractCheckBox").checked = false;
             var fullOwnerPublicKey = offer.SellerPublicKey;
             var partOne = fullOwnerPublicKey.substring(0, 12);
             var partTwo = " . . . ";
@@ -293,6 +327,10 @@
             document.getElementById("openContractdialogOwnerPublicKey").innerHTML = "Seller Public-Key : ".bold() + sellerPublicKey;
             document.getElementById("openContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
             document.getElementById("openContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;           
+            
+            
+                
+            $('#openContractModalDialong').modal('show');
 
         }
 
@@ -388,12 +426,13 @@
 
 
     var interval;
-    function setTimer(timeLeftInSeconds, labelID)
+    function setTimer(timeLeftInSeconds)
     {
-
+        console.log("time left -- "+timeLeftInSeconds);
         clearInterval(interval)
 
         var timeSpan = convert(timeLeftInSeconds);
+        console.log(timeSpan);
         //var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
         var countDownDate = new Date(timeSpan).getTime();
     
@@ -405,7 +444,16 @@
     
             // Find the distance between now and the count down date
             var distance = countDownDate - now;
-    
+            document.getElementById("openContractDialogTime").style.color = "lightgreen";
+            document.getElementById("openContractDenyBtn").disabled = false;
+            var checkBoxValue = document.getElementById("openContractCheckBox").checked;
+            if (checkBoxValue == true) {
+                document.getElementById("openContractSignBtn").disabled = true;
+            }
+            else
+            {
+                document.getElementById("openContractSignBtn").disabled = false;
+            }
             // Time calculations for days, hours, minutes and seconds
             var days = Math.floor(distance / (1000 * 60 * 60 * 24));
             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -414,7 +462,7 @@
     
             // Output the result in an element with id="demo"
             //document.getElementById("demo").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-            document.getElementById(labelID).innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            document.getElementById("openContractDialogTime").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
 
     
             // If the count down is over, write some text 
@@ -422,54 +470,56 @@
             {
                 clearInterval(interval);
                 //document.getElementById("demo").innerHTML = "EXPIRED";
-                document.getElementById(labelID).innerHTML = "EXPIRED";
-
+                document.getElementById("openContractDialogTime").innerHTML = "EXPIRED";
+                document.getElementById("openContractDialogTime").style.color = "red";
+                document.getElementById("openContractDenyBtn").disabled = true;
+                document.getElementById("openContractSignBtn").disabled = true;
             }
             }, 1000);
 
 
     }
 
-    function convert(unixtimestamp)
+    function convert(timeLeft)
     {
-        var now = new Date(unixtimestamp)  
-        var secondsSinceEpoch = Math.round(now.getTime() / 1000)  
+    var now = new Date()  
+    var secondsSinceEpoch = Math.round(now.getTime() / 1000)  
 
-        // Unixtimestamp
-        //var unixtimestamp = document.getElementById('timestamp').value;
-        if(typeof unixtimestamp =="string")
-            unixtimestamp = parseInt(unixtimestamp);
-        secondsSinceEpoch = parseInt(secondsSinceEpoch);
-        unixtimestamp = unixtimestamp +  secondsSinceEpoch;
-        // Months array
-        var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+     // Unixtimestamp
+     var unixtimestamp = timeLeft;
+     unixtimestamp = parseInt(unixtimestamp);
+     secondsSinceEpoch = parseInt(secondsSinceEpoch);
+     unixtimestamp = unixtimestamp +  secondsSinceEpoch;
+     // Months array
+     var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-        // Convert timestamp to milliseconds
-        var date = new Date(unixtimestamp*1000);
+     // Convert timestamp to milliseconds
+     var date = new Date(unixtimestamp*1000);
 
-        // Year
-        var year = date.getFullYear();
+     // Year
+     var year = date.getFullYear();
 
-        // Month
-        var month = months_arr[date.getMonth()];
+     // Month
+     var month = months_arr[date.getMonth()];
 
-        // Day
-        var day = date.getDate();
+     // Day
+     var day = date.getDate();
 
-        // Hours
-        var hours = date.getHours();
+     // Hours
+     var hours = date.getHours();
 
-        // Minutes
-        var minutes = "0" + date.getMinutes();
+     // Minutes
+     var minutes = "0" + date.getMinutes();
 
-        // Seconds
-        var seconds = "0" + date.getSeconds();
+    // Seconds
+     var seconds = "0" + date.getSeconds();
 
-        // Display date time in MM-dd-yyyy h:m:s format
-        var convdataTime = month+' '+day+', '+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-        //"Jan 5, 2021 15:37:25"
-        document.getElementById('datetime').innerHTML = convdataTime;
-        return convdataTime;
+     // Display date time in MM-dd-yyyy h:m:s format
+     var convdataTime = month+' '+day+', '+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+     //"Jan 5, 2021 15:37:25"
+     //document.getElementById('datetime').innerHTML = convdataTime;
+        console.log("Time left date-->"+convdataTime);
+     return convdataTime;
     }
 
         </script>

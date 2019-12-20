@@ -35,6 +35,7 @@ namespace FinalProject.Controllers
             {
                 ContractOffer offer = new ContractOffer();
                 string contractAddress = assCon.ContractAddress;
+                offer.ContractAddress = contractAddress;
                 if (!assCon.Status.Equals("Denied"))  //For the non-destroyed contracts, "Denied" => Self Destruction
                 {   
                     SmartContractService deployedContract = new SmartContractService(account, contractAddress);
@@ -111,6 +112,7 @@ namespace FinalProject.Controllers
                 deployedContractsFromBlockchain.Add(offer);
             }
 
+
             account.DeployedContractList = deployedContractsFromBlockchain;
             return View(DappAccountController.myAccount);
         }
@@ -123,6 +125,17 @@ namespace FinalProject.Controllers
                 return 0;
 
             return result[0].ID;
+        }
+
+        public async Task<int> GetTimeLeft(string ContractAddress)
+        {
+            DappAccount account = DappAccountController.myAccount;
+            SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
+            ulong time = await deployedContract.getTimeLeftInSeconds();
+            int timeLeft = (int)time;
+            if (timeLeft > 21)
+                timeLeft = timeLeft - 15;
+            return timeLeft;
         }
     }
 }

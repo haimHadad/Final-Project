@@ -52,5 +52,7 @@ namespace FinalProject.Models
         public string DenyReason { get; set; }
 
         public string EtherscanURL { get; set; }
+        
+        public string ContractAddress { get; set; }
     }
 }
