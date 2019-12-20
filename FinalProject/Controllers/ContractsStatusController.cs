@@ -137,5 +137,58 @@ namespace FinalProject.Controllers
                 timeLeft = timeLeft - 15;
             return timeLeft;
         }
+
+        public async Task<string> CancelDealAsSeller(string ContractAddress)
+        {
+            DappAccount account = DappAccountController.myAccount;
+            SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance();
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance();
+            double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
+            double afterBalanceETH;
+            double afterBalanceILS;
+            double feeETH;
+            double feeILS;
+            bool isCanceled = false;
+            isCanceled = await deployedContract.abort();
+            if(isCanceled == true)
+            {
+                afterBalanceETH = await DappAccountController.get_ETH_Balance();
+                afterBalanceILS = await DappAccountController.get_ILS_Balance();
+                feeETH = beforeBalanceETH - afterBalanceETH;
+                feeILS = beforeBalanceILS - afterBalanceILS;
+                DeploymentRecipt recipt = new DeploymentRecipt();
+                recipt.ContractAddress = ContractAddress;
+                recipt.feeETH = feeETH;
+                feeILS = Math.Truncate(feeILS * 100) / 100; //make the double number to be with 3 digits after dot               
+                recipt.feeILS = feeILS;
+                var ReciptJson = Newtonsoft.Json.JsonConvert.SerializeObject(recipt);
+                deleteCanceledOfferBySeller(ContractAddress);
+                return ReciptJson;
+            }
+
+            return "Fail";
+        }
+
+        public void deleteCanceledOfferBySeller(string ContractAddress)
+        {
+            var report = (from d in _context.AssetsInContract
+                          where d.ContractAddress == ContractAddress
+                          select d).Single();
+
+            _context.AssetsInContract.Remove(report);
+            _context.SaveChanges();
+        }
+
+    }
+
+    internal class CancelAsSellerRecipt
+    {
+        public string ContractAddress { get; set; }
+
+        public double feeETH { get; set; }
+
+        public double feeILS { get; set; }
+
     }
 }

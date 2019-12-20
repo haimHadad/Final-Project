@@ -266,11 +266,11 @@ namespace FinalProject.Models
         
         public async Task<bool> abort() //in case buyer didnt take action in time
         {
-            string SellerAddress = await getOldAssetOwner();
+            string SellerAddress = await getOldAssetOwner(); 
             bool BuyerSign = await getBuyerSign();
             ulong timeLeft = await getTimeLeftInSeconds();
 
-            if (!SellerAddress.Equals(accountCaller.publicKey)) //if the caller is not the buyer
+            if (!SellerAddress.Equals(accountCaller.publicKey.ToLower())) //if the caller is not the buyer
                 return false;
 
             if (BuyerSign == true) //if buyer already signed the deal, the seller cannot abort!
