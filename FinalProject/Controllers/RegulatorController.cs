@@ -11,6 +11,8 @@ namespace FinalProject.Controllers
 {
     public class RegulatorController : Controller
     {
+        const string DB_TABLE_NAME = "assetsincontract";
+        const string PENDING = "pending";
         private AssetsInContractContext _context;
         public static Regulator _regulator;
         public RegulatorController(AssetsInContractContext context)
@@ -18,9 +20,11 @@ namespace FinalProject.Controllers
             _context = context;
         }
 
-        public IActionResult RegulatorMainPage(Regulator regulator) //here the login succeeded , e initialized the key
+        public async Task<IActionResult> RegulatorMainPage(Regulator regulator) //here the login succeeded , e initialized the key
         {
             _regulator = regulator;
+            _regulator.assetsList = await _context.AssetInContract.FromSqlRaw("select * from " + DB_TABLE_NAME + " where status = {0}", PENDING).ToListAsync();
+
             return View(_regulator);
         }
     }

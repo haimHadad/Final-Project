@@ -25,3 +25,7 @@ Server name: haimdbserver.database.windows.net
 Authentication: SQL Server Authentication
 Login: nativhaim
 Password: P@ss4Arc!
+
+
+(localdb)\FinalProject
+Windows Authentication

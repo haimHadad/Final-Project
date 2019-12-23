@@ -11,6 +11,7 @@ namespace FinalProject.Controllers
 {
     public class DappAccountController : Controller
     {
+        const string DB_TABLE_NAME = "assets";
         private AssetContext _context;
         public static DappAccount myAccount;
         private const string REGULATOR_PUBLIC_KEY = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
@@ -35,7 +36,7 @@ namespace FinalProject.Controllers
             else
             {// Account is either buyer / seller
                 myAccount = account; //and save this account in static account so the other controllers be able to read it
-                myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
+                myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from " + DB_TABLE_NAME + " where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
                 return View(account);
             }
 
