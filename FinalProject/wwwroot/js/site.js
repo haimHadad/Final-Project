@@ -4,7 +4,8 @@
 // Write your JavaScript code.
 
 
-function offerContract() {
+function offerContract()
+{
     document.getElementById("CreateContractDialogMessage").innerHTML = "";
     ErrorMsg = checkErrors();
 
@@ -57,7 +58,7 @@ function offerContract() {
                     document.getElementById("deployConfirmation").src = "/img/V-symbol.png";
                     document.getElementById("DialogDeployContractMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;             
                     $('#DialogDeployContractMessage').modal('show');
-                    updateAccountBalanceAfterBlockchainOperation();
+                    updateAccountBalanceAfterBlockchainOperation(SellerPublicKey);
                     document.getElementById("DeployLoader").style.display = "none";
                     document.getElementById("AssetSelector").disabled = false;
                     DeleteFormContent();

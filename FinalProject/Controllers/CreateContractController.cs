@@ -14,23 +14,24 @@ namespace FinalProject.Controllers
 {
     public class CreateContractController : Controller
     {
-        private AssetsInContractContext _context;
-        private AccountsContext _context2;
+        private AssetsInContractContext _AssetInContractsContext;
+        private AccountsContext _AccountsContext;
 
         public CreateContractController(AssetsInContractContext context, AccountsContext context2)
         {
-            _context = context;
-            _context2 = context2;
+            _AssetInContractsContext = context;
+            _AccountsContext = context2;
         }
 
-        public async Task<IActionResult> CreateContractPage()
+        public async Task<IActionResult> CreateContractPage(string PublicKey)
         {
-            await DappAccountController.RefreshAccountData();
-            DappAccount account =  DappAccountController.myAccount;
+            await DappAccountController.RefreshAccountData(PublicKey);
+            DappAccount account = DappAccountController.openWith[PublicKey];
+
             List<AssetInContract> openContractsToCheck = new List<AssetInContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
             List<int> AssetsNumsIncludedInDeals = new List<int>();
             List<Asset> AssetsToDelete = new List<Asset>();
-            openContractsToCheck = await _context.AssetsInContract.FromSqlRaw("select * from AssetsInContract where SellerPublicKey = {0} and (Status ='Ongoing' or Status ='Pending' )", account.publicKey).ToListAsync();
+            openContractsToCheck = await _AssetInContractsContext.AssetsInContract.FromSqlRaw("select * from AssetsInContract where SellerPublicKey = {0} and (Status ='Ongoing' or Status ='Pending' )", account.publicKey).ToListAsync();
             
             foreach (AssetInContract cnrt in openContractsToCheck) //Here we take all the assets ID that included in open contracts
             {
@@ -52,22 +53,23 @@ namespace FinalProject.Controllers
                 account.OwnAssetsList.Remove(astDel);  
             }
 
-            return View(DappAccountController.myAccount); //Here we will return own assets in the account that not included in open contracts 
+            return View(account); //Here we will return own assets in the account that not included in open contracts 
+
         }
 
 
-        public async Task<double> CheckBuyerPublicKeyLegality(string BuyerPublicKey)
+        public async Task<double> CheckBuyerPublicKeyLegality(string BuyerPublicKey, string YourPublicKey)
         {
-            DappAccount account = DappAccountController.myAccount;        
-            double buyerBalance = await DappAccountController.get_ETH_BalanceOfAnyAccount(BuyerPublicKey); 
+            DappAccount account = DappAccountController.openWith[YourPublicKey];
+            double buyerBalance = await DappAccountController.get_ETH_BalanceOfAnyAccount(YourPublicKey, BuyerPublicKey); 
             return buyerBalance;
         }
 
         [HttpPost]
-        public async Task<string> DeployContractAsync (ContractOffer offer )
+        public async Task<string> DeployContract (ContractOffer offer )
         {
-            double beforeBalanceETH = await DappAccountController.get_ETH_Balance();
-            double beforeBalanceILS = await DappAccountController.get_ILS_Balance();
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance(offer.SellerPublicKey, offer.SellerPublicKey);
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance(offer.SellerPublicKey, offer.SellerPublicKey);
             double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
             double afterBalanceETH;
             double afterBalanceILS;
@@ -75,11 +77,11 @@ namespace FinalProject.Controllers
             double feeILS;
             try
             {
-                InsertAssetInContractToDB(offer, "Busy");  
-                var account = DappAccountController.myAccount;
+                InsertAssetInContractToDB(offer, "Busy");
+                var account = DappAccountController.openWith[offer.SellerPublicKey];
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
-                afterBalanceETH = await DappAccountController.get_ETH_Balance();
-                afterBalanceILS = await DappAccountController.get_ILS_Balance();
+                afterBalanceETH = await DappAccountController.get_ETH_Balance(offer.SellerPublicKey, offer.SellerPublicKey);
+                afterBalanceILS = await DappAccountController.get_ILS_Balance(offer.SellerPublicKey , offer.SellerPublicKey);
                 feeETH = beforeBalanceETH - afterBalanceETH;
                 feeILS = beforeBalanceILS - afterBalanceILS;
                 
@@ -115,20 +117,20 @@ namespace FinalProject.Controllers
             newOffer.Status = "Ongoing";
             newOffer.DeniedBy = "None";
             newOffer.Reason = "None";
-            _context.AssetsInContract.Add(newOffer);
-            _context.SaveChanges();
+            _AssetInContractsContext.AssetsInContract.Add(newOffer);
+            _AssetInContractsContext.SaveChanges();
             return true;
         }
 
         private void RemoveBusyAssetInContractFromDB(ContractOffer offer)
         {
 
-            var report = (from d in _context.AssetsInContract
+            var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.AssetID == offer.AssetID && d.ContractAddress=="Busy"
                           select d).Single();
 
-            _context.AssetsInContract.Remove(report);
-            _context.SaveChanges();
+            _AssetInContractsContext.AssetsInContract.Remove(report);
+            _AssetInContractsContext.SaveChanges();
             
         }
 
@@ -136,7 +138,7 @@ namespace FinalProject.Controllers
         public async Task<int> GetAddressIDAsync(string PublicKey)
         {
             List<AccountID> result = new List<AccountID>();
-            result = await _context2.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync(); 
+            result = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync(); 
             if(result.Count==0)
                 return 0;
 

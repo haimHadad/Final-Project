@@ -9,31 +9,33 @@ using FinalProject.Data;
 using Nethereum.Web3;
 using System.Net;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace FinalProject.Controllers
 {
     public class DappAccountController : Controller
     {
-        private AssetContext _context;
-        public static DappAccount myAccount;
-
+        private AssetContext _AssetsContext;
+        public static DappAccount GovrenmentAccount;
+        public static Dictionary<string, DappAccount> openWith = new Dictionary<string, DappAccount>();
         public DappAccountController(AssetContext context)
         {
-            _context = context;
+            _AssetsContext = context;
         }
 
         [HttpGet]
         [HttpPost]
-        public async Task<IActionResult> AccountMainPage(DappAccount account) //here the login succeeded , e initialized the key
+        public IActionResult AccountMainPage(DappAccount account) //here the login succeeded , e initialized the key
         {   
             account.BlockchainAcount = new Nethereum.Web3.Accounts.Account(account.privateKey);
             account.IsValidated = true;
-            myAccount = account; //and save this account in static account so the other controllers be able to read it
-            ConnectToBlockchain();   
-            myAccount.OwnAssetsList = await _context.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
-            await RefreshAccountData();
-            return View(account);
-
+            string myPublicKey = account.publicKey;
+            if (openWith.ContainsKey(myPublicKey))
+                openWith.Remove(myPublicKey);
+            openWith.Add(myPublicKey, account);
+            ConnectToBlockchain(account.publicKey);
+            return RedirectToAction("ShowOwnAssets", "DappAccount", new { PublicKey = account.publicKey } );
         }
 
         [HttpPost]
@@ -73,55 +75,58 @@ namespace FinalProject.Controllers
 
 
 
-        public static async Task RefreshAccountData()
+        public static async Task RefreshAccountData(string publicKey)
         {
-            myAccount.EthBalance = await get_ETH_Balance();
-            myAccount.IlsBalance = await get_ILS_Balance();
-            myAccount.exchangeRateETH_ILS = getExchangeRate_ETH_To_ILS();
+            DappAccount account = DappAccountController.openWith[publicKey];
+            account.EthBalance = await get_ETH_Balance(publicKey, publicKey);
+            account.IlsBalance = await get_ILS_Balance(publicKey, publicKey);
+            account.exchangeRateETH_ILS = getExchangeRate_ETH_To_ILS();
         }
 
 
-        
 
-        public bool ConnectToBlockchain()
+
+        public bool ConnectToBlockchain(String PublicKey)
         {
-            if (myAccount.IsValidated == true)
+            DappAccount account = openWith[PublicKey];
+            if (account.IsValidated == true)
             {
                 try
                 {
-                    var infuraURL = "https://ropsten.infura.io/v3/4dc41c6f591d4d61a3a2e32a219c6635";      
-                    myAccount.Blockchain = new Web3(myAccount.BlockchainAcount, infuraURL);
+                    var infuraURL = "https://ropsten.infura.io/v3/4dc41c6f591d4d61a3a2e32a219c6635";
+                    account.Blockchain = new Web3(account.BlockchainAcount, infuraURL);
 
                 }
                 catch (Exception e)
                 {
-                    myAccount.IsConnectedToBlockChain = false;
+                    account.IsConnectedToBlockChain = false;
                     return false;
                 }
 
             }
-            myAccount.IsConnectedToBlockChain = true;
-            return myAccount.IsConnectedToBlockChain;
+            account.IsConnectedToBlockChain = true;
+            return account.IsConnectedToBlockChain;
         }
 
         [HttpPost]
-        public async Task<double> RecheckBalanceAfterBlockchainOperation()
+        public async Task<double> RecheckBalanceAfterBlockchainOperation(string PublicKey)
         {
 
-            double balanceETH = await get_ETH_Balance();
+            double balanceETH = await get_ETH_Balance(PublicKey, PublicKey);
             return balanceETH;
         }
 
 
-        public static async Task<double> get_ETH_BalanceOfAnyAccount(String AccountAddress)
+        public static async Task<double> get_ETH_BalanceOfAnyAccount(String PublicKey, String PublicKeyToCheck)
         {
-            if (AccountAddress == null || myAccount.IsValidated == false)
-                return -1;
-            if (myAccount.IsConnectedToBlockChain == false)
+            DappAccount account = openWith[PublicKey];
+                if (PublicKey == null || account.IsValidated == false)
+                    return -1;
+            if (account.IsConnectedToBlockChain == false)
                 return -1;
             try
             {
-                var balance = await myAccount.Blockchain.Eth.GetBalance.SendRequestAsync(AccountAddress);
+                var balance = await account.Blockchain.Eth.GetBalance.SendRequestAsync(PublicKeyToCheck);
                 var etherAmount = Web3.Convert.FromWei(balance.Value);
                 double tempBalance = (double)etherAmount;
                 tempBalance = Math.Truncate(tempBalance * 1000) / 1000; //make the double number to be with 3 digits after dot
@@ -135,9 +140,9 @@ namespace FinalProject.Controllers
 
         }
 
-        public static async Task<double> get_ETH_Balance()
+        public static async Task<double> get_ETH_Balance(string PublicKey, string PublicKeyToCheck)
         {
-            double balance = await get_ETH_BalanceOfAnyAccount(myAccount.publicKey);
+            double balance = await get_ETH_BalanceOfAnyAccount(PublicKey, PublicKeyToCheck);
             return balance;
         }
 
@@ -165,28 +170,35 @@ namespace FinalProject.Controllers
             return exchangeRate;
         }
 
-        public static async Task<double> get_ILS_Balance()
+        public static async Task<double> get_ILS_Balance(string PublicKey, string PublicKeyToCheck)
         {
-            double tempBalance = await get_ILS_BalanceOfAnyAccount(myAccount.publicKey);
+            double tempBalance = await get_ILS_BalanceOfAnyAccount(PublicKey, PublicKeyToCheck);
             return tempBalance;
 
         }
 
-        public static async Task<double> get_ILS_BalanceOfAnyAccount(String AccountAddress)
+        public static async Task<double> get_ILS_BalanceOfAnyAccount(string PublicKey, string PublicKeyToCheck)
         {
             double exchangeRate = getExchangeRate_ETH_To_ILS();
-            double tempBalance = await get_ETH_BalanceOfAnyAccount(AccountAddress);
+            double tempBalance = await get_ETH_BalanceOfAnyAccount(PublicKey, PublicKeyToCheck);
             tempBalance = exchangeRate * tempBalance;
             tempBalance = Math.Truncate(tempBalance * 1000) / 1000; //make the double number to be with 3 digits after dot
             return tempBalance;
         }
 
+        public async Task<IActionResult> ShowOwnAssets(string PublicKey) //get own assets update and return a view
+        {
+            DappAccount account = openWith[PublicKey];
+            account.OwnAssetsList = null;
+            account.OwnAssetsList = await _AssetsContext.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
 
+            await RefreshAccountData(PublicKey);
 
-        
+            return View("AccountMainPage", account);
+        }
+
 
     }
-
 
 }
 

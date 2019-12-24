@@ -12,23 +12,24 @@ namespace FinalProject.Controllers
 {
     public class ContractsStatusController : Controller
     {
-        private AssetsInContractContext _context;
-        private AccountsContext _context2;
-        private AssetContext _context3;
+        private AssetsInContractContext _AssetInContractsContext;
+        private AccountsContext _AccountsContext;
+        private AssetContext _AssetsContext;
 
         public ContractsStatusController(AssetsInContractContext context, AccountsContext context2, AssetContext context3)
         {
-            _context = context;
-            _context2 = context2;
-            _context3 = context3;
+            _AssetInContractsContext = context;
+            _AccountsContext = context2;
+            _AssetsContext = context3;
         }
 
-        public async Task<IActionResult> ContractsStatusPage() //now we are going to read all the open contracts
+        public async Task<IActionResult> ContractsStatusPage(string PublicKey) //now we are going to read all the open contracts
         {
-            await DappAccountController.RefreshAccountData();
-            DappAccount account = DappAccountController.myAccount;
+            
+            await DappAccountController.RefreshAccountData(PublicKey);
+            DappAccount account = DappAccountController.openWith[PublicKey];
             List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();
-            deployedContractsFromDB = await _context.AssetsInContract.FromSqlRaw("select * from AssetsInContract where ( SellerPublicKey = {0} or BuyerPublicKey = {0} )", account.publicKey).ToListAsync();
+            deployedContractsFromDB = await _AssetInContractsContext.AssetsInContract.FromSqlRaw("select * from AssetsInContract where ( SellerPublicKey = {0} or BuyerPublicKey = {0} )", account.publicKey).ToListAsync();
             List <ContractOffer> deployedContractsFromBlockchain = new List<ContractOffer>();
 
             foreach (AssetInContract assCon in deployedContractsFromDB)
@@ -97,7 +98,7 @@ namespace FinalProject.Controllers
                     offer.DenyReason = assCon.Reason;
                     offer.AssetID = assCon.AssetID;
                     List<Asset> AssetsInDB = new List<Asset>();
-                    AssetsInDB = await _context3.Assets.FromSqlRaw("select * from Assets where AssetID = {0}", offer.AssetID).ToListAsync();
+                    AssetsInDB = await _AssetsContext.Assets.FromSqlRaw("select * from Assets where AssetID = {0}", offer.AssetID).ToListAsync();
                     offer.Loaction = AssetsInDB[0].Loaction;
                     offer.OwnertID = await GetAddressID(offer.SellerPublicKey);
                     offer.BuyerID = await GetAddressID(offer.BuyerPublicKey);
@@ -114,22 +115,22 @@ namespace FinalProject.Controllers
 
 
             account.DeployedContractList = deployedContractsFromBlockchain;
-            return View(DappAccountController.myAccount);
+            return View(account);
         }
 
         public async Task<int> GetAddressID(string PublicKey) //give me blockchain address, I will give you Israeli ID number
         {
             List<AccountID> result = new List<AccountID>();
-            result = await _context2.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync();
+            result = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync();
             if (result.Count == 0)
                 return 0;
 
             return result[0].ID;
         }
 
-        public async Task<int> GetTimeLeft(string ContractAddress)
+        public async Task<int> GetTimeLeft(string ContractAddress, string PublicKey)
         {
-            DappAccount account = DappAccountController.myAccount;
+            DappAccount account = DappAccountController.openWith[PublicKey];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
             ulong time = await deployedContract.getTimeLeftInSeconds();
             int timeLeft = (int)time;
@@ -138,12 +139,12 @@ namespace FinalProject.Controllers
             return timeLeft;
         }
 
-        public async Task<string> CancelDealAsSeller(string ContractAddress)
+        public async Task<string> CancelDealAsSeller(string ContractAddress, string PublicKey)
         {
-            DappAccount account = DappAccountController.myAccount;
+            DappAccount account = DappAccountController.openWith[PublicKey];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
-            double beforeBalanceETH = await DappAccountController.get_ETH_Balance();
-            double beforeBalanceILS = await DappAccountController.get_ILS_Balance();
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
             double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
             double afterBalanceETH;
             double afterBalanceILS;
@@ -153,8 +154,8 @@ namespace FinalProject.Controllers
             isCanceled = await deployedContract.abort();
             if(isCanceled == true)
             {
-                afterBalanceETH = await DappAccountController.get_ETH_Balance();
-                afterBalanceILS = await DappAccountController.get_ILS_Balance();
+                afterBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
+                afterBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
                 feeETH = beforeBalanceETH - afterBalanceETH;
                 feeILS = beforeBalanceILS - afterBalanceILS;
                 ConfirmationRecipt recipt = new ConfirmationRecipt();
@@ -172,20 +173,20 @@ namespace FinalProject.Controllers
 
         public void deleteCanceledOfferBySeller(string ContractAddress)
         {
-            var report = (from d in _context.AssetsInContract
+            var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.ContractAddress == ContractAddress
                           select d).Single();
 
-            _context.AssetsInContract.Remove(report);
-            _context.SaveChanges();
+            _AssetInContractsContext.AssetsInContract.Remove(report);
+            _AssetInContractsContext.SaveChanges();
         }
 
-        public async Task<string> CancelDealAsBuyer(string ContractAddress, string Notes)
+        public async Task<string> CancelDealAsBuyer(string ContractAddress, string Notes, string PublicKey)
         {
-            DappAccount account = DappAccountController.myAccount;
+            DappAccount account = DappAccountController.openWith[PublicKey];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
-            double beforeBalanceETH = await DappAccountController.get_ETH_Balance();
-            double beforeBalanceILS = await DappAccountController.get_ILS_Balance();
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
             double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
             double afterBalanceETH;
             double afterBalanceILS;
@@ -195,8 +196,8 @@ namespace FinalProject.Controllers
             isDenied = await deployedContract.denyDeal();
             if (isDenied == true)
             {
-                afterBalanceETH = await DappAccountController.get_ETH_Balance();
-                afterBalanceILS = await DappAccountController.get_ILS_Balance();
+                afterBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
+                afterBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
                 feeETH = beforeBalanceETH - afterBalanceETH;
                 feeILS = beforeBalanceILS - afterBalanceILS;
                 ConfirmationRecipt recipt = new ConfirmationRecipt();
@@ -214,7 +215,7 @@ namespace FinalProject.Controllers
 
         public void updateOfferToDenied(string ContractAddress, string Notes)
         {
-            var report = (from d in _context.AssetsInContract
+            var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.ContractAddress == ContractAddress
                           select d).Single();
             report.Status = "Denied";
@@ -228,18 +229,17 @@ namespace FinalProject.Controllers
                 report.Reason = Notes;
             }
 
-            _context.AssetsInContract.Update(report);
-            //_context.AssetsInContract.Remove(report);
-            _context.SaveChanges();
+            _AssetInContractsContext.AssetsInContract.Update(report);
+            _AssetInContractsContext.SaveChanges();
         }
 
 
-        public async Task<string> ApproveContract(string ContractAddress)
+        public async Task<string> ApproveContract(string ContractAddress, string PublicKey)
         {
-            DappAccount account = DappAccountController.myAccount;
+            DappAccount account = DappAccountController.openWith[PublicKey];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
-            double beforeBalanceETH = await DappAccountController.get_ETH_Balance();
-            double beforeBalanceILS = await DappAccountController.get_ILS_Balance();
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
             double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
             double afterBalanceETH;
             double afterBalanceILS;
@@ -256,8 +256,8 @@ namespace FinalProject.Controllers
                 isSigned = await deployedContract.setBuyerSign();
             }
 
-            afterBalanceETH = await DappAccountController.get_ETH_Balance();
-            afterBalanceILS = await DappAccountController.get_ILS_Balance();
+            afterBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
+            afterBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
             feeETH = beforeBalanceETH - afterBalanceETH;
             feeILS = beforeBalanceILS - afterBalanceILS;
             ConfirmationRecipt recipt = new ConfirmationRecipt();
@@ -273,13 +273,12 @@ namespace FinalProject.Controllers
 
         public void updateOfferToPending(string ContractAddress)
         {
-            var report = (from d in _context.AssetsInContract
+            var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.ContractAddress == ContractAddress
                           select d).Single();
             report.Status = "Pending";
-            _context.AssetsInContract.Update(report);
-            //_context.AssetsInContract.Remove(report);
-            _context.SaveChanges();
+            _AssetInContractsContext.AssetsInContract.Update(report);
+            _AssetInContractsContext.SaveChanges();
         }
 
 
