@@ -26,6 +26,7 @@ namespace FinalProject.Controllers
         public async Task<IActionResult> CreateContractPage(string PublicKey)
         {
             await DappAccountController.RefreshAccountData(PublicKey);
+            PublicKey = PublicKey.ToLower();
             DappAccount account = DappAccountController.openWith[PublicKey];
 
             List<AssetInContract> openContractsToCheck = new List<AssetInContract>(); //we will check if there are asset the included in the table, if there are, we will delete the assets from OwnAssetsList in the Create contract View 
@@ -60,6 +61,7 @@ namespace FinalProject.Controllers
 
         public async Task<double> CheckBuyerPublicKeyLegality(string BuyerPublicKey, string YourPublicKey)
         {
+            YourPublicKey = YourPublicKey.ToLower();
             DappAccount account = DappAccountController.openWith[YourPublicKey];
             double buyerBalance = await DappAccountController.get_ETH_BalanceOfAnyAccount(YourPublicKey, BuyerPublicKey); 
             return buyerBalance;
@@ -78,7 +80,7 @@ namespace FinalProject.Controllers
             try
             {
                 InsertAssetInContractToDB(offer, "Busy");
-                var account = DappAccountController.openWith[offer.SellerPublicKey];
+                var account = DappAccountController.openWith[offer.SellerPublicKey.ToLower()];
                 var ContractAddress =await SmartContractService.Deploy(account, offer);
                 afterBalanceETH = await DappAccountController.get_ETH_Balance(offer.SellerPublicKey, offer.SellerPublicKey);
                 afterBalanceILS = await DappAccountController.get_ILS_Balance(offer.SellerPublicKey , offer.SellerPublicKey);

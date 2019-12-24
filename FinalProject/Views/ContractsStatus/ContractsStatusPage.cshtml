@@ -398,7 +398,7 @@
                     url: "/ContractsStatus/ApproveContract",
                     type: 'POST',
                     async: true,
-                    data : { ContractAddress: offer.ContractAddress},
+                    data : { ContractAddress: offer.ContractAddress, PublicKey: offer.BuyerPublicKey },
                     success: function (data)
                     {
 
@@ -406,7 +406,7 @@
                         document.getElementById(lblIdApprove).style.color = "lightgreen";
                         document.getElementById(lblIdApprove).style.display = "block";
                         document.getElementById(loaderIdApprove).style.display = "none";
-                        updateAccountBalanceAfterBlockchainOperation();
+                        updateAccountBalanceAfterBlockchainOperation(offer.BuyerPublicKey);
                         var result = JSON.parse(data);
                         var feeILS = result.feeILS;
                         document.getElementById("actionDealDialogTitle").innerHTML = "The contract approved sucessfully";
@@ -422,14 +422,14 @@
                         var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                         document.getElementById("actionDealDialogMessageContent4").innerHTML = "You paid : ".bold()+offer.PriceETH +" ETH | ₪"+dealPriceILS;
                         $('#actionDealDialog').modal('show');
-                        
+
 
 
                     }
                 });
 
 
-            
+
         }
 
         function CheckIfSure()
@@ -442,7 +442,7 @@
             accountBalanceETH = accountBalanceETH.toFixed(2);
 
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            
+
             document.getElementById("additionalWarningForSigning").innerHTML ="Your balance : ".bold() + accountBalanceETH+" ETH |" + " ₪" +accountBalanceILS+"."
                 +"</br></br>" + "Deal cost : ".bold() + offer.PriceETH + " ETH |" + " ₪" + dealPriceILS+"."
                 + "</br></br>" + "You will pay now : ".bold() + offer.PriceETH + " ETH |" + " ₪" + dealPriceILS+".";
@@ -620,7 +620,7 @@
                     url: "/ContractsStatus/GetTimeLeft",
                     type: 'POST',
                     async: false,
-                    data : { ContractAddress: contractAddress },
+                    data : { ContractAddress: contractAddress, PublicKey: offer.BuyerPublicKey  },
                     success: function (data)
                     {
 

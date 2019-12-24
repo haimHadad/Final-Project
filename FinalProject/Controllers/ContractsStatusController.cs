@@ -27,7 +27,7 @@ namespace FinalProject.Controllers
         {
             
             await DappAccountController.RefreshAccountData(PublicKey);
-            DappAccount account = DappAccountController.openWith[PublicKey];
+            DappAccount account = DappAccountController.openWith[PublicKey.ToLower()];
             List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();
             deployedContractsFromDB = await _AssetInContractsContext.AssetsInContract.FromSqlRaw("select * from AssetsInContract where ( SellerPublicKey = {0} or BuyerPublicKey = {0} )", account.publicKey).ToListAsync();
             List <ContractOffer> deployedContractsFromBlockchain = new List<ContractOffer>();
@@ -130,7 +130,8 @@ namespace FinalProject.Controllers
 
         public async Task<int> GetTimeLeft(string ContractAddress, string PublicKey)
         {
-            DappAccount account = DappAccountController.openWith[PublicKey];
+            //PublicKey = ExctractRealPublicKeyAfterNethereumBug(ContractAddress, PublicKey, "Buyer");
+            DappAccount account = DappAccountController.openWith[PublicKey.ToLower()];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
             ulong time = await deployedContract.getTimeLeftInSeconds();
             int timeLeft = (int)time;
@@ -236,7 +237,9 @@ namespace FinalProject.Controllers
 
         public async Task<string> ApproveContract(string ContractAddress, string PublicKey)
         {
-            DappAccount account = DappAccountController.openWith[PublicKey];
+            //PublicKey = ExctractRealPublicKeyAfterNethereumBug(ContractAddress, PublicKey, "Buyer");
+
+            DappAccount account = DappAccountController.openWith[PublicKey.ToLower()];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
             double beforeBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
             double beforeBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
@@ -282,6 +285,34 @@ namespace FinalProject.Controllers
         }
 
 
+        public string ExctractRealPublicKeyAfterNethereumBug(string ContractAddress, string PublicKey, string Position)
+        {
+            var openContractRow = (from d in _AssetInContractsContext.AssetsInContract
+                                   where d.ContractAddress == ContractAddress
+                                   select d).Single();
+
+            if (Position.Equals("Buyer"))
+            {
+                string _buyerAdressToCheck = openContractRow.BuyerPublicKey.ToLower();
+                if (PublicKey.Equals(_buyerAdressToCheck))
+                {
+                    PublicKey = openContractRow.BuyerPublicKey;
+                }
+            }
+
+            else if (Position.Equals("Seller"))
+            {
+                string _sellerAdressToCheck = openContractRow.SellerPublicKey.ToLower();
+                if (PublicKey.Equals(_sellerAdressToCheck))
+                {
+                    PublicKey = openContractRow.SellerPublicKey;
+                }
+            }
+            return PublicKey;
+        }
+            
+            
+           
     }
 
     internal class ConfirmationRecipt

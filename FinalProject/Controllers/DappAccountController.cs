@@ -30,7 +30,7 @@ namespace FinalProject.Controllers
         {   
             account.BlockchainAcount = new Nethereum.Web3.Accounts.Account(account.privateKey);
             account.IsValidated = true;
-            string myPublicKey = account.publicKey;
+            string myPublicKey = account.publicKey.ToLower();
             if (openWith.ContainsKey(myPublicKey))
                 openWith.Remove(myPublicKey);
             openWith.Add(myPublicKey, account);
@@ -77,9 +77,11 @@ namespace FinalProject.Controllers
 
         public static async Task RefreshAccountData(string publicKey)
         {
+            string publicKeyToCheck = publicKey;
+            publicKey = publicKey.ToLower();
             DappAccount account = DappAccountController.openWith[publicKey];
-            account.EthBalance = await get_ETH_Balance(publicKey, publicKey);
-            account.IlsBalance = await get_ILS_Balance(publicKey, publicKey);
+            account.EthBalance = await get_ETH_Balance(publicKey, publicKeyToCheck);
+            account.IlsBalance = await get_ILS_Balance(publicKey, publicKeyToCheck);
             account.exchangeRateETH_ILS = getExchangeRate_ETH_To_ILS();
         }
 
@@ -88,6 +90,7 @@ namespace FinalProject.Controllers
 
         public bool ConnectToBlockchain(String PublicKey)
         {
+            PublicKey = PublicKey.ToLower();
             DappAccount account = openWith[PublicKey];
             if (account.IsValidated == true)
             {
@@ -111,14 +114,16 @@ namespace FinalProject.Controllers
         [HttpPost]
         public async Task<double> RecheckBalanceAfterBlockchainOperation(string PublicKey)
         {
-
-            double balanceETH = await get_ETH_Balance(PublicKey, PublicKey);
+            string PublicKeyToCheck = PublicKey;
+            PublicKey = PublicKey.ToLower();
+            double balanceETH = await get_ETH_Balance(PublicKey, PublicKeyToCheck);
             return balanceETH;
         }
 
 
         public static async Task<double> get_ETH_BalanceOfAnyAccount(String PublicKey, String PublicKeyToCheck)
         {
+            PublicKey = PublicKey.ToLower();
             DappAccount account = openWith[PublicKey];
                 if (PublicKey == null || account.IsValidated == false)
                     return -1;
@@ -188,6 +193,7 @@ namespace FinalProject.Controllers
 
         public async Task<IActionResult> ShowOwnAssets(string PublicKey) //get own assets update and return a view
         {
+            PublicKey = PublicKey.ToLower();
             DappAccount account = openWith[PublicKey];
             account.OwnAssetsList = null;
             account.OwnAssetsList = await _AssetsContext.Assets.FromSqlRaw("select * from Assets where OwnerPublicKey = {0}", account.publicKey).ToListAsync();
