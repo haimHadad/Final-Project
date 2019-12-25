@@ -1,0 +1,95 @@
+﻿@model FinalProject.Models.DappAccount
+@{
+    ViewData["Title"] = "RegulatorMainPage";
+    Layout = "~/Views/Shared/_LayoutRegulator.cshtml";
+}
+<br />
+@if (@Model.ContractsList == null)
+{
+    <br /><br />
+    <div class="row justify-content-center"><h2>There are NO Ongoing Requests.</h2></div>
+}
+else
+{
+    <div class="row justify-content-center"><button class="btn btn-light">Refresh Table</button></div>
+    <br /><br />
+    <table class=" table table-hover">
+        <thead align="center">
+            <tr>
+                <th scope="col">AssetID</th>
+                <th scope="col">Contract's Address</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody align="center">
+            @foreach (var a in @Model.ContractsList)
+            {
+                var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);                                                                                //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);
+                <tr>
+                    <td>@a.AssetID</td>
+                    <td>@a.ContractAddress</td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" onclick="ViewAssetDeteils( @AssetSerialModel)">View Details</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="dialogTitle">Asset Details</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="asset_dialog_body">
+                <center><img class="w-75 p-3" id="dialogImageURL"></center>
+                <p id="dialogAssetID"></p>
+                <p id="dialogOwnerID"></p>
+                <p id="dialogOwnerPublicKey"></p>
+                <p id="dialogLoaction"></p>
+                <p id="dialogAreaIn"></p>
+                <p id="dialogRooms"></p>
+                <p id="dialogPrice"></p>
+            </div>
+            <div class="modal-footer justify-content-around">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <!-- אתה צריך לשנות כאן שיתאים למודל של הרגולטור, מה שיש עכשיו זה העתק הדבק מהמודל של אקקונט-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            document.getElementById("assetsNavBar").style.textDecoration = "underline";
+            document.getElementById("assetsNavBar").style.fontWeight = "bold";
+        });
+        function ViewAssetDeteils(assetJson) {
+            var fullPublicKey = assetJson.OwnerPublicKey;
+            var partOne = fullPublicKey.substring(0, 12);
+            var partTwo = " . . . ";
+            var partThree = fullPublicKey.substring(32, fullPublicKey.length);
+            var publicKeyToShow = "" + partOne + partTwo + partThree;
+            document.getElementById("dialogAssetID").innerHTML = "Asset No : ".bold() + assetJson.AssetID;
+            document.getElementById("dialogOwnerID").innerHTML = "Your ID : ".bold() + assetJson.OwnerID;
+            document.getElementById("dialogOwnerPublicKey").innerHTML = "Your PublicKey :\n".bold() + publicKeyToShow;//param.OwnerPublicKey ;
+            document.getElementById("dialogLoaction").innerHTML = "Loaction : ".bold() + assetJson.Loaction;
+            document.getElementById("dialogAreaIn").innerHTML = "AreaIn : ".bold() + assetJson.AreaIn;
+            document.getElementById("dialogRooms").innerHTML = "Rooms : ".bold() + assetJson.Rooms;
+            document.getElementById("dialogImageURL").setAttribute("src", assetJson.ImageURL);
+            document.getElementById("dialogPrice").innerHTML = "Purchace Price : ".bold() + assetJson.Price + " ETH / ₪" + getPriceInILS(assetJson.Price);
+            $('.table tbody').on('click', '.btn', function () {
+                var row = $(this).closest('tr');
+                var col = row.find('td:eq(1)').text();
+            })
+        }
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').trigger('focus')
+        })
+    </script>
+}

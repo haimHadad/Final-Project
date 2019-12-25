@@ -25,17 +25,15 @@ namespace FinalProject.Controllers
 
         public IActionResult Logout(string PublicKey)
         {
-            if(DappAccountController.GovrenmentAccount != null)
+            DappAccountController.openWith.Remove(PublicKey.ToLower());
+            if (RegulatorController._regulator != null)
             {
-                if (DappAccountController.GovrenmentAccount.Equals(PublicKey))
+                if (RegulatorController._regulator.publicKey.Equals(PublicKey))
                 {
-                    DappAccountController.GovrenmentAccount = null;
-                    return View("Login");
+                    RegulatorController._regulator = null;
                 }
             }
-            
-            
-            DappAccountController.openWith.Remove(PublicKey);
+                  
             return View("Login");
         }
 

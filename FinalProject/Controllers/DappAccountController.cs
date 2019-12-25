@@ -16,9 +16,10 @@ namespace FinalProject.Controllers
 {
     public class DappAccountController : Controller
     {
-        private AssetContext _AssetsContext;
-        public static DappAccount GovrenmentAccount;
+        private AssetContext _AssetsContext; 
         public static Dictionary<string, DappAccount> openWith = new Dictionary<string, DappAccount>();
+        private const string REGULATOR_PUBLIC_KEY = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
+
         public DappAccountController(AssetContext context)
         {
             _AssetsContext = context;
@@ -29,12 +30,21 @@ namespace FinalProject.Controllers
         public IActionResult AccountMainPage(DappAccount account) //here the login succeeded , e initialized the key
         {   
             account.BlockchainAcount = new Nethereum.Web3.Accounts.Account(account.privateKey);
-            account.IsValidated = true;
-            string myPublicKey = account.publicKey.ToLower();
-            if (openWith.ContainsKey(myPublicKey))
-                openWith.Remove(myPublicKey);
-            openWith.Add(myPublicKey, account);
+            account.IsValidated = true;         
+                string myPublicKey = account.publicKey.ToLower();
+                if (openWith.ContainsKey(myPublicKey))
+                    openWith.Remove(myPublicKey);
+                openWith.Add(myPublicKey, account);
+            
             ConnectToBlockchain(account.publicKey);
+
+            if (String.Compare(account.publicKey, REGULATOR_PUBLIC_KEY) == 0)
+            {// account is regulator 
+                RegulatorController._regulator = account;
+                return RedirectToAction("RegulatorMainPage", "Regulator");        
+            }
+            
+
             return RedirectToAction("ShowOwnAssets", "DappAccount", new { PublicKey = account.publicKey } );
         }
 

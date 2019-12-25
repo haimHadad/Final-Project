@@ -27,13 +27,71 @@
                     <li class="nav-item active">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Login">Data Base Managment<span class="sr-only">(current)</span></a>
                     </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Logout" asp-route-PublicKey="@Model.publicKey">Logout<span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav" dir="rtl">
+                    <li class="nav-item active">
+                        <input type="button" class="btn btn-warning nav-item" value="Copy" onclick="copyToClipBoard()" />
+                    </li>
+                    <li class="nav-item active">
+                        <input id="PublicKeyInput" class="form-control" type="text" value=@Model.publicKey readonly>
+                    </li>
+                    <li class="nav-item active">
+                        <strong class="pr-2 nav-link" style="color:white !important;"> <label id="ilsBalance"></label> <label id="ethBalance"></label></strong>
+                    </li>
                 </ul>
             </div>
         </nav>
+        <div class="modal" id="dialogCopy">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Public-Key</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Public Key has been copied to clipboard.</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
+            <script type="text/javascript">
+                (function ()
+                {
+                    updateAccountBalance();
+                })();
+
+                function updateAccountBalance()
+                {
+
+
+                    var accountBalanceILS=null;
+                    var accountBalanceETH=null;
+                    accountBalanceILS = @Model.IlsBalance;
+                    accountBalanceETH = @Model.EthBalance;
+                    console.log("ETH-Balance:" + accountBalanceETH);
+                    console.log("ILS-Balance:"+accountBalanceILS);
+                    accountBalanceILS = accountBalanceILS.toFixed(2);
+                    accountBalanceETH = accountBalanceETH.toFixed(2);
+                    accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
+                    document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
+                }
+
+
+
+
+            </script>
         </main>
     </div>
 

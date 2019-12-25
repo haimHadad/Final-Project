@@ -64,23 +64,23 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
-            <div class="modal position-fixed" id="dialogCopy">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Public-Key</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <h5 id="generalDialogContent">Public Key has been copied to clipboard.</h5>
-                        </div>
-                    </div>
+            <!--<div class="modal position-fixed" id="dialogCopy">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Public-Key</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 id="generalDialogContent">Public Key has been copied to clipboard.</h5>
                 </div>
             </div>
+        </div>
+    </div>-->
 
-            
+
 
             <script type="text/javascript">
                 (function ()
@@ -90,7 +90,7 @@
 
                 function updateAccountBalance()
                 {
-                    
+
 
                     var accountBalanceILS=null;
                     var accountBalanceETH=null;
@@ -105,7 +105,7 @@
                     document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
                 }
 
-                
+
 
                 function updateAccountBalanceAfterBlockchainOperation(publicKey)
                 {
@@ -128,7 +128,7 @@
                             accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
                             document.getElementById("ethBalance").innerHTML = "" + accountBalanceETH;
-                            
+
                         },
 
                             error: function (xhr, text, error)
