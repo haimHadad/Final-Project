@@ -66,7 +66,7 @@ namespace FinalProject.Controllers
                     offer.RegulatorSign = await deployedContract.getRegulatorSign();
                     offer.Tax = await deployedContract.getTax();
                     offer.BuyerID = await GetAddressID(offer.BuyerPublicKey);
-                    offer.OwnertID = await GetAddressID(offer.SellerPublicKey);
+                    offer.OwnerID = await GetAddressID(offer.SellerPublicKey);
                     offer.NewOwnerPublicKey = await deployedContract.getNewAssetOwner();
                     offer.NewOwnerID = await GetAddressID(offer.NewOwnerPublicKey);
 
@@ -88,7 +88,7 @@ namespace FinalProject.Controllers
                     List<Asset> AssetsInDB = new List<Asset>();
                     AssetsInDB = await _AssetsContext.Assets.FromSqlRaw("select * from Assets where AssetID = {0}", offer.AssetID).ToListAsync();
                     offer.Loaction = AssetsInDB[0].Loaction;
-                    offer.OwnertID = await GetAddressID(offer.SellerPublicKey);
+                    offer.OwnerID = await GetAddressID(offer.SellerPublicKey);
                     offer.BuyerID = await GetAddressID(offer.BuyerPublicKey);
                     offer.AreaIn = AssetsInDB[0].AreaIn;
                     offer.Rooms = AssetsInDB[0].Rooms;

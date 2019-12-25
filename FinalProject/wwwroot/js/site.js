@@ -17,10 +17,10 @@ function offerContract()
         return;
     }
 
-    //AssetID OwnertID SellerPublicKey Loaction AreaIn Rooms BuyerPublicKey PriceETH TimeToBeOpen
+    //AssetID OwnerID SellerPublicKey Loaction AreaIn Rooms BuyerPublicKey PriceETH TimeToBeOpen
 
     var AssetID = document.getElementById("AssetIdTxt").value;
-    var OwnertID = document.getElementById("OwnerIdTxt").value;
+    var OwnerID = document.getElementById("OwnerIdTxt").value;
     var SellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
     var Loaction = document.getElementById("LoactionTxt").value;
     var AreaIn = document.getElementById("AreaInTxt").value;
@@ -40,7 +40,7 @@ function offerContract()
             url: "/CreateContract/DeployContract",
             type: 'POST',
             async: true,
-            data: { AssetID, OwnertID, SellerPublicKey, Loaction, AreaIn, Rooms, BuyerPublicKey, PriceETH, PriceILS, TimeToBeOpen, BuyerID, ImageURL },
+            data: { AssetID, OwnerID, SellerPublicKey, Loaction, AreaIn, Rooms, BuyerPublicKey, PriceETH, PriceILS, TimeToBeOpen, BuyerID, ImageURL },
             success: function (data)
             {
                     var result = JSON.parse(data);

@@ -10,7 +10,7 @@ namespace FinalProject.Models
         
         public int AssetID { get; set; } 
 
-        public int OwnertID { get; set; }
+        public int OwnerID { get; set; }
 
         public string SellerPublicKey { get; set; }
 
