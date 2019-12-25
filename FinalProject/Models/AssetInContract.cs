@@ -28,6 +28,9 @@ namespace FinalProject.Models
 
         [Required]
         public string Reason { get; set; }
+
+        [Required]
+        public double DealPrice { get; set; }
     }
 
 

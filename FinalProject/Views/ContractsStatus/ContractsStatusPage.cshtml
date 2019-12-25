@@ -823,7 +823,9 @@
             document.getElementById("closedContractdialogOwnerPublicKey").innerHTML = "Seller Public-Key : ".bold() + sellerPublicKey;
             document.getElementById("closedContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
             document.getElementById("closedContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;
-            document.getElementById("closedContractdialogNotes").innerHTML = ""+offer.DenyReason;
+            document.getElementById("closedContractdialogNotes").innerHTML = "" + offer.DenyReason;
+            var pricILSFixed = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById("closedContractdialogPrice").innerHTML = "Price : ".bold() + offer.PriceETH + " ETH / ₪" + pricILSFixed;
 
             if (offer.RegulatorSign == true)
             {
@@ -841,7 +843,6 @@
                 document.getElementById("closedContractdialogNewOwnerPublicKey").innerHTML = "New Owner ID : ".bold() +newOwnerPublicKeyToShow ;
                 document.getElementById("closedContractdialogResult").innerHTML = "Approved".bold();
                 document.getElementById("closedContractdialogResult").style.color = "green";
-                document.getElementById("closedContractdialogPrice").innerHTML = "Price : ".bold() + offer.PriceETH + " ETH / ₪" + offer.PriceILS;
                 document.getElementById("closedContractdialogNotes").style.display = "none";
             }
 
@@ -851,7 +852,7 @@
                 document.getElementById("closedContractdialogResult").innerHTML = "Denied By Buyer".bold();
                 document.getElementById("closedContractdialogResult").style.color = "red";
                 document.getElementById("closedContractdialogNotes").style.display = "block";
-                document.getElementById("closedContractdialogPrice").innerHTML = "";
+                
                 document.getElementById("closedContractdialogNewOwnerID").innerHTML = "";
                 document.getElementById("closedContractdialogNewOwnerPublicKey").innerHTML = "";
 
@@ -862,7 +863,7 @@
                 document.getElementById("closedContractdialogResult").innerHTML = "Denied By Regulator".bold();
                 document.getElementById("closedContractdialogResult").style.color = "red";
                 document.getElementById("closedContractdialogNotes").style.display = "block";
-                document.getElementById("closedContractdialogPrice").innerHTML = "";
+                
                 document.getElementById("closedContractdialogNewOwnerID").innerHTML = "";
                 document.getElementById("closedContractdialogNewOwnerPublicKey").innerHTML = "";
             }

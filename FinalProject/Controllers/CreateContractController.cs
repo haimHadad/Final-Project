@@ -119,6 +119,7 @@ namespace FinalProject.Controllers
             newOffer.Status = "Ongoing";
             newOffer.DeniedBy = "None";
             newOffer.Reason = "None";
+            newOffer.DealPrice = offer.PriceETH;
             _AssetInContractsContext.AssetsInContract.Add(newOffer);
             _AssetInContractsContext.SaveChanges();
             return true;

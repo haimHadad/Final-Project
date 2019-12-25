@@ -78,6 +78,8 @@ namespace FinalProject.Controllers
                 {
                     offer.SellerPublicKey = assCon.SellerPublicKey;
                     offer.BuyerPublicKey = assCon.BuyerPublicKey;
+                    offer.PriceETH = assCon.DealPrice;
+                    offer.PriceILS = offer.PriceETH * account.exchangeRateETH_ILS;
                     if (assCon.DeniedBy.Equals("Buyer"))
                     {
                         offer.BuyerSign = false;

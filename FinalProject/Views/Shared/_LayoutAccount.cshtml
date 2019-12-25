@@ -100,7 +100,7 @@
                     console.log("ILS-Balance:"+accountBalanceILS);
                     accountBalanceILS = accountBalanceILS.toFixed(2);
                     accountBalanceETH = accountBalanceETH.toFixed(2);
-                    accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                     document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
                     document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
                 }
