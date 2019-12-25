@@ -357,8 +357,9 @@
             var ErrorMsg = "";
             var dealPrice = parseFloat(offer.PriceETH);
             var accountBalance = @Model.EthBalance;
+            
             var moneyNeed = accountBalance - dealPrice;
-            console.log("Account Balance = "+accountBalance)
+            console.log("Account Balance real to check = "+accountBalance)
             console.log("Money of deal = "+dealPrice)
             console.log("Money that needed = "+moneyNeed)
             if (moneyNeed < 0.005)
@@ -420,12 +421,20 @@
                         document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
                         document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
                         var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "You paid : ".bold()+offer.PriceETH +" ETH | ₪"+dealPriceILS;
+                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "You paid : ".bold()+offer.PriceETH +" ETH | ₪"+dealPriceILS+"</br>"+"Fee : ₪"+result.feeILS;
                         $('#actionDealDialog').modal('show');
-
-
-
+                    },
+                    error: function (xhr, text, error)
+                    {
+                        updateAccountBalanceAfterBlockchainOperation(offer.BuyerPublicKey)
+                        var ErrorMsg = "You running out of ETH, please deposit more ETH.<br>";
+                        $('#DialogBlockchainError').modal('show');
+                        console.log(offer);
+                        document.getElementById(btnIdApprove).style.display = "block";
+                        document.getElementById(loaderIdApprove).style.display = "none";
+                        return;
                     }
+                     
                 });
 
 

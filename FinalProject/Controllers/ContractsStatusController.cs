@@ -258,11 +258,16 @@ namespace FinalProject.Controllers
             {
                 isSigned = await deployedContract.setBuyerSign();
             }
+            else
+            {
+                throw new Exception("Out of money");
+            }
 
             afterBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
             afterBalanceILS = await DappAccountController.get_ILS_Balance(PublicKey, PublicKey);
-            feeETH = beforeBalanceETH - afterBalanceETH;
-            feeILS = beforeBalanceILS - afterBalanceILS;
+            feeETH = beforeBalanceETH - (afterBalanceETH+ ethToPay);
+             
+            feeILS = exchangeRate* feeETH;
             ConfirmationRecipt recipt = new ConfirmationRecipt();
             recipt.ContractAddress = ContractAddress;
             recipt.feeETH = feeETH;
