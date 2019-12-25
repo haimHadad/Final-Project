@@ -221,7 +221,7 @@ namespace FinalProject.Controllers
                           select d).Single();
             report.Status = "Denied";
             report.DeniedBy = "Buyer";
-            if(Notes.Equals(""))
+            if(Notes==null)
             {
                 report.Reason = "None";
             }

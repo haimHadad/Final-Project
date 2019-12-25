@@ -128,7 +128,7 @@
                             accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
                             document.getElementById("ethBalance").innerHTML = "" + accountBalanceETH;
-                            return (afterBalanceETH);
+                            
                         },
 
                             error: function (xhr, text, error)

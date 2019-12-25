@@ -486,7 +486,7 @@
                     url: "/ContractsStatus/CancelDealAsBuyer",
                     type: 'POST',
                     async: true,
-                    data : { ContractAddress: offer.ContractAddress, Notes: notes },
+                    data : { ContractAddress: offer.ContractAddress, Notes: notes, PublicKey:  offer.BuyerPublicKey},
                     success: function (data)
                     {
 
@@ -509,7 +509,7 @@
                         document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
                         document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;
                         $('#actionDealDialog').modal('show');
-                        updateAccountBalanceAfterBlockchainOperation();
+                        updateAccountBalanceAfterBlockchainOperation(offer.BuyerPublicKey);
 
 
                     }
