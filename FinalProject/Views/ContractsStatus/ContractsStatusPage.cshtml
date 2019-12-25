@@ -723,7 +723,6 @@
                     data : { ContractAddress: contractAddress, PublicKey: offer.BuyerPublicKey  },
                     success: function (data)
                     {
-
                         timeLeftInView = data;
                     }
                 });
@@ -762,7 +761,7 @@
             }
 
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            var dealPriceETH = offer.PriceETH
+            var dealPriceETH = offer.PriceETH;
             var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
 
             document.getElementById("openContractImageURL").setAttribute("src", offer.ImageURL);
@@ -775,7 +774,6 @@
             document.getElementById("openContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
             document.getElementById("openContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;
             document.getElementById("openContractdialogPrice").innerHTML = "Price : ".bold() + dealPrice
-
 
             $('#openContractModalDialong').modal('show');
 
