@@ -11,7 +11,7 @@ namespace FinalProject.Controllers
 {
     public class RegulatorController : Controller
     {
-        const string DB_TABLE_NAME = "assetsincontract";
+        const string DB_TABLE_NAME = "AssetsInContract";
         const string PENDING = "pending";
         private AssetsInContractContext _context;
         public static Regulator _regulator;
