@@ -74,7 +74,7 @@
                                 else
                                 {
                                     <td>
-                                        <button id=@btnCancelID onclick="CancelContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal">Cancel Contract</button>
+                                        <button id=@btnCancelID onclick="ShowExpierdContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal">Open to cancel</button>
                                         <img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
                                         <label style="display:none" id=@lblCancelID>Canceled</label>
                                     </td>
@@ -149,6 +149,42 @@
             </div>
         </div>
 
+
+        <!--for seller if the contract expierd-->
+        <div class="modal fade" id="expierdContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="expierdContractModalDialongTitle" aria-hidden="true" style="">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="expierdContractDialogTitle">Contract Offer - &nbsp</h4>
+                        <h4 class="modal-title text-danger" id="expierdContractDialogTime">EXPIERD</h4>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="expierdContract_dialog_body">
+
+                        <center><img class="w-50 p-3" id="expierdContractImageURL"></center>
+                        <p id="expierdContractdialogAssetID"></p>
+                        <p id="expierdContractdialogLoaction"></p>
+                        <p id="expierdContractdialogAreaIn"></p>
+                        <p id="expierdContractdialogRooms"></p>
+                        <p id="expierdContractdialogPrice"></p>
+                        <p id="">------------------------------------</p>
+                        <p id="expierdContractdialogOwnerID"></p>
+                        <p id="expierdContractdialogOwnerPublicKey"></p>
+                        <p id="">------------------------------------</p>
+                        <p id="expierdContractdialogBuyerID"></p>
+                        <p id="expierdContractdialogBuyerPublicKey"></p>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button onclick="CancelDealContract()" id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Cancel Contract</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -532,14 +568,12 @@
             return ErrorMsg;
         }
 
-        function CancelContract(offer) //for seller
+
+
+
+        function CancelDealContract()
         {
-            var checkError = checkEthForFee();
-            if (checkError != "")
-            {
-                $('#DialogBlockchainError').modal('show');
-                return;
-            }
+            var offer = currentExpierdDealOffer;
 
             var loaderID = "DeployLoader" + offer.AssetID;
             var lblCancelID = "lblCancel" + offer.AssetID;
@@ -552,7 +586,7 @@
                     url: "/ContractsStatus/CancelDealAsSeller",
                     type: 'POST',
                     async: true,
-                    data : { ContractAddress: offer.ContractAddress },
+                    data : { ContractAddress: offer.ContractAddress, PublicKey: offer.SellerPublicKey  },
                     success: function (data)
                     {
                         document.getElementById(lblCancelID).style.display = "block";
@@ -573,10 +607,67 @@
                         document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
                         document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;
                         $('#actionDealDialog').modal('show');
-                        updateAccountBalanceAfterBlockchainOperation();
+                        updateAccountBalanceAfterBlockchainOperation(offer.SellerPublicKey);
 
                     }
                 });
+
+
+
+        }
+
+
+
+        var currentExpierdDealOffer;
+
+        function ShowExpierdContract(offer) //for seller
+        {
+            currentExpierdDealOffer = offer;
+            var fullOwnerPublicKey = offer.SellerPublicKey;
+            var partOne = fullOwnerPublicKey.substring(0, 12);
+            var partTwo = " . . . ";
+            var partThree = fullOwnerPublicKey.substring(32, fullOwnerPublicKey.length);
+            var ownerPublicKeyToShow = "" + partOne + partTwo + partThree;
+
+            var fullBuyerPublicKey = offer.BuyerPublicKey;
+            partOne = fullBuyerPublicKey.substring(0, 12);
+            partTwo = " . . . ";
+            partThree = fullBuyerPublicKey.substring(32, fullBuyerPublicKey.length);
+            var buyerPublicKeyToShow = "" + partOne + partTwo + partThree;
+
+            var yourPublicKey = @Model.publicKey;
+            var sellerPublicKey = ownerPublicKeyToShow;
+            var sellerID = offer.OwnertID;
+            var buyerPublicKey = buyerPublicKeyToShow;
+            var buyerID = offer.BuyerID;
+
+                sellerPublicKey = sellerPublicKey + "  &nbsp (You)";
+                sellerID = sellerID + " &nbsp (You)";       
+
+            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var dealPriceETH = offer.PriceETH
+            var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+
+            document.getElementById("expierdContractImageURL").setAttribute("src", offer.ImageURL);
+            document.getElementById("expierdContractdialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
+            document.getElementById("expierdContractdialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
+            document.getElementById("expierdContractdialogAreaIn").innerHTML = "AreaIn : ".bold() + offer.AreaIn +"&nbsp m^2";
+            document.getElementById("expierdContractdialogRooms").innerHTML = "Rooms : ".bold() + offer.Rooms;
+            document.getElementById("expierdContractdialogOwnerID").innerHTML = "Seller ID : ".bold() + sellerID;
+            document.getElementById("expierdContractdialogOwnerPublicKey").innerHTML = "Seller Public-Key : ".bold() + sellerPublicKey;
+            document.getElementById("expierdContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
+            document.getElementById("expierdContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;
+            document.getElementById("expierdContractdialogPrice").innerHTML = "Price : ".bold() + dealPrice
+
+
+            $('#expierdContractModalDialong').modal('show');
+
+
+
+
+
+            /*
+            */
 
 
 
