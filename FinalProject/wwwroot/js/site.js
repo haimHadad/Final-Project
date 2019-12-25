@@ -270,6 +270,8 @@ function SendLoginData() {
         }
         else {
             document.getElementById("loader").style.display = "block";
+            if ($("#public_key_input").val() == "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80")
+                document.getElementById("israelLogo").style.display = "block";
             $("#myform").submit()
         }
 
