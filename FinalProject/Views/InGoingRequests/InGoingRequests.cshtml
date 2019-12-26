@@ -4,7 +4,87 @@
     Layout = "~/Views/Shared/_LayoutRegulator.cshtml";
 }
 
-<h1>InGoingRequests</h1>
+<br />
+
+
+@if (@Model.DeployedContractList == null)
+{
+    <br />
+    <br />
+    <div class="row justify-content-center"><h2>There are NO Requests.</h2></div>
+}
+else
+{
+    <!--<div class="row justify-content-center"><button class="btn btn-light">Refresh Table</button></div>-->
+    <br />
+
+    <div class="row justify-content-center"><h1>Pending Contracts</h1></div>
+    <br />
+    <div style="display:flex">
+        <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()" />
+        <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportPendingContractBtn" />
+    </div>
+    <br />
+    <table id="decitionsTable" class=" table table-hover">
+        <thead align="center">
+            <tr>
+                <th scope="col">AssetID</th>
+                <th scope="col">Loaction</th>
+                <th scope="col">Tracking</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody align="center">
+            @foreach (var a in @Model.DeployedContractList)
+            {
+                var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                <tr>
+                    <td>@a.AssetID</td>
+                    <td>@a.Loaction</td>
+                    <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#PendingContractDetailsDialog" onclick="ViewPendingContractDeteils( @ContractSerialModel)">View Details</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div class="modal fade" id="PendingContractDetailsDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="dialogTitle">Contract Details</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="asset_dialog_body">
+                <center><img class="w-50" id="PendingDialogImageURL"></center>
+                <p id="PendingContractDialogAssetID"></p>
+                <p id="PendingContractDialogLoaction"></p>
+                <p id="PendingContractDialogAreaIn"></p>
+                <p id="PendingContractDialogRooms"></p>
+                <p id="PendingContractDialogPrice"></p>
+                <p id="">------------------------------------</p>
+                <p id="PendingContractDialogOwnerID"></p>
+                <p id="PendingContractDialogOwnerPublicKey"></p>
+                <p id="">------------------------------------</p>
+                <p id="PendingContractDialogBuyerID"></p>
+                <p id="PendingContractDialogBuyerPublicKey"></p>
+                <p id="">------------------------------------</p>
+                <p id="PendingContractDialogTaxAmount"></p>
+
+                <input onclick="AllowNotes()" type="checkbox" id="PendingContractCheckBox"> Add Deny Notes<br>
+                <textarea id="PendingContractdialogNotes" rows="4" cols="50"></textarea>
+            </div>
+            <div class="modal-footer justify-content-around">
+                <button id="PendingContractDenyBtn" onclick="ApprovePendingContract()" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+                <button id="PendingContractApproveBtn" onclick="DenyPendingContract()" type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
+                
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -17,5 +97,114 @@
             document.getElementById("navBarInGoingRequest").style.textDecoration = "underline";
             document.getElementById("navBarInGoingRequest").style.fontWeight = "bold";
         });
+
+        $('#ExportPendingContractBtn').click(function(){ document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")'; });
+
+
+
+        function FilterResults()
+        {
+            var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
+            input = document.getElementById("filterInputResults");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("decitionsTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++)
+            {
+                td0 = tr[i].getElementsByTagName("td")[0];
+                td1 = tr[i].getElementsByTagName("td")[1];
+                if (td0 || td1)
+                {
+                    txtValue0 = td0.textContent || td0.innerText;
+                    txtValue1 = td1.textContent || td1.innerText;
+                    if ( (txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1) )
+                    {
+                        tr[i].style.display = "";
+                    }
+                    else
+                    {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+
+        }
+
+        function ViewPendingContractDeteils(offer) {
+
+            console.log("ID is : -->" + offer.OwnerID);
+            var fullPublicKey = offer.SellerPublicKey;
+            var partOne = fullPublicKey.substring(0, 12);
+            var partTwo = " . . . ";
+            var partThree = fullPublicKey.substring(32, fullPublicKey.length);
+            var OwnerPublicKeyToShow = "" + partOne + partTwo + partThree;
+
+            var fullPublicKey = offer.BuyerPublicKey;
+            var partOne = fullPublicKey.substring(0, 12);
+            var partTwo = " . . . ";
+            var partThree = fullPublicKey.substring(32, fullPublicKey.length);
+            var BuyerPublicKeyToShow = "" + partOne + partTwo + partThree;
+            document.getElementById("PendingContractdialogNotes").value = "";
+            document.getElementById("PendingContractdialogNotes").disabled = true;
+            document.getElementById("PendingContractCheckBox").checked = false;
+            document.getElementById("PendingContractdialogNotes").placeholder = "";
+
+            
+                
+                
+
+            document.getElementById("PendingDialogImageURL").setAttribute("src", offer.ImageURL);
+            document.getElementById("PendingContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
+            document.getElementById("PendingContractDialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
+            document.getElementById("PendingContractDialogAreaIn").innerHTML = "AreaIn : ".bold() + offer.AreaIn + " m^2";
+            document.getElementById("PendingContractDialogRooms").innerHTML = "Rooms :".bold() + offer.Rooms;
+
+            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var dealPriceETH = offer.PriceETH
+            var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+            document.getElementById("PendingContractDialogPrice").innerHTML = "Price : ".bold() + dealPrice;
+            document.getElementById("PendingContractDialogOwnerID").innerHTML = "Owner ID : ".bold() + offer.OwnerID;
+            document.getElementById("PendingContractDialogOwnerPublicKey").innerHTML = "Owner Public-Key : ".bold() + OwnerPublicKeyToShow;
+            document.getElementById("PendingContractDialogBuyerID").innerHTML = "Buyer ID : ".bold() + offer.BuyerID;
+            document.getElementById("PendingContractDialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + BuyerPublicKeyToShow;
+
+            var taxAmountETH, taxAmountILS;
+            taxAmountETH = offer.PriceETH * 0.17;
+            taxAmountETH = taxAmountETH.toFixed(2);
+            taxAmountILS = offer.PriceILS * 0.17;
+            taxAmountILS = taxAmountILS.toFixed(2);
+            taxAmountILS = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var dealTax = "" + taxAmountETH + " ETH | ₪" + taxAmountILS;
+
+            document.getElementById("PendingContractDialogTaxAmount").innerHTML = "Tax : ".bold() + dealTax;
+
+        }
+
+        function AllowNotes()
+        {
+            // PendingContractDenyBtn 
+            checkBox = document.getElementById("PendingContractCheckBox").checked;
+            if (checkBox == true)
+            {
+
+                $('#PendingContractApproveBtn').disabled = true;
+                document.getElementById("PendingContractdialogNotes").placeholder = "Add your notes";
+                document.getElementById("PendingContractdialogNotes").value = "";
+                document.getElementById("PendingContractdialogNotes").disabled = false;
+                document.getElementById("PendingContractApproveBtn").disabled = true;
+            }
+
+            else
+            {
+                document.getElementById("PendingContractdialogNotes").disabled = true;
+                document.getElementById("PendingContractdialogNotes").placeholder = "";
+                document.getElementById("PendingContractdialogNotes").value = "";
+                document.getElementById("PendingContractApproveBtn").disabled = false;
+            }
+            
+        }
+
+
+
     </script>
 }

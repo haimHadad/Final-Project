@@ -2,20 +2,137 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FinalProject.Data;
 using FinalProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 
 namespace FinalProject.Controllers
 {
     public class InGoingRequestsController : Controller
     {
-        public IActionResult ShowInGoingRequests()
+
+        private AssetsInContractContext _AssetInContractsContext;
+        private AccountsContext _AccountsContext;
+        private AssetContext _AssetsContext;
+        public static DappAccount _regulator;
+        public InGoingRequestsController(AssetsInContractContext context, AccountsContext context2, AssetContext context3)
+        {
+            _AssetInContractsContext = context;
+            _AccountsContext = context2;
+            _AssetsContext = context3;
+        }
+
+
+
+        public async Task<IActionResult> ShowInGoingRequestsAsync()
         {
             DappAccount account = RegulatorController._regulator;
+            await DappAccountController.RefreshAccountData(account.publicKey);
+
+            
+            List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();
+            deployedContractsFromDB = await _AssetInContractsContext.AssetsInContract.FromSqlRaw("select * from AssetsInContract where Status= 'Pending'").ToListAsync();
+            List<ContractOffer> deployedContractsFromBlockchain = new List<ContractOffer>();
+
+            foreach (AssetInContract assCon in deployedContractsFromDB)
+            {
+                ContractOffer offer = new ContractOffer();
+                string contractAddress = assCon.ContractAddress;
+                offer.ContractAddress = contractAddress;
+                SmartContractService deployedContract = new SmartContractService(account, contractAddress);
+                Asset assetInContract = await deployedContract.getAssetDestails(); //read from blockchain
+                offer.AssetID = assetInContract.AssetID;
+                offer.Loaction = assetInContract.Loaction;
+                offer.Rooms = assetInContract.Rooms;
+                offer.AreaIn = assetInContract.AreaIn;
+                offer.ImageURL = assetInContract.ImageURL;
+                offer.PriceETH = assetInContract.Price;
+                offer.PriceILS = offer.PriceETH * account.exchangeRateETH_ILS;
+                offer.PriceILS = Math.Truncate(offer.PriceILS * 1000) / 1000;
+                offer.BuyerPublicKey = await deployedContract.getBuyerAddress();
+                offer.SellerPublicKey = await deployedContract.getOldAssetOwner();
+                offer.SellerSign = await deployedContract.getSellerSign();
+                offer.BuyerSign = await deployedContract.getBuyerSign();
+                offer.RegulatorSign = await deployedContract.getRegulatorSign();
+                offer.Tax = await deployedContract.getTax();
+                offer.BuyerID = await GetAddressID(offer.BuyerPublicKey);
+                offer.OwnerID = await GetAddressID(offer.SellerPublicKey);
+                offer.NewOwnerPublicKey = await deployedContract.getNewAssetOwner();
+                offer.NewOwnerID = await GetAddressID(offer.NewOwnerPublicKey);
+                
+                offer.EtherscanURL = "https://ropsten.etherscan.io/address/" + assCon.ContractAddress;
+                deployedContractsFromBlockchain.Add(offer);
+            }
+
+
+            account.DeployedContractList = deployedContractsFromBlockchain;
+
+
+
+
+
+
+
             //return View("~/Views/InGoingRequests/InGoingRequests.cshtml", account);
             return View("InGoingRequests", account);
 
 
+        }
+
+
+        public async Task<int> GetAddressID(string PublicKey) //give me blockchain address, I will give you Israeli ID number
+        {
+            List<AccountID> result = new List<AccountID>();
+            result = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync();
+            if (result.Count == 0)
+                return 0;
+
+            return result[0].ID;
+        }
+
+        public void DownloadExcelPendingContracts()
+        {
+            var collection = RegulatorController._regulator.DeployedContractList;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
+            Sheet.Cells["A1"].Value = "Asset ID";
+            Sheet.Cells["B1"].Value = "Loaction";
+            Sheet.Cells["C1"].Value = "Rooms";
+            Sheet.Cells["D1"].Value = "AreaIn";
+            Sheet.Cells["E1"].Value = "Deal Price - ETH";
+            Sheet.Cells["F1"].Value = "Deal Price - ILS";
+            Sheet.Cells["G1"].Value = "Seller ID";
+            Sheet.Cells["H1"].Value = "Buyer ID";
+            Sheet.Cells["I1"].Value = "URL";
+            Sheet.Cells["J1"].Value = "Tax Amount-ETH";
+            Sheet.Cells["K1"].Value = "Tax Amount-ILS";
+            int row = 2;
+            foreach (var contract in collection)
+            {
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = contract.AssetID;
+                Sheet.Cells[string.Format("B{0}", row)].Value = contract.Loaction;
+                Sheet.Cells[string.Format("C{0}", row)].Value = contract.Rooms;
+                Sheet.Cells[string.Format("D{0}", row)].Value = contract.AreaIn;
+                Sheet.Cells[string.Format("E{0}", row)].Value = contract.PriceETH;
+                Sheet.Cells[string.Format("F{0}", row)].Value = contract.PriceILS;
+                Sheet.Cells[string.Format("G{0}", row)].Value = contract.OwnerID;
+                Sheet.Cells[string.Format("H{0}", row)].Value = contract.BuyerID;
+                Sheet.Cells[string.Format("I{0}", row)].Value = contract.EtherscanURL;
+                Sheet.Cells[string.Format("J{0}", row)].Value = contract.PriceETH*0.17;
+                Sheet.Cells[string.Format("K{0}", row)].Value = contract.PriceILS*0.17;
+                row++;
+            }
+
+
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.Headers.Add("content-disposition", "attachment: filename=" + "Report.xlsx");
+            Response.Body.WriteAsync(Ep.GetAsByteArray());
         }
     }
 }
