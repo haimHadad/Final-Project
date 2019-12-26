@@ -16,12 +16,16 @@ else
 {
     <!--<div class="row justify-content-center"><button class="btn btn-light">Refresh Table</button></div>-->
     <br />
+    
+    <div class="row justify-content-center"><h1>Final Decisions</h1></div>
     <br />
-    <table class=" table table-hover">
+    <input class="form-control mr-sm-2 w-25"  id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction"  onkeyup="FilterResults()"/>
+    <br />
+    <table id="decitionsTable" class=" table table-hover">
         <thead align="center">
             <tr>
                 <th scope="col">AssetID</th>
-                <th scope="col">Contract's Address</th>
+                <th scope="col">Loaction</th>
                 <th scope="col">Tracking</th>
                 <th scope="col">Action</th>
             </tr>
@@ -30,13 +34,13 @@ else
             @foreach (var a in @Model.DeployedContractList)
             {
                 var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                
-            <tr>
-                <td>@a.AssetID</td>
-                <td>@a.ContractAddress</td>
-                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                <td><button class="btn btn-primary" data-toggle="modal" data-target="#ContractDetailsDialog" onclick="ViewContractDeteils( @ContractSerialModel)" >View Details</button></td>
-            </tr>
+
+                <tr>
+                    <td>@a.AssetID</td>
+                    <td>@a.Loaction</td>
+                    <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#ContractDetailsDialog" onclick="ViewContractDeteils( @ContractSerialModel)">View Details</button></td>
+                </tr>
             }
         </tbody>
     </table>
@@ -83,10 +87,37 @@ else
             document.getElementById("navBarRegulatorHome").style.fontWeight = "bold";
         });
 
-        function ViewContractDeteils(offer)
+        function FilterResults()
         {
-            
-            console.log("ID is : -->"+offer.OwnerID);
+            var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
+            input = document.getElementById("filterInputResults");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("decitionsTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) 
+            {
+                td0 = tr[i].getElementsByTagName("td")[0];
+                td1 = tr[i].getElementsByTagName("td")[1];
+                if (td0 || td1)
+                {
+                    txtValue0 = td0.textContent || td0.innerText;
+                    txtValue1 = td1.textContent || td1.innerText;
+                    if ( (txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1) )  
+                    {
+                        tr[i].style.display = "";
+                    } 
+                    else 
+                    {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+
+        }
+
+        function ViewContractDeteils(offer) {
+
+            console.log("ID is : -->" + offer.OwnerID);
             var fullPublicKey = offer.SellerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
             var partTwo = " . . . ";
@@ -99,13 +130,13 @@ else
             var partThree = fullPublicKey.substring(32, fullPublicKey.length);
             var BuyerPublicKeyToShow = "" + partOne + partTwo + partThree;
 
-            
+
 
 
             document.getElementById("DialogImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("ContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
             document.getElementById("ContractDialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
-            document.getElementById("ContractDialogAreaIn").innerHTML = "AreaIn : ".bold() + offer.AreaIn +" m^2";
+            document.getElementById("ContractDialogAreaIn").innerHTML = "AreaIn : ".bold() + offer.AreaIn + " m^2";
             document.getElementById("ContractDialogRooms").innerHTML = "Rooms :".bold() + offer.Rooms;
 
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -133,20 +164,19 @@ else
                 document.getElementById("ContractDialogResult").style.color = "lightgreen";
 
             }
-            else
-            {
+            else {
                 document.getElementById("ContractDialogNewOwnerID").style.display = "block";
                 document.getElementById("ContractDialogNewOwnerPublicKey").style.display = "block";
                 document.getElementById("ContractDialogResult").innerHTML = "Denied By Regulaotr";
                 document.getElementById("ContractDialogResult").style.color = "red";
-                
+
 
             }
 
 
-    
+
 
         }
-      
+
     </script>
 }
