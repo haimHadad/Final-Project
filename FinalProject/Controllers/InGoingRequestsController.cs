@@ -31,12 +31,18 @@ namespace FinalProject.Controllers
         {
             DappAccount account = RegulatorController._regulator;
             await DappAccountController.RefreshAccountData(account.publicKey);
+            account.DeployedContractList =  await GetPendingContracts();            
+            return View("InGoingRequests", account);
+        }
 
-            
+
+        private async Task<List<ContractOffer>> GetPendingContracts()
+        {
+            DappAccount account = RegulatorController._regulator;
+            await DappAccountController.RefreshAccountData(account.publicKey);
             List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();
             deployedContractsFromDB = await _AssetInContractsContext.AssetsInContract.FromSqlRaw("select * from AssetsInContract where Status= 'Pending'").ToListAsync();
             List<ContractOffer> deployedContractsFromBlockchain = new List<ContractOffer>();
-
             foreach (AssetInContract assCon in deployedContractsFromDB)
             {
                 ContractOffer offer = new ContractOffer();
@@ -62,25 +68,27 @@ namespace FinalProject.Controllers
                 offer.OwnerID = await GetAddressID(offer.SellerPublicKey);
                 offer.NewOwnerPublicKey = await deployedContract.getNewAssetOwner();
                 offer.NewOwnerID = await GetAddressID(offer.NewOwnerPublicKey);
-                
+
                 offer.EtherscanURL = "https://ropsten.etherscan.io/address/" + assCon.ContractAddress;
                 deployedContractsFromBlockchain.Add(offer);
             }
-
-
-            account.DeployedContractList = deployedContractsFromBlockchain;
-
-
-
-
-
-
-
-            //return View("~/Views/InGoingRequests/InGoingRequests.cshtml", account);
-            return View("InGoingRequests", account);
-
-
+            return deployedContractsFromBlockchain;
         }
+
+
+
+        public async Task<string> UpdatePendingContracts()
+        {
+            List<ContractOffer> deployedContractsFromBlockchain = await GetPendingContracts();
+            RegulatorController._regulator.DeployedContractList = deployedContractsFromBlockchain;
+            var ContractsListJson = Newtonsoft.Json.JsonConvert.SerializeObject(deployedContractsFromBlockchain);
+            return ContractsListJson;
+        }
+
+
+
+
+
 
 
         public async Task<int> GetAddressID(string PublicKey) //give me blockchain address, I will give you Israeli ID number
@@ -134,5 +142,10 @@ namespace FinalProject.Controllers
             Response.Headers.Add("content-disposition", "attachment: filename=" + "Report.xlsx");
             Response.Body.WriteAsync(Ep.GetAsByteArray());
         }
+
+
+        
+
+
     }
 }

@@ -18,36 +18,46 @@ else
     <!--<div class="row justify-content-center"><button class="btn btn-light">Refresh Table</button></div>-->
     <br />
 
-    <div class="row justify-content-center"><h1>Pending Contracts</h1></div>
+    <div class=""><h1>Pending Contracts</h1></div>
     <br />
     <div style="display:flex">
         <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()" />
         <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportPendingContractBtn" />
     </div>
     <br />
-    <table id="decitionsTable" class=" table table-hover">
-        <thead align="center">
-            <tr>
-                <th scope="col">AssetID</th>
-                <th scope="col">Loaction</th>
-                <th scope="col">Tracking</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
-        <tbody align="center">
-            @foreach (var a in @Model.DeployedContractList)
-            {
-                var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+    <div style="display:flex">
+        <input onclick="RefreshTable()" class="btn btn-info" type="button" value="Refresh Table" id="RefreshPendingContractTblBtn" />
+        <img class="ml-4" style="display:none" id="RefreshTblLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+    </div>
+    <br />
 
+
+    <div style="height:300px; overflow:auto;">
+        <table id="PendingContractsTable" class=" table table-hover">
+            <thead align="center">
                 <tr>
-                    <td>@a.AssetID</td>
-                    <td>@a.Loaction</td>
-                    <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#PendingContractDetailsDialog" onclick="ViewPendingContractDeteils( @ContractSerialModel)">View Details</button></td>
+                    <th scope="col">AssetID</th>
+                    <th scope="col">Loaction</th>
+                    <th scope="col">Tracking</th>
+                    <th scope="col">Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody align="center">
+                @foreach (var a in @Model.DeployedContractList)
+                {
+                    var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                    <tr>
+                        <td>@a.AssetID</td>
+                        <td>@a.Loaction</td>
+                        <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#PendingContractDetailsDialog" onclick="ViewPendingContractDeteils( @ContractSerialModel)">View Details</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
 }
 <div class="modal fade" id="PendingContractDetailsDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -80,7 +90,7 @@ else
             <div class="modal-footer justify-content-around">
                 <button id="PendingContractDenyBtn" onclick="ApprovePendingContract()" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
                 <button id="PendingContractApproveBtn" onclick="DenyPendingContract()" type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
-                
+
             </div>
         </div>
     </div>
@@ -100,14 +110,12 @@ else
 
         $('#ExportPendingContractBtn').click(function(){ document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")'; });
 
-
-
         function FilterResults()
         {
             var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
             input = document.getElementById("filterInputResults");
             filter = input.value.toUpperCase();
-            table = document.getElementById("decitionsTable");
+            table = document.getElementById("PendingContractsTable");
             tr = table.getElementsByTagName("tr");
             for (i = 0; i < tr.length; i++)
             {
@@ -130,9 +138,10 @@ else
 
         }
 
-        function ViewPendingContractDeteils(offer) {
+        function ViewPendingContractDeteils(offer)
+        {
 
-            console.log("ID is : -->" + offer.OwnerID);
+            console.log("Json is : -->" + offer);
             var fullPublicKey = offer.SellerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
             var partTwo = " . . . ";
@@ -149,9 +158,9 @@ else
             document.getElementById("PendingContractCheckBox").checked = false;
             document.getElementById("PendingContractdialogNotes").placeholder = "";
 
-            
-                
-                
+
+
+
 
             document.getElementById("PendingDialogImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("PendingContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
@@ -182,7 +191,7 @@ else
 
         function AllowNotes()
         {
-            // PendingContractDenyBtn 
+            // PendingContractDenyBtn
             checkBox = document.getElementById("PendingContractCheckBox").checked;
             if (checkBox == true)
             {
@@ -201,8 +210,80 @@ else
                 document.getElementById("PendingContractdialogNotes").value = "";
                 document.getElementById("PendingContractApproveBtn").disabled = false;
             }
-            
+
         }
+
+        function RefreshTable()
+        {
+            
+            document.getElementById("RefreshTblLoader").style.display = "block";
+            document.getElementById("RefreshPendingContractTblBtn").style.display = "none";
+
+            @{
+                //var a = Model.DeployedContractList[0];
+                //var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+            }
+
+            $.ajax({
+                    url: "/InGoingRequests/UpdatePendingContracts",
+                    type: 'POST',
+                    async: true,
+                    data : { },
+                    success: function (data)
+                    {
+                        
+                        table = document.getElementById("PendingContractsTable");
+                        for(var i = table.rows.length - 1; i > 0; i--)
+                        {
+                            table.deleteRow(i);
+                        }
+
+                        var List = JSON.parse(data);
+                        var cell1, cell2, cell3, cell4;
+                        var JsonContract;
+                        for (var i = 0;  i < List.length; i++)
+                        {
+
+                            var row = table.insertRow(table.rows.length);
+                            cell1 = row.insertCell(0);
+                            cell2 = row.insertCell(1);
+                            cell3 = row.insertCell(2);
+                            cell4 = row.insertCell(3);
+                            
+                               
+                            List[i].Loaction = List[i].Loaction.replace("'",'`');
+
+                            cell1.innerHTML = List[i].AssetID;
+                            cell2.innerHTML = List[i].Loaction;
+                            var etherscanURL = List[i].etherscanURL;
+                            cell3.innerHTML = "<a target='_blank' href="+etherscanURL+">Here</a>";
+                            JsonContract = JSON.stringify(List[i]);
+                            console.log("Contract: "+ i +JsonContract);
+                            cell4.innerHTML = "<button class='btn btn-primary' data-toggle='modal' data-target='#PendingContractDetailsDialog' onclick='ViewPendingContractDeteils("+JsonContract+")' >View Details</button>";
+                            
+                            document.getElementById("RefreshTblLoader").style.display = "none";
+                            document.getElementById("RefreshPendingContractTblBtn").style.display = "block";
+
+                        }
+
+
+                    },
+                    error: function (xhr, text, error)
+                    {
+
+                        return;
+                    }
+
+                });
+
+
+
+
+
+
+
+        }
+
 
 
 
