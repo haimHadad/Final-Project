@@ -7,6 +7,8 @@ using FinalProject.Models;
 using Microsoft.EntityFrameworkCore;
 using FinalProject.Data;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 
 namespace FinalProject.Controllers
 {
@@ -30,8 +32,8 @@ namespace FinalProject.Controllers
             await DappAccountController.RefreshAccountData(_regulator.publicKey);
 
             //_regulator.ContractsList = await _AssetsContext.AssetsInContract.FromSqlRaw("select * from " + DB_TABLE_NAME + " where status = {0}", PENDING).ToListAsync();
-
             return RedirectToAction("ShowHomePage", "Regulator");
+            
         }
 
 
@@ -94,7 +96,7 @@ namespace FinalProject.Controllers
                     offer.Rooms = AssetsInDB[0].Rooms;
                     offer.ImageURL = AssetsInDB[0].ImageURL;
                     offer.DenyReason = assCon.Reason;
-
+                    
                 }
 
                 offer.EtherscanURL = "https://ropsten.etherscan.io/address/" + assCon.ContractAddress;
@@ -117,5 +119,48 @@ namespace FinalProject.Controllers
 
             return result[0].ID;
         }
+
+        public void DownloadExcelFinalDecitions()
+        {
+            var collection = _regulator.DeployedContractList;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
+            Sheet.Cells["A1"].Value = "Asset ID";
+            Sheet.Cells["B1"].Value = "Loaction";
+            Sheet.Cells["C1"].Value = "Rooms";
+            Sheet.Cells["D1"].Value = "AreaIn";
+            Sheet.Cells["E1"].Value = "Deal Price - ETH";
+            Sheet.Cells["F1"].Value = "Deal Price - ILS";
+            Sheet.Cells["G1"].Value = "Seller ID";
+            Sheet.Cells["H1"].Value = "Buyer ID";
+            int row = 2;
+            foreach (var contract in collection)
+            {
+
+                Sheet.Cells[string.Format("A{0}", row)].Value = contract.AssetID;
+                Sheet.Cells[string.Format("B{0}", row)].Value = contract.Loaction;
+                Sheet.Cells[string.Format("C{0}", row)].Value = contract.Rooms;
+                Sheet.Cells[string.Format("D{0}", row)].Value = contract.AreaIn;
+                Sheet.Cells[string.Format("E{0}", row)].Value = contract.PriceETH;
+                Sheet.Cells[string.Format("F{0}", row)].Value = contract.PriceILS;
+                Sheet.Cells[string.Format("G{0}", row)].Value = contract.OwnerID;
+                Sheet.Cells[string.Format("H{0}", row)].Value = contract.BuyerID;
+                row++;
+            }
+
+
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.Headers.Add("content-disposition", "attachment: filename=" + "Report.xlsx");
+            Response.Body.WriteAsync(Ep.GetAsByteArray());
+            
+            //Response.AddHeader("content-disposition", "attachment: filename=" + "Report.xlsx");
+            //Response.BinaryWrite(Ep.GetAsByteArray());
+            //Response.StatusCode = StatusCodes.Status200OK;
+            //Response.End();
+        }
+
+
     }
 }

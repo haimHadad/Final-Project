@@ -69,6 +69,8 @@ namespace FinalProject
                     name: "default",
                     pattern: "{controller=Home}/{action=Login}/{id?}");
             });
+
+
         }
     }
 }

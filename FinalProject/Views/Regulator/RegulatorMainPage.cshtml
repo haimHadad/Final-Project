@@ -19,7 +19,10 @@ else
     
     <div class="row justify-content-center"><h1>Final Decisions</h1></div>
     <br />
-    <input class="form-control mr-sm-2 w-25"  id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction"  onkeyup="FilterResults()"/>
+    <div style="display:flex">
+        <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()"  />
+        <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn"  />
+    </div>
     <br />
     <table id="decitionsTable" class=" table table-hover">
         <thead align="center">
@@ -87,6 +90,8 @@ else
             document.getElementById("navBarRegulatorHome").style.fontWeight = "bold";
         });
 
+        $('#ExportFinalDecitionsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelFinalDecitions" ,"Regulator")'; });
+
         function FilterResults()
         {
             var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
@@ -94,7 +99,7 @@ else
             filter = input.value.toUpperCase();
             table = document.getElementById("decitionsTable");
             tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) 
+            for (i = 0; i < tr.length; i++)
             {
                 td0 = tr[i].getElementsByTagName("td")[0];
                 td1 = tr[i].getElementsByTagName("td")[1];
@@ -102,15 +107,15 @@ else
                 {
                     txtValue0 = td0.textContent || td0.innerText;
                     txtValue1 = td1.textContent || td1.innerText;
-                    if ( (txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1) )  
+                    if ( (txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1) )
                     {
                         tr[i].style.display = "";
-                    } 
-                    else 
+                    }
+                    else
                     {
                         tr[i].style.display = "none";
                     }
-                }       
+                }
             }
 
         }
@@ -173,10 +178,9 @@ else
 
             }
 
-
-
-
         }
+
+        
 
     </script>
 }
