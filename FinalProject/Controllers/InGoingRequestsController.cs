@@ -249,8 +249,63 @@ namespace FinalProject.Controllers
                 _AssetsContext.Assets.Update(report2);
                 _AssetsContext.SaveChanges();
             }
+        }
+
+      public async Task<string> CancelContractAsRegulator(string ContractAddress, string DenyNotes)
+      {
+            DappAccount account = RegulatorController._regulator;
+            await DappAccountController.RefreshAccountData(account.publicKey);
+            SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance(account.publicKey, account.publicKey);
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance(account.publicKey, account.publicKey);
+            double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
+            double afterBalanceETH;
+            double feeETH;
+            double feeILS;
+            var ReciptJson = "";
+            var isCanceled = await deployedContract.cancelDeal();
+            if (isCanceled == true)
+            {
+                afterBalanceETH = await DappAccountController.get_ETH_Balance(account.publicKey, account.publicKey);
+                feeETH = beforeBalanceETH - afterBalanceETH ;
+                feeILS = feeETH * exchangeRate;
+                feeILS = Math.Truncate(feeILS * 100) / 100; //make the double number to be with 3 digits after dot
+                RegulatorConfirmationRecipt recipt = new RegulatorConfirmationRecipt();
+                recipt.ContractAddress = ContractAddress;
+                recipt.feeETH = feeETH;
+                recipt.feeILS = feeILS;
+                ReciptJson = Newtonsoft.Json.JsonConvert.SerializeObject(recipt);
+                UpdateContractToDeniedAsRegulatorInDB(ContractAddress, DenyNotes);
 
 
+                return ReciptJson;
+            }
+
+            else
+            {
+                throw new Exception("No money the sign the transaction");       
+            }
+
+        }
+
+        private void UpdateContractToDeniedAsRegulatorInDB(string ContractAddress, string Notes)
+        {             
+
+            var report = (from d in _AssetInContractsContext.AssetsInContract
+                           where d.ContractAddress == ContractAddress
+                           select d).Single();
+            report.Status = "Denied";
+            report.DeniedBy = "Regulator";
+            if(Notes==null)
+            {
+                report.Reason = "None";
+            }
+            else
+            {
+                report.Reason = Notes;
+            }
+            _AssetInContractsContext.AssetsInContract.Update(report);
+            _AssetInContractsContext.SaveChanges();
         }
 
     }

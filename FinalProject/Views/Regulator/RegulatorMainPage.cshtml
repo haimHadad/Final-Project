@@ -153,7 +153,7 @@ else
             document.getElementById("ContractDialogOwnerPublicKey").innerHTML = "Owner Public-Key : ".bold() + OwnerPublicKeyToShow;
             document.getElementById("ContractDialogBuyerID").innerHTML = "Buyer ID : ".bold() + offer.BuyerID;
             document.getElementById("ContractDialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + BuyerPublicKeyToShow;
-
+            document.getElementById("ContractdialogNotes").innerText = offer.DenyReason;
             if (offer.RegulatorSign == true)
             {
                 var taxAmountETH = offer.Tax;

@@ -95,7 +95,7 @@ else
                 <textarea id="PendingContractdialogNotes" rows="4" cols="50"></textarea>
             </div>
             <div class="modal-footer justify-content-around">
-                <button id="PendingContractDenyBtn"  type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+                <button id="PendingContractDenyBtn" onclick="CancelContract()"  type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
                 <button id="PendingContractApproveBtn" onclick="ShowWarningFeforeApproval()"  type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
 
             </div>
@@ -460,15 +460,78 @@ else
 
                 });
 
-
-
-
-
-
-
         }
 
 
+        function CancelContract()
+        {
+            var offer = approvedContract;
+            var buttonID = "viewPendingContractDetailsBtn"+ offer.AssetID;
+            var loaderID = "loader" + offer.AssetID;
+            var lblIdApproved = "lblPendingContractResult" + offer.AssetID;
+            console.log("Label ID is---->" + lblIdApproved);
+            var publicKeyRegultaor = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
+            var notes = document.getElementById("PendingContractdialogNotes").value;
+
+            document.getElementById(buttonID).style.display = "none";
+            document.getElementById(loaderID).style.display = "block";
+            
+            $.ajax({
+                    url: "/InGoingRequests/CancelContractAsRegulator",
+                    type: 'POST',
+                    async: true,
+                    data : {ContractAddress: offer.ContractAddress, DenyNotes: notes },
+                    success: function (data)
+                    {
+                        document.getElementById(lblIdApproved).innerHTML = "Canceled";
+                        document.getElementById(lblIdApproved).style.color = "red";
+                        document.getElementById(lblIdApproved).style.display = "block";
+                        document.getElementById(loaderID).style.display = "none";
+                        updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor);
+                        var result = JSON.parse(data);
+                        var feeILS = result.feeILS;
+                        document.getElementById("ResultRegulatorDialogTitle").innerHTML = "The contract canceled sucessfully";
+                        document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "block";
+                        document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+                        document.getElementById("ResultRegulatorDialogMessageContent1").innerHTML = "The contract been canceled.";
+                        document.getElementById("ResultRegulatorDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+                        document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";     
+                        document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Fee : ₪"+result.feeILS;
+                        $('#ResultRegulatorDialog').modal('show'); 
+            
+                    },
+                    error: function (xhr, text, error)
+                    {
+                        document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "none";
+                        updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor)
+                        var ErrorMsg = "You running out of ETH, please deposit more ETH.<br>";
+                        document.getElementById("ErrorRegulatorDialogMessageContent").innerHTML = "" + ErrorMsg;
+                        document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "block";
+                        document.getElementById("ResultRegulatorConfirmationImg").style.display = "none";
+                        document.getElementById(lblIdApproved).style.display = "none";                       
+                        document.getElementById(loaderID).style.display = "none";
+                        document.getElementById(buttonID).style.display = "block";
+                        document.getElementById("ResultRegulatorDialogTitle").innerHTML = "Error";
+
+                        $('#ResultRegulatorDialog').modal('show');
+                        
+             
+                        
+                        return;
+                    }
+                });
+
+
+        }
 
 
     </script>
