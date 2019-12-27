@@ -26,6 +26,7 @@
         <table class=" table table-hover">
             <thead align="center">
                 <tr>
+                    <th scope="col">AssetID</th>
                     <th scope="col">Loaction</th>
                     <th scope="col">Your Role</th>
                     <th scope="col">Tracking</th>
@@ -44,6 +45,7 @@
                         var lblID = "resultOpenContract" + a.AssetID;
                         var loaderID = "DeployLoader" + a.AssetID;
                         <tr>
+                            <td>@a.AssetID</td>
                             <td>@a.Loaction</td>
                             <td>Buyer</td>
                             <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
@@ -62,6 +64,7 @@
                         var lblCancelID = "lblCancel" + a.AssetID;
                         var btnCancelID = "btnCancelID" + a.AssetID;
                         <tr>
+                            <td>@a.AssetID</td>
                             <td>@a.Loaction</td>
                             <td>Seller</td>
                             <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
@@ -89,6 +92,7 @@
                         var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
 
                         <tr>
+                            <td>@a.AssetID</td>
                             <td>@a.Loaction</td>
                             @{
                                 if (Model.publicKey.ToLower().Equals(a.SellerPublicKey))
@@ -196,6 +200,7 @@
         <table class=" table table-hover">
             <thead align="center">
                 <tr>
+                    <th scope="col">AssetID</th>
                     <th scope="col">Loaction</th>
                     <th scope="col">Your Role</th>
                     <th scope="col">Tracking</th>
@@ -216,6 +221,7 @@
                             role = "Buyer";
                         var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
                         <tr>
+                            <td>@a.AssetID</td>
                             <td>@a.Loaction</td>
                             <td>@role</td>
                             <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
@@ -232,6 +238,7 @@
                             role = "Buyer";
                         var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
                         <tr>
+                            <td>@a.AssetID</td>
                             <td>@a.Loaction</td>
                             <td>@role</td>
                             <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
