@@ -158,12 +158,15 @@ namespace FinalProject.Models
 
         public async Task<double> getBalance()
         {
-            double returnedEther;
+            double returnedEther=0;
             var getContractBalanceFunction = deployedContractIsntance.GetFunction("getContractBalance");
-            var salesContractBalanceAsBuyer = await getContractBalanceFunction.CallAsync<UInt64>();
-            var assetPriceAtEther = Web3.Convert.FromWei(salesContractBalanceAsBuyer);
-            returnedEther = Convert.ToDouble(assetPriceAtEther);
+            
+                var salesContractBalanceAsBuyer = await getContractBalanceFunction.CallAsync<BigInteger>();
+                var assetPriceAtEther = Web3.Convert.FromWei(salesContractBalanceAsBuyer);
+                returnedEther = Convert.ToDouble(assetPriceAtEther);
+
             return returnedEther;
+
         }
 
         public async Task<string> getNewAssetOwner()
@@ -213,19 +216,22 @@ namespace FinalProject.Models
             string GovrenmentAddress = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
             if (!GovrenmentAddress.Equals(accountCaller.publicKey)) //if the caller is not the regulator
                 return false;
+            
             try
             {
                 double salesContractBalance = await getBalance();
                 double contractBalanceAsDouble = Convert.ToDouble(salesContractBalance); ;
                 double taxEtherAmountAsDouble = contractBalanceAsDouble * taxPercentage;
+
+                BigInteger taxEtherAmountToPay = UnitConversion.Convert.ToWei(taxEtherAmountAsDouble); 
                 bool buyerSign = await getBuyerSign();
                 if (buyerSign == true) //check if buyer signed
                 {
                     var approveAndExcecuteContractFunction = deployedContractIsntance.GetFunction("approveAndExcecuteContract");  //find the method of the contract 
                     var gasEstimationForApproval = await approveAndExcecuteContractFunction.EstimateGasAsync(accountCaller.publicKey,
-                        null, null, new BigInteger(taxEtherAmountAsDouble));
+                        null, null, taxEtherAmountToPay);
                     var receiptOfApproval = await approveAndExcecuteContractFunction.SendTransactionAndWaitForReceiptAsync(accountCaller.publicKey,
-                        gasEstimationForApproval, null, null, new BigInteger(taxEtherAmountAsDouble));
+                        gasEstimationForApproval, null, null, taxEtherAmountToPay );
                 }
                 else
                     return false;

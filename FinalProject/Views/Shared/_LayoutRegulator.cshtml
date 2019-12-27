@@ -88,7 +88,36 @@
                     document.getElementById("ethBalance").innerHTML = "" +  accountBalanceETH ;
                 }
 
+                function updateAccountBalanceAfterBlockchainOperation(publicKey)
+                {
+                    var echangeRate = @Model.exchangeRateETH_ILS;
+                    console.log("Before update, the public key is : "+publicKey);
+                    $.ajax(
+                    {
+                        url: "/DappAccount/RecheckBalanceAfterBlockchainOperation",
+                        type: 'POST',
+                        async: true,
+                        data: {PublicKey: publicKey},
+                        success: function (data)
+                        {
+                            var accountBalanceETH = data;
+                            afterBalanceETH = data; //for fee calcultion only
+                            afterBalanceILS = afterBalanceETH * echangeRate; //for fee calcultion only
+                            var accountBalanceILS = accountBalanceETH * echangeRate;
+                            accountBalanceILS = accountBalanceILS.toFixed(2);
+                            accountBalanceETH = accountBalanceETH.toFixed(2);
+                            accountBalanceILS = accountBalanceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            document.getElementById("ilsBalance").innerHTML = " ₪" + accountBalanceILS +" | ETH" ;
+                            document.getElementById("ethBalance").innerHTML = "" + accountBalanceETH;
 
+                        },
+
+                            error: function (xhr, text, error)
+                            {
+                                console.log("Error in update of balance after bloackchain operation failed");
+                            }
+                    });
+                }
 
 
             </script>

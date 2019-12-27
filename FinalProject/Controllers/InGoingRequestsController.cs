@@ -143,9 +143,125 @@ namespace FinalProject.Controllers
             Response.Body.WriteAsync(Ep.GetAsByteArray());
         }
 
-
         
+        public async Task<string> ApproveContractAsRegulatorAsync(string ContractAddress)
+        {
+            DappAccount account = RegulatorController._regulator;
+            await DappAccountController.RefreshAccountData(account.publicKey);
+            SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
+            Asset assetDetials = await deployedContract.getAssetDestails();
+            double DealPriceEth = assetDetials.Price;
+            double taxToGet = DealPriceEth * 0.17;
+            double beforeBalanceETH = await DappAccountController.get_ETH_Balance(account.publicKey, account.publicKey);
+            double beforeBalanceILS = await DappAccountController.get_ILS_Balance(account.publicKey, account.publicKey);
+            double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
+            double afterBalanceETH; 
+            double feeETH;
+            double feeILS;
+            var isApproved = await deployedContract.approveAndExcecute(0.17);
+            if(isApproved ==true)
+            {
+                afterBalanceETH = await DappAccountController.get_ETH_Balance(account.publicKey, account.publicKey);
+                feeETH = afterBalanceETH - beforeBalanceETH - taxToGet;
+                feeILS = feeETH * exchangeRate;
+                feeILS = Math.Truncate(feeILS * 100) / 100; //make the double number to be with 3 digits after dot
+                await UpdateContractToApprovedInDB(ContractAddress);
+                await SwitchOwnership(ContractAddress);
 
+
+            }
+
+            else
+            {
+                throw new Exception("Out of money");
+            }
+
+
+            RegulatorConfirmationRecipt recipt = new RegulatorConfirmationRecipt();
+            recipt.ContractAddress = ContractAddress;
+            recipt.feeETH = feeETH;
+            recipt.feeILS = feeILS;
+            var ReciptJson = Newtonsoft.Json.JsonConvert.SerializeObject(recipt);
+            return ReciptJson;
+        }
+
+        private async Task UpdateContractToApprovedInDB(string ContractAddress)
+        {
+            DappAccount account = RegulatorController._regulator;
+            SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
+            Asset dealAsset = await deployedContract.getAssetDestails();
+            int dealAssetID = dealAsset.AssetID;
+            AssetInContract report ; 
+            try 
+            {
+                report = (from d in _AssetInContractsContext.AssetsInContract
+                              where d.AssetID == dealAssetID && d.Status.Equals("Approved")
+                              select d).Single();
+            } 
+            catch(Exception e) 
+            {
+                report = null;
+            }
+            
+
+            if(report != null)
+            {
+                _AssetInContractsContext.AssetsInContract.Remove(report);
+                _AssetInContractsContext.SaveChanges();
+            }
+
+
+
+            var report2 = (from d in _AssetInContractsContext.AssetsInContract
+                          where d.ContractAddress == ContractAddress
+                          select d).Single();
+            report2.Status = "Approved";
+            _AssetInContractsContext.AssetsInContract.Update(report2);
+            _AssetInContractsContext.SaveChanges();
+        }
+
+        private async Task SwitchOwnership(string ContractAddress)
+        {
+            string PublicKeySeller, PublicKeyNewOwner; 
+            DappAccount account = RegulatorController._regulator;
+            SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
+            var report = (from d in _AssetInContractsContext.AssetsInContract
+                          where d.ContractAddress == ContractAddress
+                          select d).Single();
+            PublicKeySeller = report.SellerPublicKey;
+            PublicKeyNewOwner = await deployedContract.getNewAssetOwner();
+            Asset dealAsset = await deployedContract.getAssetDestails();
+            int dealAssetID = dealAsset.AssetID;
+            var PublicKeyNewOwnerToCheck = report.BuyerPublicKey.ToLower();
+            
+
+            if (PublicKeyNewOwnerToCheck.Equals(PublicKeyNewOwner))
+            {
+                PublicKeyNewOwner = report.BuyerPublicKey;
+                int newOwnerID = await GetAddressID(PublicKeyNewOwner);
+               
+                var report2 = (from d in _AssetsContext.Assets
+                                where d.AssetID == dealAssetID
+                               select d).Single();
+                report2.OwnerPublicKey = PublicKeyNewOwner;
+                report2.Price = dealAsset.Price;
+                report2.OwnerID = newOwnerID;
+                _AssetsContext.Assets.Update(report2);
+                _AssetsContext.SaveChanges();
+            }
+
+
+        }
+
+    }
+
+    internal class RegulatorConfirmationRecipt
+    {
+        public string ContractAddress { get; set; }
+
+        public double feeETH { get; set; }
+
+        public double feeILS { get; set; }
 
     }
 }

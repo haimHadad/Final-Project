@@ -91,7 +91,7 @@
                         <tr>
                             <td>@a.Loaction</td>
                             @{
-                                if (a.SellerPublicKey.ToLower().Equals(a.SellerPublicKey))
+                                if (Model.publicKey.ToLower().Equals(a.SellerPublicKey))
                                 {
                                     <td>Seller</td>
                                 }

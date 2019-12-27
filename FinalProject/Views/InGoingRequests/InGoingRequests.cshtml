@@ -46,14 +46,21 @@ else
                 @foreach (var a in @Model.DeployedContractList)
                 {
                     var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                    var btnID = "viewPendingContractDetailsBtn"+ a.AssetID;
+                    var loaderID = "loader" + a.AssetID;
+                    var lblID = "lblPendingContractResult"+ a.AssetID;
 
                     <tr>
                         <td>@a.AssetID</td>
                         <td>@a.Loaction</td>
                         <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#PendingContractDetailsDialog" onclick="ViewPendingContractDeteils( @ContractSerialModel)">View Details</button></td>
-                    </tr>
-                }
+                        <td>
+                            <button id =@btnID class="btn btn-primary" data-toggle="modal" data-target="#PendingContractDetailsDialog" onclick="ViewPendingContractDeteils( @ContractSerialModel)">View Details</button>
+                            <img style="display:none" id=@loaderID  src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+                            <label style="display:none" id=@lblID  ></label>
+                        </td>
+                    </tr> 
+        }
             </tbody>
         </table>
     </div>
@@ -88,14 +95,89 @@ else
                 <textarea id="PendingContractdialogNotes" rows="4" cols="50"></textarea>
             </div>
             <div class="modal-footer justify-content-around">
-                <button id="PendingContractDenyBtn" onclick="ApprovePendingContract()" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
-                <button id="PendingContractApproveBtn" onclick="DenyPendingContract()" type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
+                <button id="PendingContractDenyBtn"  type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+                <button id="PendingContractApproveBtn" onclick="ShowWarningFeforeApproval()"  type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
 
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="DialogBlockchainBeforeRegulatorApprove" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Are You Sure?</h4><!--Contract Offer Details-->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5><strong>After this operation - There is no coming back!!</strong></h5>
+                <h5>-----------------------------------------------------------------------</h5>
+                <h6 id="additionalWarningForSigning"></h6>
+                <small class="text-danger">*The seller will receive the money.</small>
+                <br />
+                <small class="text-danger">*The revenue will be reduced by tax pay.</small>
+                <br />
+                <small class="text-danger">*The buyer receives the asset listing.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                <button onclick="ApprovePendingContract()"  type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal position-fixed" id="ResultRegulatorDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="ResultRegulatorDialogTitle" class="modal-title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div style="display:flex" class="modal-body">
+
+
+                <table>
+                    <tr>
+                        <td>
+                            <h5 id="ResultRegulatorDialogMessageContent1"></h5>
+                            <h5 style="display:none" id="ErrorRegulatorDialogMessageContent"></h5>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <h5 id="ResultRegulatorDialogMessageContent2"></h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="display:flex">
+                                <h5 id="ResultRegulatorDialogMessageContent3">You can track it</h5>
+                                <a style="font-size:16px" target="_blank" id="ResultRegulatorDialogEtherscanURL" href="">&nbsp Here.</a>
+                            </div>
+
+                            <h5 class="text-danger" style="display:none" id="ResultRegulatorDialogMessageContent4"></h5>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <img id="ResultRegulatorConfirmationImg" style="width:70px; height:70px; margin-left:auto;" />
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -138,9 +220,115 @@ else
 
         }
 
+
+        function ShowWarningFeforeApproval()
+        {
+            var offer = approvedContract;
+            
+            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var dealPriceETH = offer.PriceETH
+            var DealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+            var TaxAmountETH = offer.PriceETH * 0.17;
+            TaxAmountETH = TaxAmountETH.toFixed(2);  
+            var TaxAmountILS = offer.PriceILS * 0.17;
+            TaxAmountILS = TaxAmountILS.toFixed(2)
+            TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var TaxAmount = "" + TaxAmountETH + " ETH | ₪" + TaxAmountILS;
+
+            var message = document.getElementById("additionalWarningForSigning");
+            message.innerHTML = "Asset ID : ".bold() + offer.AssetID + "</br>" + "Loaction : ".bold() + offer.Loaction +"</br>"
+                + "Deal Price : ".bold() + DealPrice + "</br>" + "Tax : ".bold() + TaxAmount;
+
+
+            $('#DialogBlockchainBeforeRegulatorApprove').modal('show');
+
+        }
+
+
+
+        function ApprovePendingContract()
+        {
+            var offer = approvedContract;
+            var buttonID = "viewPendingContractDetailsBtn"+ offer.AssetID;
+            var loaderID = "loader" + offer.AssetID;
+            var lblIdApproved = "lblPendingContractResult" + offer.AssetID;
+            console.log("Label ID is---->" + lblIdApproved);
+            var publicKeyRegultaor = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
+
+            var TaxAmountETH = offer.PriceETH * 0.17;
+            TaxAmountETH = TaxAmountETH.toFixed(2);  
+            var TaxAmountILS = offer.PriceILS * 0.17;
+            TaxAmountILS = TaxAmountILS.toFixed(2)
+            TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var TaxAmount = "" + TaxAmountETH + " ETH | ₪" + TaxAmountILS;
+
+
+            document.getElementById(buttonID).style.display = "none";
+            document.getElementById(loaderID).style.display = "block";
+            
+            $.ajax({
+                    url: "/InGoingRequests/ApproveContractAsRegulator",
+                    type: 'POST',
+                    async: true,
+                    data : {ContractAddress: offer.ContractAddress },
+                    success: function (data)
+                    {
+                        document.getElementById(lblIdApproved).innerHTML = "Approved";
+                        document.getElementById(lblIdApproved).style.color = "lightgreen";
+                        document.getElementById(lblIdApproved).style.display = "block";
+                        document.getElementById(loaderID).style.display = "none";
+                        updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor);
+                        var result = JSON.parse(data);
+                        var feeILS = result.feeILS;
+                        document.getElementById("ResultRegulatorDialogTitle").innerHTML = "The contract approved sucessfully";
+                        document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "block";
+                        document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "block";
+                        document.getElementById("ResultRegulatorDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+                        document.getElementById("ResultRegulatorDialogMessageContent1").innerHTML = "The contract been approved.";
+                        document.getElementById("ResultRegulatorDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+                        document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";
+                        var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Tax recieved : ".bold()+TaxAmount+"</br>"+"Fee : ₪"+result.feeILS;
+                        $('#ResultRegulatorDialog').modal('show'); 
+            
+                    },
+                    error: function (xhr, text, error)
+                    {
+                        document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "none";
+                        document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "none";
+                        updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor)
+                        var ErrorMsg = "You running out of ETH, please deposit more ETH.<br>";
+                        document.getElementById("ErrorRegulatorDialogMessageContent").innerHTML = "" + ErrorMsg;
+                        document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "block";
+                        document.getElementById("ResultRegulatorConfirmationImg").style.display = "none";
+                        document.getElementById(lblIdApproved).style.display = "none";                       
+                        document.getElementById(loaderID).style.display = "none";
+                        document.getElementById(buttonID).style.display = "block";
+                        document.getElementById("ResultRegulatorDialogTitle").innerHTML = "Error";
+
+                        $('#ResultRegulatorDialog').modal('show');
+                        
+             
+                        
+                        return;
+                    }
+                });
+
+        }
+
+
+        var approvedContract;
+
         function ViewPendingContractDeteils(offer)
         {
-
+            approvedContract = offer;
             console.log("Json is : -->" + offer);
             var fullPublicKey = offer.SellerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
@@ -157,10 +345,6 @@ else
             document.getElementById("PendingContractdialogNotes").disabled = true;
             document.getElementById("PendingContractCheckBox").checked = false;
             document.getElementById("PendingContractdialogNotes").placeholder = "";
-
-
-
-
 
             document.getElementById("PendingDialogImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("PendingContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
@@ -219,10 +403,7 @@ else
             document.getElementById("RefreshTblLoader").style.display = "block";
             document.getElementById("RefreshPendingContractTblBtn").style.display = "none";
 
-            @{
-                //var a = Model.DeployedContractList[0];
-                //var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-            }
+           
 
             $.ajax({
                     url: "/InGoingRequests/UpdatePendingContracts",
@@ -259,8 +440,11 @@ else
                             cell3.innerHTML = "<a target='_blank' href="+etherscanURL+">Here</a>";
                             JsonContract = JSON.stringify(List[i]);
                             console.log("Contract: "+ i +JsonContract);
-                            cell4.innerHTML = "<button class='btn btn-primary' data-toggle='modal' data-target='#PendingContractDetailsDialog' onclick='ViewPendingContractDeteils("+JsonContract+")' >View Details</button>";
-                            
+                            cell4.innerHTML = "<button id='viewPendingContractDetailsBtn"+ List[i].AssetID +"' class='btn btn-primary' data-toggle='modal' data-target='#PendingContractDetailsDialog' onclick='ViewPendingContractDeteils(" + JsonContract + ")' >View Details</button>"
+                                + "<img style='display:none' id='loader" + List[i].AssetID + "' src='https://s5.gifyu.com/images/LoaderDeploy.gif' alt='LoaderDeploy.gif' border='0' />"
+                                + "<label style='display:none' id='lblPendingContractResult" + List[i].AssetID + "'></label>";
+
+        
                             document.getElementById("RefreshTblLoader").style.display = "none";
                             document.getElementById("RefreshPendingContractTblBtn").style.display = "block";
 
