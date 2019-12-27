@@ -22,96 +22,97 @@
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade active show" id="OpenContractsTab">
+        <div style="height:300px; overflow:auto;">
+            <table class=" table table-hover">
+                <thead align="center">
+                    <tr>
+                        <th scope="col">AssetID</th>
+                        <th scope="col">Loaction</th>
+                        <th scope="col">Your Role</th>
+                        <th scope="col">Tracking</th>
+                        <th scope="col">Action</th>
 
-        <table class=" table table-hover">
-            <thead align="center">
-                <tr>
-                    <th scope="col">AssetID</th>
-                    <th scope="col">Loaction</th>
-                    <th scope="col">Your Role</th>
-                    <th scope="col">Tracking</th>
-                    <th scope="col">Action</th>
-
-                </tr>
-            </thead>
-            <tbody align="center">
-                @foreach (var a in @Model.DeployedContractList)
-                {
-
-                    if (Model.publicKey.ToLower().Equals(a.BuyerPublicKey) && a.IsDeniedByBuyer == false && a.BuyerSign == false) //if I am a buyer, and I didn`t sign
+                    </tr>
+                </thead>
+                <tbody align="center">
+                    @foreach (var a in @Model.DeployedContractList)
                     {
-                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                        var btnID = "openContract" + a.AssetID;
-                        var lblID = "resultOpenContract" + a.AssetID;
-                        var loaderID = "DeployLoader" + a.AssetID;
-                        <tr>
-                            <td>@a.AssetID</td>
-                            <td>@a.Loaction</td>
-                            <td>Buyer</td>
-                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                            <td>
-                                <button id=@btnID onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal">Open Contract</button>
-                                <img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
-                                <label style="display:none;" id=@lblID></label>
-                            </td>
-                        </tr>
+
+                        if (Model.publicKey.ToLower().Equals(a.BuyerPublicKey) && a.IsDeniedByBuyer == false && a.BuyerSign == false) //if I am a buyer, and I didn`t sign
+                        {
+                            var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                            var btnID = "openContract" + a.AssetID;
+                            var lblID = "resultOpenContract" + a.AssetID;
+                            var loaderID = "DeployLoader" + a.AssetID;
+                            <tr>
+                                <td>@a.AssetID</td>
+                                <td>@a.Loaction</td>
+                                <td>Buyer</td>
+                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                                <td>
+                                    <button id=@btnID onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal">Open Contract</button>
+                                    <img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+                                    <label style="display:none;" id=@lblID></label>
+                                </td>
+                            </tr>
+                        }
+
+                        if (Model.publicKey.ToLower().Equals(a.SellerPublicKey) && a.IsDeniedByBuyer == false && a.BuyerSign == false) //if I am a seller
+                        {
+                            var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                            var loaderID = "DeployLoader" + a.AssetID;
+                            var lblCancelID = "lblCancel" + a.AssetID;
+                            var btnCancelID = "btnCancelID" + a.AssetID;
+                            <tr>
+                                <td>@a.AssetID</td>
+                                <td>@a.Loaction</td>
+                                <td>Seller</td>
+                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                                @{
+                                    if (a.TimeToBeOpen > 0)
+                                    {
+                                        var idAwaitForBuyer = "AwaitFor" + a.AssetID;
+                                        <td><label id=@idAwaitForBuyer>Awaiting for buyer signing </label></td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <button id=@btnCancelID onclick="ShowExpierdContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal">Open to cancel</button>
+                                            <img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+                                            <label style="display:none" id=@lblCancelID>Canceled</label>
+                                        </td>
+                                    }
+                                }
+
+                            </tr>
+                        }
+
+                        if (a.BuyerSign == true && a.RegulatorSign == false && a.IsDeniedByRegulator == false) //if I am a buyer, and I didn`t sign
+                        {
+                            var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                            <tr>
+                                <td>@a.AssetID</td>
+                                <td>@a.Loaction</td>
+                                @{
+                                    if (Model.publicKey.ToLower().Equals(a.SellerPublicKey))
+                                    {
+                                        <td>Seller</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Buyer</td>
+                                    }
+                                }
+
+                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                                <td>Awaiting for regulator signing</td>
+                            </tr>
+                        }
                     }
-
-                    if (Model.publicKey.ToLower().Equals(a.SellerPublicKey) && a.IsDeniedByBuyer == false && a.BuyerSign == false) //if I am a seller
-                    {
-                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                        var loaderID = "DeployLoader" + a.AssetID;
-                        var lblCancelID = "lblCancel" + a.AssetID;
-                        var btnCancelID = "btnCancelID" + a.AssetID;
-                        <tr>
-                            <td>@a.AssetID</td>
-                            <td>@a.Loaction</td>
-                            <td>Seller</td>
-                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                            @{
-                                if (a.TimeToBeOpen > 0)
-                                {
-                                    var idAwaitForBuyer = "AwaitFor" + a.AssetID;
-                                    <td><label id=@idAwaitForBuyer>Awaiting for buyer signing </label></td>
-                                }
-                                else
-                                {
-                                    <td>
-                                        <button id=@btnCancelID onclick="ShowExpierdContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal">Open to cancel</button>
-                                        <img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
-                                        <label style="display:none" id=@lblCancelID>Canceled</label>
-                                    </td>
-                                }
-                            }
-
-                        </tr>
-                    }
-
-                    if (a.BuyerSign == true && a.RegulatorSign == false && a.IsDeniedByRegulator == false) //if I am a buyer, and I didn`t sign
-                    {
-                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-
-                        <tr>
-                            <td>@a.AssetID</td>
-                            <td>@a.Loaction</td>
-                            @{
-                                if (Model.publicKey.ToLower().Equals(a.SellerPublicKey))
-                                {
-                                    <td>Seller</td>
-                                }
-                                else
-                                {
-                                    <td>Buyer</td>
-                                }
-                            }
-
-                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                            <td>Awaiting for regulator signing</td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
 
         <div class="modal fade" id="openContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="openContractModalDialongTitle" aria-hidden="true" style="">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -197,87 +198,141 @@
 
     <div class="tab-pane fade" id="ClosedContractsTab">
 
-        <table class=" table table-hover">
-            <thead align="center">
-                <tr>
-                    <th scope="col">AssetID</th>
-                    <th scope="col">Loaction</th>
-                    <th scope="col">Your Role</th>
-                    <th scope="col">Tracking</th>
-                    <th scope="col">Result</th>
+        <div style="height:300px; overflow:auto;">
+            <table class=" table table-hover">
+                <thead align="center">
+                    <tr>
+                        <th scope="col">AssetID</th>
+                        <th scope="col">Loaction</th>
+                        <th scope="col">Your Role</th>
+                        <th scope="col">Tracking</th>
+                        <th scope="col">Result</th>
 
-                </tr>
-            </thead>
-            <tbody align="center">
-                @foreach (var a in @Model.DeployedContractList)
-                {
-                    if (a.RegulatorSign == true)
+                    </tr>
+                </thead>
+                <tbody align="center">
+                    @foreach (var a in @Model.DeployedContractList)
                     {
-                        var role = "";
-                        var yourPublicKey = Model.publicKey;
-                        if (yourPublicKey.ToLower().Equals(a.SellerPublicKey))
-                            role = "Seller";
-                        else
-                            role = "Buyer";
-                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                        <tr>
-                            <td>@a.AssetID</td>
-                            <td>@a.Loaction</td>
-                            <td>@role</td>
-                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                            <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
-                        </tr>
+                        if (a.RegulatorSign == true)
+                        {
+                            var role = "";
+                            var yourPublicKey = Model.publicKey;
+                            if (yourPublicKey.ToLower().Equals(a.SellerPublicKey))
+                                role = "Seller";
+                            else
+                                role = "Buyer";
+                            var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                            <tr>
+                                <td>@a.AssetID</td>
+                                <td>@a.Loaction</td>
+                                <td>@role</td>
+                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                                <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
+                            </tr>
+                        }
+                        else if (a.IsDeniedByBuyer == true || a.IsDeniedByRegulator == true)
+                        {
+                            var role = "";
+                            var yourPublicKey = Model.publicKey;
+                            if (yourPublicKey.Equals(a.SellerPublicKey))
+                                role = "Seller";
+                            else
+                                role = "Buyer";
+                            var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                            <tr>
+                                <td>@a.AssetID</td>
+                                <td>@a.Loaction</td>
+                                <td>@role</td>
+                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                                <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
+                            </tr>
+                        }
                     }
-                    else if (a.IsDeniedByBuyer == true || a.IsDeniedByRegulator == true)
-                    {
-                        var role = "";
-                        var yourPublicKey = Model.publicKey;
-                        if (yourPublicKey.Equals(a.SellerPublicKey))
-                            role = "Seller";
-                        else
-                            role = "Buyer";
-                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                        <tr>
-                            <td>@a.AssetID</td>
-                            <td>@a.Loaction</td>
-                            <td>@role</td>
-                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                            <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+
+            <div class="modal fade" id="closedContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="closedContractModalDialongTitle" aria-hidden="true" style="">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="closedContractDialogTitle">Closed Contract</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="closedContract_dialog_body">
+                            <center><img class="w-50 p-3" id="closedContractImageURL"></center>
+                            <p id="closedContractdialogAssetID"></p>
+                            <p id="closedContractdialogLoaction"></p>
+                            <p id="closedContractdialogAreaIn"></p>
+                            <p id="closedContractdialogRooms"></p>
+                            <p id="closedContractdialogPrice"></p>
+                            <p id="">------------------------------------</p>
+                            <p id="closedContractdialogOwnerID"></p>
+                            <p id="closedContractdialogOwnerPublicKey"></p>
+                            <p id="">------------------------------------</p>
+                            <p id="closedContractdialogBuyerID"></p>
+                            <p id="closedContractdialogBuyerPublicKey"></p>
+                            <p id="">------------------------------------</p>
+                            <p id="closedContractdialogNewOwnerID"></p>
+                            <p id="closedContractdialogNewOwnerPublicKey"></p>
+                            <p class="text-danger" id="closedContractdialogTax"></p>
+                            <h5 id="closedContractdialogResult"></h5>
+                            <textarea id="closedContractdialogNotes" rows="4" cols="50"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
-        <div class="modal fade" id="closedContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="closedContractModalDialongTitle" aria-hidden="true" style="">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+
+        </div> <!--End of closed contracts tab-->
+
+
+        <div class="modal position-fixed" id="actionDealDialog">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="closedContractDialogTitle">Closed Contract</h4>
+                        <h4 id="actionDealDialogTitle" class="modal-title">The contract canceled sucessfully</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" id="closedContract_dialog_body">
-                        <center><img class="w-50 p-3" id="closedContractImageURL"></center>
-                        <p id="closedContractdialogAssetID"></p>
-                        <p id="closedContractdialogLoaction"></p>
-                        <p id="closedContractdialogAreaIn"></p>
-                        <p id="closedContractdialogRooms"></p>
-                        <p id="closedContractdialogPrice"></p>
-                        <p id="">------------------------------------</p>
-                        <p id="closedContractdialogOwnerID"></p>
-                        <p id="closedContractdialogOwnerPublicKey"></p>
-                        <p id="">------------------------------------</p>
-                        <p id="closedContractdialogBuyerID"></p>
-                        <p id="closedContractdialogBuyerPublicKey"></p>
-                        <p id="">------------------------------------</p>
-                        <p id="closedContractdialogNewOwnerID"></p>
-                        <p id="closedContractdialogNewOwnerPublicKey"></p>
-                        <p class="text-danger" id="closedContractdialogTax"></p>
-                        <h5 id="closedContractdialogResult"></h5>
-                        <textarea id="closedContractdialogNotes" rows="4" cols="50"></textarea>
+                    <div style="display:flex" class="modal-body">
+
+
+                        <table>
+                            <tr>
+                                <td>
+                                    <h5 id="actionDealDialogMessageContent1"></h5>
+                                    <h5 style="display:none" id="actionDealDialogErrorMessageContent">Cancel operation failed. Try again later.</h5>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <h5 id="actionDealDialogMessageContent2"></h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display:flex">
+                                        <h5 id="actionDealDialogMessageContent3">You can track it</h5>
+                                        <a style="font-size:16px" target="_blank" id="actionDealDialogEtherscanURL" href="">&nbsp Here.</a>
+                                    </div>
+
+                                    <h5 class="text-danger" style="display:none" id="actionDealDialogMessageContent4"></h5>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                        <img id="actionConfirmationImg" style="width:70px; height:70px; margin-left:auto;" />
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -286,105 +341,52 @@
             </div>
         </div>
 
-
-
-    </div> <!--End of closed contracts tab-->
-
-
-    <div class="modal position-fixed" id="actionDealDialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 id="actionDealDialogTitle" class="modal-title">The contract canceled sucessfully</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div style="display:flex" class="modal-body">
-
-
-                    <table>
-                        <tr>
-                            <td>
-                                <h5 id="actionDealDialogMessageContent1"></h5>
-                                <h5 style="display:none" id="actionDealDialogErrorMessageContent">Cancel operation failed. Try again later.</h5>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <h5 id="actionDealDialogMessageContent2"></h5>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div style="display:flex">
-                                    <h5 id="actionDealDialogMessageContent3">You can track it</h5>
-                                    <a style="font-size:16px" target="_blank" id="actionDealDialogEtherscanURL" href="">&nbsp Here.</a>
-                                </div>
-
-                                <h5 class="text-danger" style="display:none" id="actionDealDialogMessageContent4"></h5>
-                            </td>
-                        </tr>
-
-                    </table>
-
-                    <img id="actionConfirmationImg" style="width:70px; height:70px; margin-left:auto;" />
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <div class="modal fade" id="DialogBlockchainError" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Error</h4><!--Contract Offer Details-->
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>You running out of ETH, please deposit more ETH.</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="closeButton" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="modal fade" id="DialogBlockchainError" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Error</h4><!--Contract Offer Details-->
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h5>You running out of ETH, please deposit more ETH.</h5>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="closeButton" class="btn btn-danger" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
-    <div class="modal fade" id="DialogBlockchainBeforeApprove" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Are You Sure?</h4><!--Contract Offer Details-->
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h5><strong>After this operation - There is no coming back!!</strong></h5>
-                    <h5>-----------------------------------------------------------------------</h5>
-                    <h6 id="additionalWarningForSigning"></h6>
-                    <small class="text-danger">*The payment will be send to the contract first.</small>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-                    <button onclick="ApproveDeal()" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+        <div class="modal fade" id="DialogBlockchainBeforeApprove" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Are You Sure?</h4><!--Contract Offer Details-->
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h5><strong>After this operation - There is no coming back!!</strong></h5>
+                        <h5>-----------------------------------------------------------------------</h5>
+                        <h6 id="additionalWarningForSigning"></h6>
+                        <small class="text-danger">*The payment will be send to the contract first.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                        <button onclick="ApproveDeal()" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
 
+                    </div>
                 </div>
             </div>
         </div>
+
+
     </div>
-
-
-</div>
 
 
 @section scripts

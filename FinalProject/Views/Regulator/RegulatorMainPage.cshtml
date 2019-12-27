@@ -24,29 +24,32 @@ else
         <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn"  />
     </div>
     <br />
-    <table id="decitionsTable" class=" table table-hover">
-        <thead align="center">
-            <tr>
-                <th scope="col">AssetID</th>
-                <th scope="col">Loaction</th>
-                <th scope="col">Tracking</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
-        <tbody align="center">
-            @foreach (var a in @Model.DeployedContractList)
-            {
-                var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-
+    <div style="height:300px; overflow:auto;">
+        <table id="decitionsTable" class=" table table-hover">
+            <thead align="center">
                 <tr>
-                    <td>@a.AssetID</td>
-                    <td>@a.Loaction</td>
-                    <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#ContractDetailsDialog" onclick="ViewContractDeteils( @ContractSerialModel)">View Details</button></td>
+                    <th scope="col">AssetID</th>
+                    <th scope="col">Loaction</th>
+                    <th scope="col">Tracking</th>
+                    <th scope="col">Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody align="center">
+                @foreach (var a in @Model.DeployedContractList)
+                {
+                    var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
+                    <tr>
+                        <td>@a.AssetID</td>
+                        <td>@a.Loaction</td>
+                        <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#ContractDetailsDialog" onclick="ViewContractDeteils( @ContractSerialModel)">View Details</button></td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
 }
 <div class="modal fade" id="ContractDetailsDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

@@ -6,6 +6,7 @@
 <br />
 <h1>Your Assets</h1>
 <br />
+<div style="height:300px; overflow:auto;">
     <table class=" table table-hover">
         <thead align="center">
             <tr>
@@ -27,35 +28,37 @@
             }
         </tbody>
     </table>
-<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="dialogTitle">Asset Details</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="asset_dialog_body">
-                <center><img class="w-75 p-3" id="dialogImageURL"></center>
-                <p id="dialogAssetID"></p>
-                <p id="dialogOwnerID"></p>
-                <p id="dialogOwnerPublicKey"></p>
-                <p id="dialogLoaction"></p>
-                <p id="dialogAreaIn"></p>
-                <p id="dialogRooms"></p>
-                <p id="dialogPrice"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+</div>
+
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="dialogTitle">Asset Details</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="asset_dialog_body">
+                    <center><img class="w-75 p-3" id="dialogImageURL"></center>
+                    <p id="dialogAssetID"></p>
+                    <p id="dialogOwnerID"></p>
+                    <p id="dialogOwnerPublicKey"></p>
+                    <p id="dialogLoaction"></p>
+                    <p id="dialogAreaIn"></p>
+                    <p id="dialogRooms"></p>
+                    <p id="dialogPrice"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-@section scripts
+    @section scripts
 {
 
-    <script type="text/javascript">
+        <script type="text/javascript">
         $(document).ready(function () {
             document.getElementById("assetsNavBar").style.textDecoration = "underline";
             document.getElementById("assetsNavBar").style.fontWeight = "bold";
@@ -93,5 +96,5 @@
         $('#myModal').on('shown.bs.modal', function () {
             $('#myInput').trigger('focus')
         })
-    </script>
-}
+        </script>
+    }
