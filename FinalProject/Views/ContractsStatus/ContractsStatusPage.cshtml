@@ -275,6 +275,7 @@
                         <p id="">------------------------------------</p>
                         <p id="closedContractdialogNewOwnerID"></p>
                         <p id="closedContractdialogNewOwnerPublicKey"></p>
+                        <p class="text-danger" id="closedContractdialogTax"></p>
                         <h5 id="closedContractdialogResult"></h5>
                         <textarea id="closedContractdialogNotes" rows="4" cols="50"></textarea>
                     </div>
@@ -825,9 +826,18 @@
             document.getElementById("closedContractdialogNotes").innerHTML = "" + offer.DenyReason;
             var pricILSFixed = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             document.getElementById("closedContractdialogPrice").innerHTML = "Price : ".bold() + offer.PriceETH + " ETH / ₪" + pricILSFixed;
-
+            document.getElementById("closedContractdialogTax").innerHTML = "";
             if (offer.RegulatorSign == true)
             {
+                var taxAmountETH = offer.Tax;
+                var rate_EthToILS = @Model.exchangeRateETH_ILS;
+                var taxAmountILS = rate_EthToILS*taxAmountETH;
+                taxAmountETH = taxAmountETH.toFixed(2);
+                taxAmountILS = taxAmountILS.toFixed(2);
+                var taxAmountILSfixed = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById("closedContractdialogTax").innerHTML = "Tax : ".bold() + taxAmountETH + " ETH | ₪" + taxAmountILSfixed;
+
+
                 var newOwnerID = offer.NewOwnerID;
                 partOne = newOwnerPublicKey.substring(0, 12);
                 partTwo = " . . . ";

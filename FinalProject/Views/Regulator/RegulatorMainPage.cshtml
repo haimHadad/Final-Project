@@ -73,6 +73,7 @@ else
                 <p id="">------------------------------------</p>
                 <p id="ContractDialogNewOwnerID"></p>
                 <p id="ContractDialogNewOwnerPublicKey"></p>
+                <p class="text-danger" id="ContractDialogTaxAmount"></p>
                 <h5 id="ContractDialogResult"></h5>
                 <textarea id="ContractdialogNotes" rows="4" cols="50"></textarea>
             </div>
@@ -137,7 +138,7 @@ else
 
 
 
-
+            
             document.getElementById("DialogImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("ContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
             document.getElementById("ContractDialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
@@ -153,7 +154,16 @@ else
             document.getElementById("ContractDialogBuyerID").innerHTML = "Buyer ID : ".bold() + offer.BuyerID;
             document.getElementById("ContractDialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + BuyerPublicKeyToShow;
 
-            if (offer.RegulatorSign == true) {
+            if (offer.RegulatorSign == true)
+            {
+                var taxAmountETH = offer.Tax;
+                var rate_EthToILS = @Model.exchangeRateETH_ILS;
+                var taxAmountILS = rate_EthToILS*taxAmountETH;
+                taxAmountETH = taxAmountETH.toFixed(2);
+                taxAmountILS = taxAmountILS.toFixed(2);
+                var taxAmountILSfixed = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                document.getElementById("ContractDialogTaxAmount").innerHTML = "Tax : ".bold() + taxAmountETH + " ETH | ₪" + taxAmountILSfixed;
+
                 document.getElementById("ContractDialogNewOwnerID").style.display = "block";
                 document.getElementById("ContractDialogNewOwnerPublicKey").style.display = "block";
                 var fullPublicKey = offer.NewOwnerPublicKey;
@@ -168,13 +178,15 @@ else
                 document.getElementById("ContractDialogResult").innerHTML = "Approved";
                 document.getElementById("ContractDialogResult").style.color = "lightgreen";
 
+                
+
             }
             else {
                 document.getElementById("ContractDialogNewOwnerID").style.display = "block";
                 document.getElementById("ContractDialogNewOwnerPublicKey").style.display = "block";
                 document.getElementById("ContractDialogResult").innerHTML = "Denied By Regulaotr";
                 document.getElementById("ContractDialogResult").style.color = "red";
-
+                document.getElementById("ContractDialogTaxAmount").innerHTML = "";
 
             }
 
