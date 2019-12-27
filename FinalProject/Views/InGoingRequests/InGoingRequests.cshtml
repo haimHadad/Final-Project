@@ -77,11 +77,21 @@ else
             </div>
             <div class="modal-body" id="asset_dialog_body">
                 <center><img class="w-50" id="PendingDialogImageURL"></center>
-                <p id="PendingContractDialogAssetID"></p>
-                <p id="PendingContractDialogLoaction"></p>
-                <p id="PendingContractDialogAreaIn"></p>
-                <p id="PendingContractDialogRooms"></p>
-                <p id="PendingContractDialogPrice"></p>
+                <br />
+                <div style="display:flex">
+                    <p id="PendingContractDialogAssetID"></p>
+                    <p>&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</p>
+                    <p id="PendingContractDialogLoaction"></p>
+                </div>
+
+                <div style="display:flex">
+                    <p id="PendingContractDialogAreaIn"></p>
+                    <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                    <p id="PendingContractDialogRooms"></p>
+                    <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                    <p id="PendingContractDialogPrice"></p>
+                </div>
+
                 <p id="">------------------------------------</p>
                 <p id="PendingContractDialogOwnerID"></p>
                 <p id="PendingContractDialogOwnerPublicKey"></p>
@@ -227,13 +237,13 @@ else
             
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             var dealPriceETH = offer.PriceETH
-            var DealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+            var DealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
             var TaxAmountETH = offer.PriceETH * 0.17;
             TaxAmountETH = TaxAmountETH.toFixed(2);  
             var TaxAmountILS = offer.PriceILS * 0.17;
             TaxAmountILS = TaxAmountILS.toFixed(2)
             TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            var TaxAmount = "" + TaxAmountETH + " ETH | ₪" + TaxAmountILS;
+            var TaxAmount = "" + TaxAmountETH + " ETH / ₪" + TaxAmountILS;
 
             var message = document.getElementById("additionalWarningForSigning");
             message.innerHTML = "Asset ID : ".bold() + offer.AssetID + "</br>" + "Loaction : ".bold() + offer.Loaction +"</br>"
@@ -260,7 +270,7 @@ else
             var TaxAmountILS = offer.PriceILS * 0.17;
             TaxAmountILS = TaxAmountILS.toFixed(2)
             TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            var TaxAmount = "" + TaxAmountETH + " ETH | ₪" + TaxAmountILS;
+            var TaxAmount = "" + TaxAmountETH + " ETH / ₪" + TaxAmountILS;
 
 
             document.getElementById(buttonID).style.display = "none";
@@ -354,7 +364,7 @@ else
 
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             var dealPriceETH = offer.PriceETH
-            var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+            var dealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
             document.getElementById("PendingContractDialogPrice").innerHTML = "Price : ".bold() + dealPrice;
             document.getElementById("PendingContractDialogOwnerID").innerHTML = "Owner ID : ".bold() + offer.OwnerID;
             document.getElementById("PendingContractDialogOwnerPublicKey").innerHTML = "Owner Public-Key : ".bold() + OwnerPublicKeyToShow;
@@ -367,7 +377,7 @@ else
             taxAmountILS = offer.PriceILS * 0.17;
             taxAmountILS = taxAmountILS.toFixed(2);
             taxAmountILS = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            var dealTax = "" + taxAmountETH + " ETH | ₪" + taxAmountILS;
+            var dealTax = "" + taxAmountETH + " ETH / ₪" + taxAmountILS;
 
             document.getElementById("PendingContractDialogTaxAmount").innerHTML = "Tax : ".bold() + dealTax;
 

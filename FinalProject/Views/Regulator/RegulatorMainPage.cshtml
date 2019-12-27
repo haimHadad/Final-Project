@@ -62,11 +62,22 @@ else
             </div>
             <div class="modal-body" id="asset_dialog_body">
                 <center><img class="w-50" id="DialogImageURL"></center>
-                <p id="ContractDialogAssetID"></p>
-                <p id="ContractDialogLoaction"></p>
-                <p id="ContractDialogAreaIn"></p>
-                <p id="ContractDialogRooms"></p>
-                <p id="ContractDialogPrice"></p>
+                <br />
+                <div style="display:flex">
+                    <p id="ContractDialogAssetID"></p>
+                    <p>&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</p>
+                    <p id="ContractDialogLoaction"></p>
+                </div>
+
+                <div style="display:flex">
+                    <p id="ContractDialogAreaIn"></p>
+                    <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                    <p id="ContractDialogRooms"></p>
+                    <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                    <p id="ContractDialogPrice"></p>
+                </div>
+
+
                 <p id="">------------------------------------</p>
                 <p id="ContractDialogOwnerID"></p>
                 <p id="ContractDialogOwnerPublicKey"></p>
@@ -78,7 +89,7 @@ else
                 <p id="ContractDialogNewOwnerPublicKey"></p>
                 <p class="text-danger" id="ContractDialogTaxAmount"></p>
                 <h5 id="ContractDialogResult"></h5>
-                <textarea id="ContractdialogNotes" rows="4" cols="50"></textarea>
+                <textarea readonly id="ContractdialogNotes" rows="4" cols="50"></textarea>
             </div>
             <div class="modal-footer justify-content-around">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">close</button>
@@ -146,11 +157,11 @@ else
             document.getElementById("ContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
             document.getElementById("ContractDialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
             document.getElementById("ContractDialogAreaIn").innerHTML = "AreaIn : ".bold() + offer.AreaIn + " m^2";
-            document.getElementById("ContractDialogRooms").innerHTML = "Rooms :".bold() + offer.Rooms;
+            document.getElementById("ContractDialogRooms").innerHTML = "Rooms : ".bold() + offer.Rooms;
 
-            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            var dealPriceETH = offer.PriceETH
-            var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+            var dealPriceILS = offer.PriceILS.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var dealPriceETH = offer.PriceETH;
+            var dealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
             document.getElementById("ContractDialogPrice").innerHTML = "Price : ".bold() + dealPrice;
             document.getElementById("ContractDialogOwnerID").innerHTML = "Owner ID : ".bold() + offer.OwnerID;
             document.getElementById("ContractDialogOwnerPublicKey").innerHTML = "Owner Public-Key : ".bold() + OwnerPublicKeyToShow;
@@ -165,7 +176,7 @@ else
                 taxAmountETH = taxAmountETH.toFixed(2);
                 taxAmountILS = taxAmountILS.toFixed(2);
                 var taxAmountILSfixed = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                document.getElementById("ContractDialogTaxAmount").innerHTML = "Tax : ".bold() + taxAmountETH + " ETH | ₪" + taxAmountILSfixed;
+                document.getElementById("ContractDialogTaxAmount").innerHTML = "Tax : ".bold() + taxAmountETH + " ETH / ₪" + taxAmountILSfixed;
 
                 document.getElementById("ContractDialogNewOwnerID").style.display = "block";
                 document.getElementById("ContractDialogNewOwnerPublicKey").style.display = "block";
@@ -185,8 +196,8 @@ else
 
             }
             else {
-                document.getElementById("ContractDialogNewOwnerID").style.display = "block";
-                document.getElementById("ContractDialogNewOwnerPublicKey").style.display = "block";
+                document.getElementById("ContractDialogNewOwnerID").style.display = "none";
+                document.getElementById("ContractDialogNewOwnerPublicKey").style.display = "none";
                 document.getElementById("ContractDialogResult").innerHTML = "Denied By Regulaotr";
                 document.getElementById("ContractDialogResult").style.color = "red";
                 document.getElementById("ContractDialogTaxAmount").innerHTML = "";

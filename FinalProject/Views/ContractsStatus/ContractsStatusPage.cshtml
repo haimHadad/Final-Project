@@ -128,11 +128,21 @@
                     <div class="modal-body" id="openContract_dialog_body">
 
                         <center><img class="w-50 p-3" id="openContractImageURL"></center>
-                        <p id="openContractdialogAssetID"></p>
-                        <p id="openContractdialogLoaction"></p>
-                        <p id="openContractdialogAreaIn"></p>
-                        <p id="openContractdialogRooms"></p>
-                        <p id="openContractdialogPrice"></p>
+
+                        <div style="display:flex">
+                            <p id="openContractdialogAssetID"></p>
+                            <p>&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</p>
+                            <p id="openContractdialogLoaction"></p>
+                        </div>
+
+                        <div style="display:flex">
+                            <p id="openContractdialogAreaIn"></p>
+                            <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                            <p id="openContractdialogRooms"></p>
+                            <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                            <p id="openContractdialogPrice"></p>
+                        </div>
+
                         <p id="">------------------------------------</p>
                         <p id="openContractdialogOwnerID"></p>
                         <p id="openContractdialogOwnerPublicKey"></p>
@@ -171,11 +181,21 @@
                     <div class="modal-body" id="expierdContract_dialog_body">
 
                         <center><img class="w-50 p-3" id="expierdContractImageURL"></center>
-                        <p id="expierdContractdialogAssetID"></p>
-                        <p id="expierdContractdialogLoaction"></p>
-                        <p id="expierdContractdialogAreaIn"></p>
-                        <p id="expierdContractdialogRooms"></p>
-                        <p id="expierdContractdialogPrice"></p>
+
+                        <div style="display:flex">
+                            <p id="expierdContractdialogAssetID"></p>
+                            <p>&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</p>
+                            <p id="expierdContractdialogLoaction"></p>
+                        </div>
+
+                        <div style="display:flex">
+                            <p id="expierdContractdialogAreaIn"></p>
+                            <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                            <p id="expierdContractdialogRooms"></p>
+                            <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                            <p id="expierdContractdialogPrice"></p>
+                        </div>
+                        
                         <p id="">------------------------------------</p>
                         <p id="expierdContractdialogOwnerID"></p>
                         <p id="expierdContractdialogOwnerPublicKey"></p>
@@ -263,11 +283,21 @@
                         </div>
                         <div class="modal-body" id="closedContract_dialog_body">
                             <center><img class="w-50 p-3" id="closedContractImageURL"></center>
-                            <p id="closedContractdialogAssetID"></p>
-                            <p id="closedContractdialogLoaction"></p>
-                            <p id="closedContractdialogAreaIn"></p>
-                            <p id="closedContractdialogRooms"></p>
-                            <p id="closedContractdialogPrice"></p>
+
+                            <div style="display:flex">
+                                <p id="closedContractdialogAssetID"></p>
+                                <p>&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</p>
+                                <p id="closedContractdialogLoaction"></p>
+                            </div>
+
+                            <div style="display:flex">
+                                <p id="closedContractdialogAreaIn"></p>
+                                <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                                <p id="closedContractdialogRooms"></p>
+                                <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                                <p id="closedContractdialogPrice"></p>
+                            </div>
+
                             <p id="">------------------------------------</p>
                             <p id="closedContractdialogOwnerID"></p>
                             <p id="closedContractdialogOwnerPublicKey"></p>
@@ -279,12 +309,12 @@
                             <p id="closedContractdialogNewOwnerPublicKey"></p>
                             <p class="text-danger" id="closedContractdialogTax"></p>
                             <h5 id="closedContractdialogResult"></h5>
-                            <textarea id="closedContractdialogNotes" rows="4" cols="50"></textarea>
+                            <textarea readonly id="closedContractdialogNotes" rows="4" cols="50"></textarea>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
                         </div>
-                    </div>
                 </div>
             </div>
 
@@ -468,7 +498,7 @@
                         document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
                         document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
                         var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "You paid : ".bold()+offer.PriceETH +" ETH | ₪"+dealPriceILS+"</br>"+"Fee : ₪"+result.feeILS;
+                        document.getElementById("actionDealDialogMessageContent4").innerHTML = "You paid : ".bold()+offer.PriceETH +" ETH / ₪"+dealPriceILS+"</br>"+"Fee : ₪"+result.feeILS;
                         $('#actionDealDialog').modal('show');
                     },
                     error: function (xhr, text, error)
@@ -499,9 +529,9 @@
 
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-            document.getElementById("additionalWarningForSigning").innerHTML ="Your balance : ".bold() + accountBalanceETH+" ETH |" + " ₪" +accountBalanceILS+"."
-                +"</br></br>" + "Deal cost : ".bold() + offer.PriceETH + " ETH |" + " ₪" + dealPriceILS+"."
-                + "</br></br>" + "You will pay now : ".bold() + offer.PriceETH + " ETH |" + " ₪" + dealPriceILS+".";
+            document.getElementById("additionalWarningForSigning").innerHTML ="Your balance : ".bold() + accountBalanceETH+" ETH /" + " ₪" +accountBalanceILS+"."
+                +"</br></br>" + "Deal cost : ".bold() + offer.PriceETH + " ETH /" + " ₪" + dealPriceILS+"."
+                + "</br></br>" + "You will pay now : ".bold() + offer.PriceETH + " ETH /" + " ₪" + dealPriceILS+".";
             $('#DialogBlockchainBeforeApprove').modal('show');
         }
 
@@ -657,7 +687,7 @@
 
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             var dealPriceETH = offer.PriceETH
-            var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+            var dealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
 
             document.getElementById("expierdContractImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("expierdContractdialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
@@ -766,7 +796,7 @@
 
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             var dealPriceETH = offer.PriceETH;
-            var dealPrice = "" + dealPriceETH + " ETH | ₪" + dealPriceILS;
+            var dealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
 
             document.getElementById("openContractImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("openContractdialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
@@ -837,7 +867,7 @@
                 taxAmountETH = taxAmountETH.toFixed(2);
                 taxAmountILS = taxAmountILS.toFixed(2);
                 var taxAmountILSfixed = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                document.getElementById("closedContractdialogTax").innerHTML = "Tax : ".bold() + taxAmountETH + " ETH | ₪" + taxAmountILSfixed;
+                document.getElementById("closedContractdialogTax").innerHTML = "Tax : ".bold() + taxAmountETH + " ETH / ₪" + taxAmountILSfixed;
 
 
                 var newOwnerID = offer.NewOwnerID;
