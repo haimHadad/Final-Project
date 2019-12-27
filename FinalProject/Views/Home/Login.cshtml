@@ -12,22 +12,26 @@
      
     </script>
     }
+    
 
-    <div class="container">
-        @using (Html.BeginForm("AccountMainPage", "DappAccount", FormMethod.Post, new { @id = "myform" }))
-        {
-            <div class="row justify-content-center">
-                @Html.TextBoxFor(m => m.publicKey, new { id = "public_key_input", placeholder = "Ethereum Public Key", required = "required" })
-            </div> <br />
-            <div class="row justify-content-center">
-                @Html.TextBoxFor(m => m.privateKey, new { id = "private_key_input", placeholder = "Ethereum Private Key", required = "required", type = "password" })
-            </div> <br />
-            <div class="row justify-content-center">
-                <img id="loader" style="display: none;" src="https://s5.gifyu.com/images/Loader5a73d3b26568dbc4.gif" alt="Loader5a73d3b26568dbc4.gif" border="0" />
-                <img id="israelLogo" style="display: none; width:10%; height: auto " src="~/img/IsraelSymbol.png" />
-                </div> <br />
-        }
+    
+<div class="container">
+    <br /><br /><br /><br /><br /><br />
+    <center><img src="~/img/Logo.png" style="width:90%; height:auto" /></center>
+    @using (Html.BeginForm("AccountMainPage", "DappAccount", FormMethod.Post, new { @id = "myform" }))
+    {
         <div class="row justify-content-center">
-            <input id="submit" type="button" value="Login" class="btn btn-primary" onclick="SendLoginData()" />
-        </div>
+            @Html.TextBoxFor(m => m.publicKey, new { id = "public_key_input", placeholder = "Ethereum Public Key", required = "required" })
+        </div> <br />
+        <div class="row justify-content-center">
+            @Html.TextBoxFor(m => m.privateKey, new { id = "private_key_input", placeholder = "Ethereum Private Key", required = "required", type = "password" })
+        </div> <br />
+        <div class="row justify-content-center">
+            <img id="loader" style="display: none;" src="https://s5.gifyu.com/images/Loader5a73d3b26568dbc4.gif" alt="Loader5a73d3b26568dbc4.gif" border="0" />
+            <img id="israelLogo" style="display: none; width:10%; height: auto " src="~/img/IsraelSymbol.png" />
+        </div> <br />
+    }
+    <div class="row justify-content-center">
+        <input id="submit" type="button" value="Login" class="btn btn-primary" onclick="SendLoginData()" />
     </div>
+</div>
