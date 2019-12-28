@@ -10,8 +10,11 @@
 <h1>Accounts Managment</h1>
 <br />
 
+<div style="display:flex">
+    
+    <div style="width:100%">
 
-    <h4>New Account:</h4>
+        <h4>New Account:</h4>
         <table>
             <tr>
                 <td>
@@ -20,34 +23,76 @@
                     <div id="validInputID" style="display:none" class="valid-feedback">Valid ID</div>
                     <div id="inValidInputID" style="display:none" class="invalid-feedback"></div>
                 </td>
-                
-            </tr>    
+
+            </tr>
             <tr>
                 <td>
                     <label class="mt-2">Public-Key:</label>
                     <input onkeyup="checkValidityOfPublicKeyInput()" class="form-control" id="NewPublicKey" type="text" placeholder="Insert public-key" />
                     <div id="validInputPublicKey" style="display:none" class="valid-feedback">Valid public-key</div>
                     <div id="inValidInputPublicKey" style="display:none" class="invalid-feedback">Sorry, that username's taken. Try another?</div>
-                    
+
                 </td>
             </tr>
         </table>
+
+        <br />
+        <table>
+            <tr>
+                <td>
+                    <input value="Add" class="btn btn-success pl-3 pr-3" type="button" onclick="RegisterNewAccount()" />
+                </td>
+                <td></td>
+                <td></td>
+                <td>
+
+                    <h6 id="ResponseID"></h6>
+                    <img style="display:none" id="AddAccountLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+
+    <div style="float:right">
+        <div style="display:flex">
+            <input class="form-control mr-sm-2 w-50" id="filterAccountsResults" type="text" placeholder="Search Account ID or Public-Key" onkeyup="filterAccountsResults()" />
+            <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportAccountsBtn" />
+        </div>
+        <br />
+            <div style="height:300px; overflow:auto;">
+            <table id="accountsTable" class=" table table-hover">
+                <thead align="center">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">PublicKey</th>
+                        <th scope="col">Tracking</th>
+                    </tr>
+                </thead>
+                <tbody align="center">
+                    @foreach (var a in @Model.AllAccounts)
+                    {
+                        var etherscanURL = "https://ropsten.etherscan.io/address/" + a.PublicKey;
+
+                        <tr>
+                            <td>@a.ID</td>
+                            <td>@a.PublicKey</td>
+                            <td><a target="_blank" href=@etherscanURL>Here</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+</div>
+
     
-    <br />
-    <table>
-        <tr>
-            <td>
-                <input value="Add" class="btn btn-success pl-3 pr-3" type="button" onclick="RegisterNewAccount()" />
-            </td>
-            <td></td><td></td>
-            <td>
-
-                <h6 id="ResponseID"></h6>
-                <img style="display:none" id="AddAccountLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
-
-            </td>
-        </tr>
-</table>
         
         
         
@@ -65,6 +110,7 @@
                 document.getElementById("navBarAccountsManagement").style.fontWeight = "bold";
             });
 
+            $('#ExportAccountsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelAccounts" ,"AccountsManagment")'; });
 
             function resetValidation()
             {
@@ -247,8 +293,24 @@
                             document.getElementById("NewPublicKey").classList.remove('is-valid');
                             document.getElementById("validInputID").style.display = "none";
                             document.getElementById("validInputPublicKey").style.display = "none";
-                            $('#NewIdNumber').val("");
-                            $('#NewPublicKey').val("");  
+                            
+
+
+                        table = document.getElementById("accountsTable");
+                   
+                        var cell1, cell2, cell3, cell4;
+                        var row = table.insertRow(table.rows.length);
+                        cell1 = row.insertCell(0);
+                        cell2 = row.insertCell(1);
+                        cell3 = row.insertCell(2);                              
+                        cell1.innerHTML = $('#NewIdNumber').val();
+                        cell2.innerHTML = $('#NewPublicKey').val();
+                        var etherscanURL = 'https://ropsten.etherscan.io/address/' + $('#NewPublicKey').val();
+
+                        cell3.innerHTML = "<a target='_blank' href='"+etherscanURL+"'>Here</a>";
+
+                        $('#NewIdNumber').val("");
+                        $('#NewPublicKey').val(""); 
                         }
 
                         else
@@ -260,27 +322,49 @@
                     }});
 
 
-
-
-
-
-
-
-                
                 
             }
             
 
+            function filterAccountsResults()
+            {
+                var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
+            input = document.getElementById("filterAccountsResults");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("accountsTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++)
+            {
+                td0 = tr[i].getElementsByTagName("td")[0];
+                td1 = tr[i].getElementsByTagName("td")[1];
+                if (td0 || td1)
+                {
+                    txtValue0 = td0.textContent || td0.innerText;
+                    txtValue1 = td1.textContent || td1.innerText;
+                    if ( (txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1) )
+                    {
+                        tr[i].style.display = "";
+                    }
+                    else
+                    {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+
+
+
+
+
+            }
 
 
 
 
 
 
-
-
-
-            setInputFilter(document.getElementById("NewIdNumber"), function(value) {
+            setInputFilter(document.getElementById("NewIdNumber"), function (value)
+            {
                 return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
             });
 

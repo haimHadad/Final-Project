@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinalProject.Data;
 using FinalProject.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 namespace FinalProject.Controllers
 {
@@ -63,6 +65,7 @@ namespace FinalProject.Controllers
             newAccountID.PublicKey = PublicKey;
             _AccountsContext.Accounts.Add(newAccountID);
             _AccountsContext.SaveChanges();
+            regulatorAcc.AllAccounts.Add(newAccountID);
             return "Success";
         }
 
@@ -73,6 +76,36 @@ namespace FinalProject.Controllers
             var PublicKeyToCheck = PublicKey;
             double Balance = await DappAccountController.get_ETH_BalanceOfAnyAccount(YourPublicKey, PublicKeyToCheck);
             return Balance;
+        }
+
+
+        public void DownloadExcelAccounts()
+        {
+            var collection = regulatorAcc.AllAccounts;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
+            Sheet.Cells["A1"].Value = "ID";
+            Sheet.Cells["B1"].Value = "Public-Key";
+            
+            int row = 2;
+            foreach (var account in collection)
+            {
+                string idNumber = ""+account.ID;
+                if(idNumber.Length==8)
+                {
+                    idNumber = "0" + idNumber;
+                }
+                Sheet.Cells[string.Format("A{0}", row)].Value = idNumber;
+                Sheet.Cells[string.Format("B{0}", row)].Value = account.PublicKey; 
+                row++;
+            }
+
+
+            Sheet.Cells["A:AZ"].AutoFitColumns();
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.Headers.Add("content-disposition", "attachment: filename=" + "Report.xlsx");
+            Response.Body.WriteAsync(Ep.GetAsByteArray());
         }
 
     }
