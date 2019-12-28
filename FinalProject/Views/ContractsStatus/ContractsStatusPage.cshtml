@@ -856,7 +856,7 @@
             document.getElementById("closedContractdialogBuyerID").innerHTML = "Buyer ID : ".bold() + buyerID;
             document.getElementById("closedContractdialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + buyerPublicKey;
             document.getElementById("closedContractdialogNotes").innerHTML = "" + offer.DenyReason;
-            var pricILSFixed = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var pricILSFixed = offer.PriceILS.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             document.getElementById("closedContractdialogPrice").innerHTML = "Price : ".bold() + offer.PriceETH + " ETH / ₪" + pricILSFixed;
             document.getElementById("closedContractdialogTax").innerHTML = "";
             if (offer.RegulatorSign == true)
