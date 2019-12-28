@@ -19,6 +19,7 @@ namespace FinalProject.Controllers
         private AccountsContext _AccountsContext;
         private AssetContext _AssetsContext;
         public static DappAccount _regulator;
+
         public RegulatorController(AssetsInContractContext context, AccountsContext context2, AssetContext context3)
         {
             _AssetInContractsContext = context;

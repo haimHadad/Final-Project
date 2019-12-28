@@ -1,0 +1,308 @@
+﻿@model RegulatorAccount
+
+@{
+    ViewData["Title"] = "AccountsManagment";
+    Layout = "~/Views/Shared/_LayoutRegulator.cshtml";
+}
+
+<br />
+<br />
+<h1>Accounts Managment</h1>
+<br />
+
+
+    <h4>New Account:</h4>
+        <table>
+            <tr>
+                <td>
+                    <label>ID:</label>
+                    <input onkeyup="checkValidityOfIdInput()" class="form-control" id="NewIdNumber" type="text" placeholder="Insert ID number" />
+                    <div id="validInputID" style="display:none" class="valid-feedback">Valid ID</div>
+                    <div id="inValidInputID" style="display:none" class="invalid-feedback"></div>
+                </td>
+                
+            </tr>    
+            <tr>
+                <td>
+                    <label class="mt-2">Public-Key:</label>
+                    <input onkeyup="checkValidityOfPublicKeyInput()" class="form-control" id="NewPublicKey" type="text" placeholder="Insert public-key" />
+                    <div id="validInputPublicKey" style="display:none" class="valid-feedback">Valid public-key</div>
+                    <div id="inValidInputPublicKey" style="display:none" class="invalid-feedback">Sorry, that username's taken. Try another?</div>
+                    
+                </td>
+            </tr>
+        </table>
+    
+    <br />
+    <table>
+        <tr>
+            <td>
+                <input value="Add" class="btn btn-success pl-3 pr-3" type="button" onclick="RegisterNewAccount()" />
+            </td>
+            <td></td><td></td>
+            <td>
+
+                <h6 id="ResponseID"></h6>
+                <img style="display:none" id="AddAccountLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+
+            </td>
+        </tr>
+</table>
+        
+        
+        
+    
+
+
+
+
+
+    @section scripts
+{
+        <script type="text/javascript">
+            $(document).ready(function () {
+                document.getElementById("navBarAccountsManagement").style.textDecoration = "underline";
+                document.getElementById("navBarAccountsManagement").style.fontWeight = "bold";
+            });
+
+
+            function resetValidation()
+            {
+                
+       
+                if (document.getElementById("NewIdNumber").classList.contains('is-invalid'))
+                {
+                    document.getElementById("NewIdNumber").classList.remove('is-invalid');
+                }
+                document.getElementById("validInputPublicKey").style.display = "none";
+                document.getElementById("inValidInputPublicKey").style.display = "none";
+
+                if (document.getElementById("NewPublicKey").classList.contains('is-valid'))
+                {
+                    document.getElementById("NewPublicKey").classList.remove('is-valid');
+                }
+
+                else if (document.getElementById("NewPublicKey").classList.contains('is-invalid'))
+                {
+                    document.getElementById("NewPublicKey").classList.remove('is-invalid');
+                }
+            }
+            
+
+
+            function checkValidityOfIdInput()
+            {
+                document.getElementById("ResponseID").innerHTML = "";
+                document.getElementById("validInputID").style.display = "none";
+                document.getElementById("inValidInputID").style.display = "none";
+                
+
+                var inputID = $('#NewIdNumber').val();
+                if (inputID.length != 9)
+                {
+                    if (document.getElementById("NewIdNumber").classList.contains('is-valid'))
+                    {
+                        document.getElementById("NewIdNumber").classList.remove('is-valid');
+                    }
+                    document.getElementById("NewIdNumber").classList.add('is-invalid');
+                    document.getElementById("validInputID").style.display = "none";
+                    document.getElementById("inValidInputID").style.display = "block";
+                    document.getElementById("inValidInputID").innerHTML = "ID length must be 9 digits."
+                    return;
+                }
+                else
+                {
+                    if (document.getElementById("NewIdNumber").classList.contains('is-invalid'))
+                    {
+                        document.getElementById("NewIdNumber").classList.remove('is-invalid');
+                        
+                    }
+                    document.getElementById("NewIdNumber").classList.add('is-valid');
+                    document.getElementById("validInputID").style.display = "block";
+                    document.getElementById("inValidInputID").style.display = "none";
+                    
+                    return;
+
+                }
+            }
+
+
+            function checkValidityOfPublicKeyInput()
+            {
+                document.getElementById("ResponseID").innerHTML = "";
+                document.getElementById("validInputPublicKey").style.display = "none";
+                document.getElementById("inValidInputPublicKey").style.display = "none";
+
+                if (document.getElementById("NewPublicKey").classList.contains('is-valid')) {
+                    document.getElementById("NewPublicKey").classList.remove('is-valid');
+                }
+
+                var publicKey = $('#NewPublicKey').val();
+                if (publicKey == "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80")
+                {
+                    if (!document.getElementById("NewPublicKey").classList.contains('is-invalid'))
+                    {
+                        document.getElementById("NewPublicKey").classList.add('is-invalid');
+                    }
+                    document.getElementById("inValidInputPublicKey").innerHTML = "The regulator cannot be added";
+                    document.getElementById("inValidInputPublicKey").style.display = "block";
+                    return;
+                }
+
+
+                $.ajax({
+                    url: "/AccountsManagment/CheckPublicKeyValidity",
+                    type: 'POST',
+                    async: false,
+                    data : {PublicKey: publicKey },
+                    success: function (data)
+                    {
+                        if (data == -1)
+                        {
+                            if (!document.getElementById("NewPublicKey").classList.contains('is-invalid'))
+                            {
+                                document.getElementById("NewPublicKey").classList.add('is-invalid');
+                            }
+                            document.getElementById("inValidInputPublicKey").innerHTML = "Please insert a legal public Key";
+                            document.getElementById("inValidInputPublicKey").style.display = "block";
+                        }
+
+                        else
+                        {
+                            if (document.getElementById("NewPublicKey").classList.contains('is-invalid'))
+                            {
+                                document.getElementById("NewPublicKey").classList.remove('is-invalid');      
+                            }
+                            document.getElementById("NewPublicKey").classList.add('is-valid');  
+                            document.getElementById("validInputPublicKey").style.display = "block";
+                            document.getElementById("inValidInputPublicKey").style.display = "none";
+
+                        }
+            
+                    }});
+
+      
+            }   
+            
+
+
+            function RegisterNewAccount()
+            {
+                var idNumber = $('#NewIdNumber').val();
+                var publicKey =  $('#NewPublicKey').val();
+
+                if (document.getElementById("NewIdNumber").classList.contains('is-invalid'))
+                {  
+                    return;
+                }
+
+                if (document.getElementById("NewPublicKey").classList.contains('is-invalid'))
+                {  
+                    return;
+                }
+
+
+                
+                if (idNumber.length == 0)
+                {  
+                    if (!document.getElementById("NewIdNumber").classList.contains('is-invalid'))
+                    {
+                        document.getElementById("NewIdNumber").classList.add('is-invalid');
+                        document.getElementById("inValidInputID").innerHTML = "Please insert ID number";
+                        document.getElementById("inValidInputID").style.display = "block";
+                        return;
+                    }
+                    return;
+                }
+               
+                if (publicKey.length == 0)
+                {
+                    if (!document.getElementById("NewPublicKey").classList.contains('is-invalid'))
+                    {
+                        document.getElementById("NewPublicKey").classList.add('is-invalid');
+                        document.getElementById("inValidInputPublicKey").innerHTML = "Please insert PublicKey";
+                        document.getElementById("inValidInputPublicKey").style.display = "block";
+                        return;
+                    }
+                    return;
+                }
+
+
+                document.getElementById("AddAccountLoader").style.display = "block";
+
+                $.ajax({
+                    url: "/AccountsManagment/AddNewAccount",
+                    type: 'POST',
+                    async: true,
+                    data : { ID: idNumber  ,PublicKey: publicKey },
+                    success: function (data)
+                    {
+                        document.getElementById("ResponseID").style.display = "block";
+                        document.getElementById("AddAccountLoader").style.display = "none";
+                        if (data == "Success")
+                        {
+                            document.getElementById("ResponseID").style.color = "lightgreen";
+                            document.getElementById("ResponseID").innerHTML = "Account added successfully!";
+                            document.getElementById("NewIdNumber").classList.remove('is-valid');
+                            document.getElementById("NewPublicKey").classList.remove('is-valid');
+                            document.getElementById("validInputID").style.display = "none";
+                            document.getElementById("validInputPublicKey").style.display = "none";
+                            $('#NewIdNumber').val("");
+                            $('#NewPublicKey').val("");  
+                        }
+
+                        else
+                        {
+                            document.getElementById("ResponseID").style.color = "red";
+                            document.getElementById("ResponseID").innerHTML = data;
+                        }
+            
+                    }});
+
+
+
+
+
+
+
+
+                
+                
+            }
+            
+
+
+
+
+
+
+
+
+
+
+            setInputFilter(document.getElementById("NewIdNumber"), function(value) {
+                return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
+            });
+
+            function setInputFilter(textbox, inputFilter)
+            {
+                ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+                    textbox.addEventListener(event, function () {
+                        if (inputFilter(this.value)) {
+                            this.oldValue = this.value;
+                            this.oldSelectionStart = this.selectionStart;
+                            this.oldSelectionEnd = this.selectionEnd;
+                        }
+                        else if (this.hasOwnProperty("oldValue")) {
+                            this.value = this.oldValue;
+                            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                        }
+                        else {
+                            this.value = "";
+                        }
+                    });
+                });
+            }
+
+        </script>
+    }
