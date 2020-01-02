@@ -3,7 +3,7 @@
     ViewData["Title"] = "ContractsStatus";
     Layout = "/Views/Shared/_LayoutAccount.cshtml";
 }
-
+    
 <br />
 <h1>Contracts Status</h1>
 
@@ -218,109 +218,110 @@
 
     <div class="tab-pane fade" id="ClosedContractsTab">
 
-        <div style="height:300px; overflow:auto;">
-            <table class=" table table-hover">
-                <thead align="center">
-                    <tr>
-                        <th scope="col">AssetID</th>
-                        <th scope="col">Loaction</th>
-                        <th scope="col">Your Role</th>
-                        <th scope="col">Tracking</th>
-                        <th scope="col">Result</th>
+        <div hidden style="height:300px; overflow:auto;"></div>
+        
+        <table class=" table table-hover fixed_header">
+            <thead align="">
+                <tr>
+                    <th scope="col">AssetID</th>
+                    <th scope="col">Loaction</th>
+                    <th scope="col">Your Role</th>
+                    <th scope="col">Tracking</th>
+                    <th scope="col">Result</th>
 
-                    </tr>
-                </thead>
-                <tbody align="center">
-                    @foreach (var a in @Model.DeployedContractList)
+                </tr>
+            </thead>
+            <tbody align="">
+                @foreach (var a in @Model.DeployedContractList)
+                {
+                    if (a.RegulatorSign == true)
                     {
-                        if (a.RegulatorSign == true)
-                        {
-                            var role = "";
-                            var yourPublicKey = Model.publicKey;
-                            if (yourPublicKey.ToLower().Equals(a.SellerPublicKey))
-                                role = "Seller";
-                            else
-                                role = "Buyer";
-                            var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                            <tr>
-                                <td>@a.AssetID</td>
-                                <td>@a.Loaction</td>
-                                <td>@role</td>
-                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                                <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
-                            </tr>
-                        }
-                        else if (a.IsDeniedByBuyer == true || a.IsDeniedByRegulator == true)
-                        {
-                            var role = "";
-                            var yourPublicKey = Model.publicKey;
-                            if (yourPublicKey.Equals(a.SellerPublicKey))
-                                role = "Seller";
-                            else
-                                role = "Buyer";
-                            var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                            <tr>
-                                <td>@a.AssetID</td>
-                                <td>@a.Loaction</td>
-                                <td>@role</td>
-                                <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                                <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
-                            </tr>
-                        }
+                        var role = "";
+                        var yourPublicKey = Model.publicKey;
+                        if (yourPublicKey.ToLower().Equals(a.SellerPublicKey))
+                            role = "Seller";
+                        else
+                            role = "Buyer";
+                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                        <tr>
+                            <td>@a.AssetID</td>
+                            <td>@a.Loaction</td>
+                            <td>@role</td>
+                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                            <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
+                        </tr>
                     }
-                </tbody>
-            </table>
-        </div>
+                    else if (a.IsDeniedByBuyer == true || a.IsDeniedByRegulator == true)
+                    {
+                        var role = "";
+                        var yourPublicKey = Model.publicKey;
+                        if (yourPublicKey.Equals(a.SellerPublicKey))
+                            role = "Seller";
+                        else
+                            role = "Buyer";
+                        var OfferSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                        <tr>
+                            <td>@a.AssetID</td>
+                            <td>@a.Loaction</td>
+                            <td>@role</td>
+                            <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                            <td><button onclick="LoadClosedContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal" data-target="#closedContractModalDialong">View Details</button></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
 
-            <div class="modal fade" id="closedContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="closedContractModalDialongTitle" aria-hidden="true" style="">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" id="closedContractDialogTitle">Closed Contract</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+
+        <div class="modal fade" id="closedContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="closedContractModalDialongTitle" aria-hidden="true" style="">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="closedContractDialogTitle">Closed Contract</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="closedContract_dialog_body">
+                        <center><img class="w-50 p-3" id="closedContractImageURL"></center>
+
+                        <div style="display:flex">
+                            <p id="closedContractdialogAssetID"></p>
+                            <p>&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</p>
+                            <p id="closedContractdialogLoaction"></p>
                         </div>
-                        <div class="modal-body" id="closedContract_dialog_body">
-                            <center><img class="w-50 p-3" id="closedContractImageURL"></center>
 
-                            <div style="display:flex">
-                                <p id="closedContractdialogAssetID"></p>
-                                <p>&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp</p>
-                                <p id="closedContractdialogLoaction"></p>
-                            </div>
-
-                            <div style="display:flex">
-                                <p id="closedContractdialogAreaIn"></p>
-                                <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
-                                <p id="closedContractdialogRooms"></p>
-                                <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
-                                <p id="closedContractdialogPrice"></p>
-                            </div>
-
-                            <p id="">------------------------------------</p>
-                            <p id="closedContractdialogOwnerID"></p>
-                            <p id="closedContractdialogOwnerPublicKey"></p>
-                            <p id="">------------------------------------</p>
-                            <p id="closedContractdialogBuyerID"></p>
-                            <p id="closedContractdialogBuyerPublicKey"></p>
-                            <p id="">------------------------------------</p>
-                            <p id="closedContractdialogNewOwnerID"></p>
-                            <p id="closedContractdialogNewOwnerPublicKey"></p>
-                            <p class="text-danger" id="closedContractdialogTax"></p>
-                            <h5 id="closedContractdialogResult"></h5>
-                            <textarea readonly id="closedContractdialogNotes" rows="4" cols="50"></textarea>
+                        <div style="display:flex">
+                            <p id="closedContractdialogAreaIn"></p>
+                            <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                            <p id="closedContractdialogRooms"></p>
+                            <p>&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp</p>
+                            <p id="closedContractdialogPrice"></p>
                         </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
+
+                        <p id="">------------------------------------</p>
+                        <p id="closedContractdialogOwnerID"></p>
+                        <p id="closedContractdialogOwnerPublicKey"></p>
+                        <p id="">------------------------------------</p>
+                        <p id="closedContractdialogBuyerID"></p>
+                        <p id="closedContractdialogBuyerPublicKey"></p>
+                        <p id="">------------------------------------</p>
+                        <p id="closedContractdialogNewOwnerID"></p>
+                        <p id="closedContractdialogNewOwnerPublicKey"></p>
+                        <p class="text-danger" id="closedContractdialogTax"></p>
+                        <h5 id="closedContractdialogResult"></h5>
+                        <textarea readonly id="closedContractdialogNotes" rows="4" cols="50"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
+        </div>
 
 
 
-        </div> <!--End of closed contracts tab-->
+    </div> <!--End of closed contracts tab-->
 
 
         <div class="modal position-fixed" id="actionDealDialog">

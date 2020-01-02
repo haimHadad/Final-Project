@@ -152,3 +152,30 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+<style>
+    .fixed_header {
+        table-layout: fixed;
+        border-collapse: collapse;
+        position: relative;
+        left: 5%;
+    }
+
+        .fixed_header tbody {
+            display: block;
+            width: 100%;
+            overflow: auto;
+            height: 350px;
+        }
+
+        .fixed_header thead tr {
+            display: block;
+        }
+
+        .fixed_header thead {
+        }
+
+        .fixed_header th, .fixed_header td {
+            text-align: center;
+            width: 200px;
+        }
+</style>
