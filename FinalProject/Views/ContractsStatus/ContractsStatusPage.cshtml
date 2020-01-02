@@ -22,9 +22,9 @@
 
 <div id="myTabContent" class="tab-content">
     <div class="tab-pane fade active show" id="OpenContractsTab">
-        <div style="height:300px; overflow:auto;">
-            <table class=" table table-hover">
-                <thead align="center">
+        <div hidden style="height:300px; overflow:auto;"></div>
+            <table class=" table table-hover fixed_header_open_closed_contracts">
+                <thead align="">
                     <tr>
                         <th scope="col">AssetID</th>
                         <th scope="col">Loaction</th>
@@ -34,7 +34,7 @@
 
                     </tr>
                 </thead>
-                <tbody align="center">
+                <tbody align="">
                     @foreach (var a in @Model.DeployedContractList)
                     {
 
@@ -112,7 +112,7 @@
                     }
                 </tbody>
             </table>
-        </div>
+        
 
         <div class="modal fade" id="openContractModalDialong" tabindex="-1" role="dialog" aria-labelledby="openContractModalDialongTitle" aria-hidden="true" style="">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -220,7 +220,7 @@
 
         <div hidden style="height:300px; overflow:auto;"></div>
         
-        <table class=" table table-hover fixed_header">
+        <table class=" table table-hover fixed_header_open_closed_contracts">
             <thead align="">
                 <tr>
                     <th scope="col">AssetID</th>
