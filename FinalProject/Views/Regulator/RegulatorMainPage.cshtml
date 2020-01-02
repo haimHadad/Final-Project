@@ -16,40 +16,47 @@ else
 {
     <!--<div class="row justify-content-center"><button class="btn btn-light">Refresh Table</button></div>-->
     <br />
-    
+
     <div class=""><h1>Final Decisions</h1></div>
     <br />
     <div style="display:flex">
-        <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()"  />
-        <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn"  />
+        <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()" />
+        <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn" />
     </div>
     <br />
-    <div style="height:300px; overflow:auto;">
-        <table id="decitionsTable" class=" table table-hover">
-            <thead align="center">
+
+
+
+
+    
+
+
+    <div hidden style="height:300px; overflow:auto;"></div>
+    <table id="decitionsTable" class=" table table-hover fixed_header_final_decitions">
+        <thead align="">
+            <tr>
+                <th scope="col">AssetID</th>
+                <th scope="col">Loaction</th>
+                <th scope="col">Tracking</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody align="">
+            @foreach (var a in @Model.DeployedContractList)
+            {
+                var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+
                 <tr>
-                    <th scope="col">AssetID</th>
-                    <th scope="col">Loaction</th>
-                    <th scope="col">Tracking</th>
-                    <th scope="col">Action</th>
+                    <td>@a.AssetID</td>
+                    <td>@a.Loaction</td>
+                    <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                    <td><button class="btn btn-primary" data-toggle="modal" data-target="#ContractDetailsDialog" onclick="ViewContractDeteils( @ContractSerialModel)">View Details</button></td>
                 </tr>
-            </thead>
-            <tbody align="center">
-                @foreach (var a in @Model.DeployedContractList)
-                {
-                    var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
 
-                    <tr>
-                        <td>@a.AssetID</td>
-                        <td>@a.Loaction</td>
-                        <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#ContractDetailsDialog" onclick="ViewContractDeteils( @ContractSerialModel)">View Details</button></td>
-                    </tr>
+            }
+        </tbody>
+    </table>
 
-                }
-            </tbody>
-        </table>
-    </div>
 }
 <div class="modal fade" id="ContractDetailsDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -152,7 +159,7 @@ else
 
 
 
-            
+
             document.getElementById("DialogImageURL").setAttribute("src", offer.ImageURL);
             document.getElementById("ContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
             document.getElementById("ContractDialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
@@ -192,7 +199,7 @@ else
                 document.getElementById("ContractDialogResult").innerHTML = "Approved";
                 document.getElementById("ContractDialogResult").style.color = "lightgreen";
 
-                
+
 
             }
             else {
@@ -206,7 +213,7 @@ else
 
         }
 
-        
+
 
     </script>
 }
