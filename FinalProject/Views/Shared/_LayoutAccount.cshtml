@@ -178,28 +178,46 @@
             text-align: center;
             width: 200px;
         }
-
+</style>
+<style>
+    .fixed_header_open_closed_contracts {
+        table-layout: fixed;
+        border-collapse: collapse;
+        position: relative;
+        left: 5%;
+    }
+        .fixed_header_open_closed_contracts tbody {
+            display: block;
+            width: 100%;
+            overflow: auto;
+            height: 350px;
+        }
+        .fixed_header_open_closed_contracts thead tr {
+            display: block;
+        }
+        .fixed_header_open_closed_contracts thead {
+        }
+        .fixed_header_open_closed_contracts th, .fixed_header_open_closed_contracts td {
+            text-align: center;
+            width: 200px;
+        }
         .fixed_header_ownAssets {
         table-layout: fixed;
         border-collapse: collapse;
         position: relative;
         left: 5%;
     }
-
         .fixed_header_ownAssets tbody {
             display: block;
             width: 100%;
             overflow: auto;
             height: 350px;
         }
-
         .fixed_header_ownAssets thead tr {
             display: block;
         }
-
         .fixed_header_ownAssets thead {
         }
-
         .fixed_header_ownAssets th, .fixed_header_ownAssets td {
             text-align: center;
             width: 350px;

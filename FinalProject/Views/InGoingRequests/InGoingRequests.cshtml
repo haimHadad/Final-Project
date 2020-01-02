@@ -31,39 +31,42 @@ else
     </div>
     <br />
 
+    
 
-    <div style="height:300px; overflow:auto;">
-        <table id="PendingContractsTable" class=" table table-hover">
-            <thead align="center">
+
+    <div hidden style="height:300px; overflow:auto;"></div>
+    <table id="PendingContractsTable" class=" table table-hover fixed_header_ingoing_requests">
+        <thead align="">
+            <tr>
+                <th scope="col">AssetID</th>
+                <th scope="col">Loaction</th>
+                <th scope="col">Tracking</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody align="">
+            @foreach (var a in @Model.DeployedContractList)
+            {
+                var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
+                var btnID = "viewPendingContractDetailsBtn" + a.AssetID;
+                var loaderID = "loader" + a.AssetID;
+                var lblID = "lblPendingContractResult" + a.AssetID;
+
                 <tr>
-                    <th scope="col">AssetID</th>
-                    <th scope="col">Loaction</th>
-                    <th scope="col">Tracking</th>
-                    <th scope="col">Action</th>
+                    <td>@a.AssetID</td>
+                    <td>@a.Loaction</td>
+                    <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
+                    <td>
+                        <button id=@btnID class="btn btn-primary" data-toggle="modal" data-target="#PendingContractDetailsDialog" onclick="ViewPendingContractDeteils( @ContractSerialModel)">View Details</button>
+                        <img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+                        <label style="display:none" id=@lblID></label>
+                    </td>
                 </tr>
-            </thead>
-            <tbody align="center">
-                @foreach (var a in @Model.DeployedContractList)
-                {
-                    var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-                    var btnID = "viewPendingContractDetailsBtn"+ a.AssetID;
-                    var loaderID = "loader" + a.AssetID;
-                    var lblID = "lblPendingContractResult"+ a.AssetID;
 
-                    <tr>
-                        <td>@a.AssetID</td>
-                        <td>@a.Loaction</td>
-                        <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
-                        <td>
-                            <button id =@btnID class="btn btn-primary" data-toggle="modal" data-target="#PendingContractDetailsDialog" onclick="ViewPendingContractDeteils( @ContractSerialModel)">View Details</button>
-                            <img style="display:none" id=@loaderID  src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
-                            <label style="display:none" id=@lblID  ></label>
-                        </td>
-                    </tr> 
-        }
-            </tbody>
-        </table>
-    </div>
+            }
+        </tbody>
+    </table>
+
 
 }
 <div class="modal fade" id="PendingContractDetailsDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
@@ -105,8 +108,8 @@ else
                 <textarea id="PendingContractdialogNotes" rows="4" cols="50"></textarea>
             </div>
             <div class="modal-footer justify-content-around">
-                <button id="PendingContractDenyBtn" onclick="CancelContract()"  type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
-                <button id="PendingContractApproveBtn" onclick="ShowWarningFeforeApproval()"  type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
+                <button id="PendingContractDenyBtn" onclick="CancelContract()" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+                <button id="PendingContractApproveBtn" onclick="ShowWarningFeforeApproval()" type="button" class="btn btn-success" data-dismiss="modal">Approve</button>
 
             </div>
         </div>
@@ -134,7 +137,7 @@ else
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-                <button onclick="ApprovePendingContract()"  type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+                <button onclick="ApprovePendingContract()" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
 
             </div>
         </div>
@@ -234,12 +237,12 @@ else
         function ShowWarningFeforeApproval()
         {
             var offer = approvedContract;
-            
+
             var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             var dealPriceETH = offer.PriceETH
             var DealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
             var TaxAmountETH = offer.PriceETH * 0.17;
-            TaxAmountETH = TaxAmountETH.toFixed(2);  
+            TaxAmountETH = TaxAmountETH.toFixed(2);
             var TaxAmountILS = offer.PriceILS * 0.17;
             TaxAmountILS = TaxAmountILS.toFixed(2)
             TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -266,7 +269,7 @@ else
             var publicKeyRegultaor = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
 
             var TaxAmountETH = offer.PriceETH * 0.17;
-            TaxAmountETH = TaxAmountETH.toFixed(2);  
+            TaxAmountETH = TaxAmountETH.toFixed(2);
             var TaxAmountILS = offer.PriceILS * 0.17;
             TaxAmountILS = TaxAmountILS.toFixed(2)
             TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -275,7 +278,7 @@ else
 
             document.getElementById(buttonID).style.display = "none";
             document.getElementById(loaderID).style.display = "block";
-            
+
             $.ajax({
                     url: "/InGoingRequests/ApproveContractAsRegulator",
                     type: 'POST',
@@ -303,8 +306,8 @@ else
                         document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";
                         var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                         document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Tax recieved : ".bold()+TaxAmount+"</br>"+"Fee : ₪"+result.feeILS;
-                        $('#ResultRegulatorDialog').modal('show'); 
-            
+                        $('#ResultRegulatorDialog').modal('show');
+
                     },
                     error: function (xhr, text, error)
                     {
@@ -318,15 +321,15 @@ else
                         document.getElementById("ErrorRegulatorDialogMessageContent").innerHTML = "" + ErrorMsg;
                         document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "block";
                         document.getElementById("ResultRegulatorConfirmationImg").style.display = "none";
-                        document.getElementById(lblIdApproved).style.display = "none";                       
+                        document.getElementById(lblIdApproved).style.display = "none";
                         document.getElementById(loaderID).style.display = "none";
                         document.getElementById(buttonID).style.display = "block";
                         document.getElementById("ResultRegulatorDialogTitle").innerHTML = "Error";
 
                         $('#ResultRegulatorDialog').modal('show');
-                        
-             
-                        
+
+
+
                         return;
                     }
                 });
@@ -409,11 +412,11 @@ else
 
         function RefreshTable()
         {
-            
+
             document.getElementById("RefreshTblLoader").style.display = "block";
             document.getElementById("RefreshPendingContractTblBtn").style.display = "none";
 
-           
+
 
             $.ajax({
                     url: "/InGoingRequests/UpdatePendingContracts",
@@ -422,7 +425,7 @@ else
                     data : { },
                     success: function (data)
                     {
-                        
+
                         table = document.getElementById("PendingContractsTable");
                         for(var i = table.rows.length - 1; i > 0; i--)
                         {
@@ -440,8 +443,8 @@ else
                             cell2 = row.insertCell(1);
                             cell3 = row.insertCell(2);
                             cell4 = row.insertCell(3);
-                            
-                               
+
+
                             List[i].Loaction = List[i].Loaction.replace("'",'`');
 
                             cell1.innerHTML = List[i].AssetID;
@@ -454,7 +457,7 @@ else
                                 + "<img style='display:none' id='loader" + List[i].AssetID + "' src='https://s5.gifyu.com/images/LoaderDeploy.gif' alt='LoaderDeploy.gif' border='0' />"
                                 + "<label style='display:none' id='lblPendingContractResult" + List[i].AssetID + "'></label>";
 
-        
+
                             document.getElementById("RefreshTblLoader").style.display = "none";
                             document.getElementById("RefreshPendingContractTblBtn").style.display = "block";
 
@@ -485,7 +488,7 @@ else
 
             document.getElementById(buttonID).style.display = "none";
             document.getElementById(loaderID).style.display = "block";
-            
+
             $.ajax({
                     url: "/InGoingRequests/CancelContractAsRegulator",
                     type: 'POST',
@@ -510,10 +513,10 @@ else
                         document.getElementById("ResultRegulatorDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
                         document.getElementById("ResultRegulatorDialogMessageContent1").innerHTML = "The contract been canceled.";
                         document.getElementById("ResultRegulatorDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
-                        document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";     
+                        document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";
                         document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Fee : ₪"+result.feeILS;
-                        $('#ResultRegulatorDialog').modal('show'); 
-            
+                        $('#ResultRegulatorDialog').modal('show');
+
                     },
                     error: function (xhr, text, error)
                     {
@@ -527,15 +530,15 @@ else
                         document.getElementById("ErrorRegulatorDialogMessageContent").innerHTML = "" + ErrorMsg;
                         document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "block";
                         document.getElementById("ResultRegulatorConfirmationImg").style.display = "none";
-                        document.getElementById(lblIdApproved).style.display = "none";                       
+                        document.getElementById(lblIdApproved).style.display = "none";
                         document.getElementById(loaderID).style.display = "none";
                         document.getElementById(buttonID).style.display = "block";
                         document.getElementById("ResultRegulatorDialogTitle").innerHTML = "Error";
 
                         $('#ResultRegulatorDialog').modal('show');
-                        
-             
-                        
+
+
+
                         return;
                     }
                 });
