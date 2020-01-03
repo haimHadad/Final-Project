@@ -21,7 +21,9 @@ else
     <br />
     <div style="display:flex">
         <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()" />
-        <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn" />
+        <input hidden  class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn" />
+        <button onclick="DownloadFinalDecitions()" class="btn btn-warning" id="ExportFinalDecitionsBtn">Export To Excel&nbsp&nbsp<i class="fa fa-download" aria-hidden="true"></i></button>
+        
     </div>
     <br />
 
@@ -112,7 +114,13 @@ else
             document.getElementById("navBarRegulatorHome").style.fontWeight = "bold";
         });
 
-        $('#ExportFinalDecitionsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelFinalDecitions" ,"Regulator")'; });
+        //$('#ExportFinalDecitionsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelFinalDecitions" ,"Regulator")'; });
+
+
+        function DownloadFinalDecitions() {
+            document.location = '@Url.Action("DownloadExcelFinalDecitions" ,"Regulator")';
+        }
+
 
         function FilterResults()
         {

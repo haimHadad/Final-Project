@@ -28,104 +28,105 @@
 <div style="display:flex">
     <div>
         @using (Html.BeginForm("DeployContract", "CreateContract", FormMethod.Post, new { @id = "DeployContractForm" }))
-        {
-            <table>
-                <tr>
-                    <td>
+        { }
+        <table>
+            <tr>
+                <td>
 
-                        <label>Asset ID:</label>
-                        <input name="AssetID" class="form-control form-control-sm w-auto" type="text" id="AssetIdTxt" disabled>
-                        <br />
-                    </td>
-                    <td></td>
-                    <td>
-                        <label>Your ID:</label>
-                        <input name="OwnerID" class="form-control form-control-sm w-auto" type="text" id="OwnerIdTxt" disabled>
-                        <br />
-                    </td>
-                    <td></td>
-                    <td>
-                        <label>Your Public Key:</label>
-                        <input name="SellerPublicKey" class="form-control form-control-sm w-auto" type="text" id="OwnerPublicKeyTxt" disabled>
-                        <br />
-                    </td>
-                </tr>
+                    <label>Asset ID:</label>
+                    <input name="AssetID" class="form-control form-control-sm w-auto" type="text" id="AssetIdTxt" disabled>
+                    <br />
+                </td>
+                <td></td>
+                <td>
+                    <label>Your ID:</label>
+                    <input name="OwnerID" class="form-control form-control-sm w-auto" type="text" id="OwnerIdTxt" disabled>
+                    <br />
+                </td>
+                <td></td>
+                <td>
+                    <label>Your Public Key:</label>
+                    <input name="SellerPublicKey" class="form-control form-control-sm w-auto" type="text" id="OwnerPublicKeyTxt" disabled>
+                    <br />
+                </td>
+            </tr>
 
-                <tr>
-                    <td>
+            <tr>
+                <td>
 
-                        <label>Loaction:</label>
-                        <input name="Loaction" class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
-                        <br />
-                    </td>
-                    <td></td>
-                    <td>
-                        <label>Area-In [m^2]:</label>
-                        <input name="AreaIn" class="form-control form-control-sm w-auto" type="number" id="AreaInTxt" disabled>
-                        <br />
-                    </td>
-                    <td></td>
-                    <td>
-                        <label>Rooms:</label>
-                        <input name="Rooms" class="form-control form-control-sm w-auto" type="number" id="RoomsTxt" disabled>
-                        <br />
-                    </td>
-                </tr>
-                <tr></tr>
-                <tr>
-                    <td>
-                        <label>Buyer Public Key</label>
-                        <input onchange="getBuyerID()" name="BuyerPublicKey" required class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
-                        <br />
-                    </td>
-                    <td></td>
-                    <td>
-                        <label>Price [ETH]:</label>
-                        <input name="PriceETH" required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
-                        <br />
-                    </td>
-                    <td></td>
-                    <td>
-                        <label>Price [₪]:</label>
-                        <input name="PriceILS" class="form-control form-control-sm w-auto" id="PriceIlsTxt" disabled>
-                        <br />
-                    </td>
-                </tr>
-                <tr></tr>
-                <tr>
-                    <td>
-                        <label>BuyerID:</label>
-                        <input name="BuyerID" class="form-control form-control-sm w-auto" id="BuyerIdTxt" disabled>
-                    </td>
-                    <td></td>
-                    
-                    <td>
-                        <br />
-                        <select style="position:relative; top:4px" name="TimeToBeOpen" class="  custom-select w-auto" id="TimeSelector" required disabled>
-                            <option value="">Choose Time</option>
-                            <option value="1">1 Hour</option>
-                            <option value="2">2 Hours</option>
-                            <option value="3">3 Hours</option>
-                            <option value="24">24 Hours</option>
-                            <option value="48">48 Hours</option>
-                        </select>
+                    <label>Loaction:</label>
+                    <input name="Loaction" class="form-control form-control-sm w-auto" type="text" id="LoactionTxt" disabled>
+                    <br />
+                </td>
+                <td></td>
+                <td>
+                    <label>Area-In [m^2]:</label>
+                    <input name="AreaIn" class="form-control form-control-sm w-auto" type="number" id="AreaInTxt" disabled>
+                    <br />
+                </td>
+                <td></td>
+                <td>
+                    <label>Rooms:</label>
+                    <input name="Rooms" class="form-control form-control-sm w-auto" type="number" id="RoomsTxt" disabled>
+                    <br />
+                </td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td>
+                    <label>Buyer Public Key</label>
+                    <input onchange="getBuyerID()" name="BuyerPublicKey" required class="form-control form-control-sm w-auto" type="text" id="BuyerAddressTxt" placeholder="" disabled>
+                    <br />
+                </td>
+                <td></td>
+                <td>
+                    <label>Price [ETH]:</label>
+                    <input name="PriceETH" required class="form-control form-control-sm w-auto" step="0.1" type="number" id="PriceEthTxt" min="0" placeholder="" disabled onchange="SetIlsPrice()">
+                    <br />
+                </td>
+                <td></td>
+                <td>
+                    <label>Price [₪]:</label>
+                    <input name="PriceILS" class="form-control form-control-sm w-auto" id="PriceIlsTxt" disabled>
+                    <br />
+                </td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td>
+                    <label>BuyerID:</label>
+                    <input name="BuyerID" class="form-control form-control-sm w-auto" id="BuyerIdTxt" disabled>
+                </td>
+                <td></td>
 
-                    </td>
+                <td>
+                    <br />
+                    <select style="position:relative; top:4px" name="TimeToBeOpen" class="  custom-select w-auto" id="TimeSelector" required disabled>
+                        <option value="">Choose Time</option>
+                        <option value="1">1 Hour</option>
+                        <option value="2">2 Hours</option>
+                        <option value="3">3 Hours</option>
+                        <option value="24">24 Hours</option>
+                        <option value="48">48 Hours</option>
+                    </select>
 
-                </tr>
-            </table>
+                </td>
 
-            <br />
-            <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
-            <span style="font-size:14px; display:none" id="TaxLabel" class="badge badge-warning"></span>
-            <br />
-            <br />
-            <div style="display:flex ; ">
-                <input id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" value="Sign&Deploy Contract" disabled />
-                <img style="display:none" id="DeployLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+            </tr>
+        </table>
 
-            </div>
-        }
+        <br />
+        <span style="font-size:14px; display:none" id="lastPriceLabel" class="badge badge-primary">Last purchase price:</span>
+        <span style="font-size:14px; display:none" id="TaxLabel" class="badge badge-warning"></span>
+        <br />
+        <br />
+        <div style="display:flex ; ">
+            <!--<input id="deployContractBtn" onclick="offerContract()" type="button" class="btn btn-success" value="Sign&Deploy Contract" disabled hidden/>-->
+            <button id="deployContractBtn" onclick="offerContract()" class="btn btn-success" disabled>Sign&Deploy Contract&nbsp&nbsp<i class="fa fa-pencil-square-o  fa-lg" aria-hidden="true"></i> </button>
+            <img style="display:none" id="DeployLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+
+        </div>
+
     </div>
     <div style="float:left">
         <img name="ImageURL" class="w-75" style="float:right" id="imageAssetForm" />
@@ -254,7 +255,7 @@
 
         });
 
-        
+    
 
         function SetIlsPrice()
         {
@@ -305,6 +306,18 @@
                 ErrorMsg = ErrorMsg + "You running out of ETH, please deposit more ETH.<br>";
             }
 
+            var inputBuyerPublicKey = document.getElementById("BuyerAddressTxt").value;
+            var inputPriceEth = document.getElementById("PriceEthTxt").value;
+            var inputTimeToBeOpen = document.getElementById("TimeSelector").value;
+
+            if (inputBuyerPublicKey == '' || inputPriceEth == '' || inputTimeToBeOpen == '')
+            {
+                ErrorMsg = ErrorMsg + "You missed some required fields!<br>";
+                console.log("The new test for empty fields has been proven");
+            }
+
+
+            /*
             var form = document.getElementById('DeployContractForm');
             for (var i = 0; i < form.elements.length; i++)
                 {
@@ -312,7 +325,7 @@
                        ErrorMsg = ErrorMsg + "You missed some required fields!<br>";
                         break;
                     }
-                }
+                }*/
 
             return ErrorMsg;
         }

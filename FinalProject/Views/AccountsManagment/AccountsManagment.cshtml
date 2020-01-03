@@ -40,7 +40,9 @@
         <table>
             <tr>
                 <td>
-                    <input value="Add" class="btn btn-success pl-3 pr-3" type="button" onclick="RegisterNewAccount()" />
+                    <input hidden value="Add" class="btn btn-success pl-3 pr-3" type="button" onclick="RegisterNewAccount()" />
+                    <button onclick="RegisterNewAccount()" class="btn btn-success pl-3 pr-3" >Add&nbsp&nbsp<i class="fa fa-user-plus fa-lg" aria-hidden="true"></i></button>
+                    
                 </td>
                 <td></td>
                 <td></td>
@@ -59,10 +61,13 @@
     <div style="float:right">
         <div style="display:flex">
             <input class="form-control mr-sm-2 w-50" id="filterAccountsResults" type="text" placeholder="Search Account ID or Public-Key" onkeyup="filterAccountsResults()" />
-            <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportAccountsBtn" />
+            <input hidden class="btn btn-warning" type="button" value="Export To Excel" id="ExportAccountsBtn" />
+            <button onclick="DownloadAccounts()" class="btn btn-warning" id="ExportAccountsBtn">Export To Excel&nbsp&nbsp<i class="fa fa-download" aria-hidden="true"></i></button>
+
         </div>
         <br />
-            <div style="height:300px; overflow:auto;">
+        <div style="height:300px; overflow:auto;">
+
             <table id="accountsTable" class=" table table-hover">
                 <thead align="center">
                     <tr>
@@ -84,21 +89,15 @@
                     }
                 </tbody>
             </table>
+
         </div>
     </div>
-
 
 
 
 </div>
 
     
-        
-        
-        
-    
-
-
 
 
 
@@ -110,7 +109,12 @@
                 document.getElementById("navBarAccountsManagement").style.fontWeight = "bold";
             });
 
-            $('#ExportAccountsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelAccounts" ,"AccountsManagment")'; });
+            //$('#ExportAccountsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelAccounts" ,"AccountsManagment")'; });
+
+            function DownloadAccounts()
+            {
+                document.location = '@Url.Action("DownloadExcelAccounts" ,"AccountsManagment")';
+            }
 
             function resetValidation()
             {

@@ -20,7 +20,7 @@
     <center><img src="~/img/Logo.png" style="width:90%; height:auto" /></center>
     @using (Html.BeginForm("AccountMainPage", "DappAccount", FormMethod.Post, new { @id = "myform" }))
     {
-        <div class="row justify-content-center">
+        <div class="row justify-content-center" > 
             @Html.TextBoxFor(m => m.publicKey, new { id = "public_key_input", placeholder = "Ethereum Public Key", required = "required" })
         </div> <br />
         <div class="row justify-content-center">
@@ -31,7 +31,8 @@
             <img id="israelLogo" style="display: none; width:10%; height: auto " src="~/img/IsraelSymbol.png" />
         </div> <br />
     }
-    <div class="row justify-content-center">
-        <input id="submit" type="button" value="Login" class="btn btn-primary" onclick="SendLoginData()" />
-    </div>
+<div class="row justify-content-center">
+    <input hidden id="submit" type="button" value="Login" class="btn btn-primary" onclick="SendLoginData()" />
+    <button class="btn btn-primary" onclick="SendLoginData()" id="submit">Login&nbsp<i class="fa fa-sign-in"></i></button>
+</div>
 </div>

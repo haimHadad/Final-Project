@@ -22,12 +22,15 @@ else
     <br />
     <div style="display:flex">
         <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()" />
-        <input class="btn btn-warning" type="button" value="Export To Excel" id="ExportPendingContractBtn" />
+        <input hidden class="btn btn-warning" type="button" value="Export To Excel" id="ExportPendingContractBtn" />
+        <button onclick="DownloadPendingRequests()" class="btn btn-warning" id="ExportFinalDecitionsBtn">Export To Excel&nbsp&nbsp<i class="fa fa-download" aria-hidden="true"></i></button>
+
     </div>
     <br />
     <div style="display:flex">
-        <input onclick="RefreshTable()" class="btn btn-info" type="button" value="Refresh Table" id="RefreshPendingContractTblBtn" />
-        <img class="ml-4" style="display:none" id="RefreshTblLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+        <!--<input hidden onclick="RefreshTable()" class="btn btn-info" type="button" value="Refresh Table" id="RefreshPendingContractTblBtn" />-->
+        <button id="RefreshPendingContractTblBtn" onclick="RefreshTable()" class="btn btn-info">Refresh Table&nbsp&nbsp<i class="fa fa-refresh" aria-hidden="true"></i></button>
+        <img class="ml-5" style="display:none" id="RefreshTblLoader" src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
     </div>
     <br />
 
@@ -203,7 +206,12 @@ else
             document.getElementById("navBarInGoingRequest").style.fontWeight = "bold";
         });
 
-        $('#ExportPendingContractBtn').click(function(){ document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")'; });
+        //$('#ExportPendingContractBtn').click(function(){ document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")'; });
+
+        function DownloadPendingRequests()
+        {
+            document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")';
+        }
 
         function FilterResults()
         {

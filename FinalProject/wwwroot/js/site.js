@@ -8,7 +8,7 @@ function offerContract()
 {
     document.getElementById("CreateContractDialogMessage").innerHTML = "";
     ErrorMsg = checkErrors();
-
+    console.log("Check after icon : " + ErrorMsg);
     if (ErrorMsg != "") {
         $('#CreateContractDialogTitle').text("Error"); //show error headline
         document.getElementById("CreateContractDialogMessage").innerHTML = ErrorMsg;
@@ -18,7 +18,7 @@ function offerContract()
     }
 
     //AssetID OwnerID SellerPublicKey Loaction AreaIn Rooms BuyerPublicKey PriceETH TimeToBeOpen
-
+    console.log("Here we continue after checking the errors! ! ! ! !");
     var AssetID = document.getElementById("AssetIdTxt").value;
     var OwnerID = document.getElementById("OwnerIdTxt").value;
     var SellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
