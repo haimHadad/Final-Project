@@ -19,18 +19,15 @@ else
 
     <div class=""><h1>Final Decisions</h1></div>
     <br />
-    <div style="display:flex">
+    <div style="display:flex"> 
         <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()" />
-        <input hidden  class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn" />
+        <input style="display:none" class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn" />
         <button onclick="DownloadFinalDecitions()" class="btn btn-warning" id="ExportFinalDecitionsBtn">Export To Excel&nbsp&nbsp<i class="fa fa-download" aria-hidden="true"></i></button>
-        
+
     </div>
     <br />
 
 
-
-
-    
 
 
     <div hidden style="height:300px; overflow:auto;"></div>
@@ -101,7 +98,7 @@ else
                 <textarea readonly id="ContractdialogNotes" rows="4" cols="50"></textarea>
             </div>
             <div class="modal-footer justify-content-around">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">close</button>
             </div>
         </div>
     </div>
