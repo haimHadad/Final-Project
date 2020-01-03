@@ -51,7 +51,7 @@
                                 <td><a target="_blank" href=@a.EtherscanURL>Here</a></td>
                                 <td>
                                     <button id=@btnID onclick="LoadOpenContractDetails(@OfferSerialModel)" class="btn btn-primary" data-toggle="modal">Open Contract</button>
-                                    <img class="ml-5" style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+                                    <center><img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" /></center>
                                     <label style="display:none;" id=@lblID></label>
                                 </td>
                             </tr>
@@ -78,7 +78,7 @@
                                     {
                                         <td>
                                             <button id=@btnCancelID onclick="ShowExpierdContract(@OfferSerialModel)" class="btn btn-danger" data-toggle="modal">Open to cancel</button>
-                                            <img class="ml-5" style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" />
+                                            <center><img style="display:none" id=@loaderID src="https://s5.gifyu.com/images/LoaderDeploy.gif" alt="LoaderDeploy.gif" border="0" /></center>
                                             <label style="display:none" id=@lblCancelID>Canceled</label>
                                         </td>
                                     }
@@ -158,8 +158,8 @@
                     </div>
                     <div class="modal-footer justify-content-around">
 
-                        <button onclick="DenyContract()" id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
-                        <button onclick="CheckIfSure()" id="openContractSignBtn" type="button" class="btn btn-success" data-dismiss="modal">Sign</button>
+                        <button onclick="DenyContract()" id="openContractDenyBtn" type="button" class="btn btn-danger" data-dismiss="modal">Deny&nbsp&nbsp<i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button onclick="CheckIfSure()" id="openContractSignBtn" type="button" class="btn btn-success" data-dismiss="modal">Sign&nbsp&nbsp<i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
