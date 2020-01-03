@@ -204,8 +204,9 @@ else
         $(document).ready(function () {
             document.getElementById("navBarInGoingRequest").style.textDecoration = "underline";
             document.getElementById("navBarInGoingRequest").style.fontWeight = "bold";
+            rowsInProcess = 0;
         });
-
+        var rowsInProcess;
         //$('#ExportPendingContractBtn').click(function(){ document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")'; });
 
         function DownloadPendingRequests()
@@ -282,7 +283,7 @@ else
             TaxAmountILS = TaxAmountILS.toFixed(2)
             TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             var TaxAmount = "" + TaxAmountETH + " ETH / ₪" + TaxAmountILS;
-
+            rowsInProcess = rowsInProcess + 1;
 
             document.getElementById(buttonID).style.display = "none";
             document.getElementById(loaderID).style.display = "block";
@@ -315,6 +316,7 @@ else
                         var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                         document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Tax recieved : ".bold()+TaxAmount+"</br>"+"Fee : ₪"+result.feeILS;
                         $('#ResultRegulatorDialog').modal('show');
+                        rowsInProcess = rowsInProcess - 1;
 
                     },
                     error: function (xhr, text, error)
@@ -420,7 +422,8 @@ else
 
         function RefreshTable()
         {
-
+            if (rowsInProcess > 0)
+                return;
             document.getElementById("RefreshTblLoader").style.display = "block";
             document.getElementById("RefreshPendingContractTblBtn").style.display = "none";
 
@@ -457,7 +460,8 @@ else
 
                             cell1.innerHTML = List[i].AssetID;
                             cell2.innerHTML = List[i].Loaction;
-                            var etherscanURL = List[i].etherscanURL;
+                            var etherscanURL = List[i].EtherscanURL;
+                            console.log("Check URL--$>"+etherscanURL);
                             cell3.innerHTML = "<a target='_blank' href="+etherscanURL+">Here</a>";
                             JsonContract = JSON.stringify(List[i]);
                             console.log("Contract: "+ i +JsonContract);
@@ -496,7 +500,7 @@ else
 
             document.getElementById(buttonID).style.display = "none";
             document.getElementById(loaderID).style.display = "block";
-
+            rowsInProcess = rowsInProcess + 1;
             $.ajax({
                     url: "/InGoingRequests/CancelContractAsRegulator",
                     type: 'POST',
@@ -524,7 +528,7 @@ else
                         document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";
                         document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Fee : ₪"+result.feeILS;
                         $('#ResultRegulatorDialog').modal('show');
-
+                        rowsInProcess = rowsInProcess - 1;
                     },
                     error: function (xhr, text, error)
                     {
