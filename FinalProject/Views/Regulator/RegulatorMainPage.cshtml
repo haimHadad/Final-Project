@@ -20,7 +20,7 @@ else
     <div class=""><h1>Final Decisions</h1></div>
     <br />
     <div style="display:flex"> 
-        <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterResults()" />
+        <input class="form-control mr-sm-2 w-25" id="filterInputResults" type="text" placeholder="Search Asset ID or Loaction" onkeyup="FilterFinalDecitionsResults()" />
         <input style="display:none" class="btn btn-warning" type="button" value="Export To Excel" id="ExportFinalDecitionsBtn" />
         <button onclick="DownloadFinalDecitions()" class="btn btn-warning" id="ExportFinalDecitionsBtn">Export To Excel&nbsp&nbsp<i class="fa fa-download" aria-hidden="true"></i></button>
 
@@ -119,33 +119,7 @@ else
         }
 
 
-        function FilterResults()
-        {
-            var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
-            input = document.getElementById("filterInputResults");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("decitionsTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++)
-            {
-                td0 = tr[i].getElementsByTagName("td")[0];
-                td1 = tr[i].getElementsByTagName("td")[1];
-                if (td0 || td1)
-                {
-                    txtValue0 = td0.textContent || td0.innerText;
-                    txtValue1 = td1.textContent || td1.innerText;
-                    if ( (txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1) )
-                    {
-                        tr[i].style.display = "";
-                    }
-                    else
-                    {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-
-        }
+        
 
         function ViewContractDeteils(offer) {
 

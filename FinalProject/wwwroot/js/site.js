@@ -8,6 +8,372 @@
 
 
 
+function CancelContract()   //in regulator InGoingRequests
+{
+    var offer = approvedContract;
+    var buttonID = "viewPendingContractDetailsBtn" + offer.AssetID;
+    var loaderID = "loader" + offer.AssetID;
+    var lblIdApproved = "lblPendingContractResult" + offer.AssetID;
+    console.log("Label ID is---->" + lblIdApproved);
+    var publicKeyRegultaor = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
+    var notes = document.getElementById("PendingContractdialogNotes").value;
+
+    document.getElementById(buttonID).style.display = "none";
+    document.getElementById(loaderID).style.display = "block";
+    rowsInProcess = rowsInProcess + 1;
+    $.ajax({
+        url: "/InGoingRequests/CancelContractAsRegulator",
+        type: 'POST',
+        async: true,
+        data: { ContractAddress: offer.ContractAddress, DenyNotes: notes },
+        success: function (data) {
+            document.getElementById(lblIdApproved).innerHTML = "Canceled";
+            document.getElementById(lblIdApproved).style.color = "red";
+            document.getElementById(lblIdApproved).style.display = "block";
+            document.getElementById(loaderID).style.display = "none";
+            updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor);
+            var result = JSON.parse(data);
+            var feeILS = result.feeILS;
+            document.getElementById("ResultRegulatorDialogTitle").innerHTML = "The contract canceled sucessfully";
+            document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "block";
+            document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "block";
+            document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "block";
+            document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "block";
+            document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "none";
+            document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "block";
+            document.getElementById("ResultRegulatorDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+            document.getElementById("ResultRegulatorDialogMessageContent1").innerHTML = "The contract been canceled.";
+            document.getElementById("ResultRegulatorDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+            document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";
+            document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;
+            $('#ResultRegulatorDialog').modal('show');
+            rowsInProcess = rowsInProcess - 1;
+        },
+        error: function (xhr, text, error) {
+            document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "none";
+            document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "none";
+            document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "none";
+            document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "none";
+            document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "none";
+            updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor)
+            var ErrorMsg = "You running out of ETH, please deposit more ETH.<br>";
+            document.getElementById("ErrorRegulatorDialogMessageContent").innerHTML = "" + ErrorMsg;
+            document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "block";
+            document.getElementById("ResultRegulatorConfirmationImg").style.display = "none";
+            document.getElementById(lblIdApproved).style.display = "none";
+            document.getElementById(loaderID).style.display = "none";
+            document.getElementById(buttonID).style.display = "block";
+            document.getElementById("ResultRegulatorDialogTitle").innerHTML = "Error";
+
+            $('#ResultRegulatorDialog').modal('show');
+
+
+
+            return;
+        }
+    });
+
+
+}
+
+
+
+
+function RefreshTable()  //in regulator InGoingRequests
+{
+    if (rowsInProcess > 0)
+        return;
+    document.getElementById("RefreshTblLoader").style.display = "block";
+    document.getElementById("RefreshPendingContractTblBtn").style.display = "none";
+
+
+
+    $.ajax({
+        url: "/InGoingRequests/UpdatePendingContracts",
+        type: 'POST',
+        async: true,
+        data: {},
+        success: function (data) {
+
+            table = document.getElementById("PendingContractsTable");
+            for (var i = table.rows.length - 1; i > 0; i--) {
+                table.deleteRow(i);
+            }
+
+            var List = JSON.parse(data);
+            var cell1, cell2, cell3, cell4;
+            var JsonContract;
+            for (var i = 0; i < List.length; i++) {
+
+                var row = table.insertRow(table.rows.length);
+                cell1 = row.insertCell(0);
+                cell2 = row.insertCell(1);
+                cell3 = row.insertCell(2);
+                cell4 = row.insertCell(3);
+
+
+                List[i].Loaction = List[i].Loaction.replace("'", '`');
+
+                cell1.innerHTML = List[i].AssetID;
+                cell2.innerHTML = List[i].Loaction;
+                var etherscanURL = List[i].EtherscanURL;
+                console.log("Check URL--$>" + etherscanURL);
+                cell3.innerHTML = "<a target='_blank' href=" + etherscanURL + ">Here</a>";
+                JsonContract = JSON.stringify(List[i]);
+                console.log("Contract: " + i + JsonContract);
+                cell4.innerHTML = "<button id='viewPendingContractDetailsBtn" + List[i].AssetID + "' class='btn btn-primary' data-toggle='modal' data-target='#PendingContractDetailsDialog' onclick='ViewPendingContractDeteils(" + JsonContract + ")' >View Details</button>"
+                    + "<center><img style='display:none' id='loader" + List[i].AssetID + "' src='https://s5.gifyu.com/images/LoaderDeploy.gif' alt='LoaderDeploy.gif' border='0' /></center>"
+                    + "<label style='display:none' id='lblPendingContractResult" + List[i].AssetID + "'></label>";
+
+
+                document.getElementById("RefreshTblLoader").style.display = "none";
+                document.getElementById("RefreshPendingContractTblBtn").style.display = "block";
+
+            }
+
+
+        },
+        error: function (xhr, text, error) {
+
+            return;
+        }
+
+    });
+
+}
+
+
+
+function AllowNotesRegulaotrDenial() //in regulator InGoingRequests
+{
+    // PendingContractDenyBtn
+    checkBox = document.getElementById("PendingContractCheckBox").checked;
+    if (checkBox == true) {
+
+        $('#PendingContractApproveBtn').disabled = true;
+        document.getElementById("PendingContractdialogNotes").placeholder = "Add your notes";
+        document.getElementById("PendingContractdialogNotes").value = "";
+        document.getElementById("PendingContractdialogNotes").disabled = false;
+        document.getElementById("PendingContractApproveBtn").disabled = true;
+    }
+
+    else {
+        document.getElementById("PendingContractdialogNotes").disabled = true;
+        document.getElementById("PendingContractdialogNotes").placeholder = "";
+        document.getElementById("PendingContractdialogNotes").value = "";
+        document.getElementById("PendingContractApproveBtn").disabled = false;
+    }
+
+}
+
+
+
+
+
+function ViewPendingContractDeteils(offer) //in regulator InGoingRequests
+{
+    approvedContract = offer;
+    console.log("Json is : -->" + offer);
+    var fullPublicKey = offer.SellerPublicKey;
+    var partOne = fullPublicKey.substring(0, 12);
+    var partTwo = " . . . ";
+    var partThree = fullPublicKey.substring(32, fullPublicKey.length);
+    var OwnerPublicKeyToShow = "" + partOne + partTwo + partThree;
+
+    var fullPublicKey = offer.BuyerPublicKey;
+    var partOne = fullPublicKey.substring(0, 12);
+    var partTwo = " . . . ";
+    var partThree = fullPublicKey.substring(32, fullPublicKey.length);
+    var BuyerPublicKeyToShow = "" + partOne + partTwo + partThree;
+    document.getElementById("PendingContractdialogNotes").value = "";
+    document.getElementById("PendingContractdialogNotes").disabled = true;
+    document.getElementById("PendingContractCheckBox").checked = false;
+    document.getElementById("PendingContractdialogNotes").placeholder = "";
+
+    document.getElementById("PendingDialogImageURL").setAttribute("src", offer.ImageURL);
+    document.getElementById("PendingContractDialogAssetID").innerHTML = "Asset No : ".bold() + offer.AssetID;
+    document.getElementById("PendingContractDialogLoaction").innerHTML = "Loaction : ".bold() + offer.Loaction;
+    document.getElementById("PendingContractDialogAreaIn").innerHTML = "AreaIn : ".bold() + offer.AreaIn + " m^2";
+    document.getElementById("PendingContractDialogRooms").innerHTML = "Rooms :".bold() + offer.Rooms;
+
+    var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var dealPriceETH = offer.PriceETH
+    var dealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
+    document.getElementById("PendingContractDialogPrice").innerHTML = "Price : ".bold() + dealPrice;
+    document.getElementById("PendingContractDialogOwnerID").innerHTML = "Owner ID : ".bold() + offer.OwnerID;
+    document.getElementById("PendingContractDialogOwnerPublicKey").innerHTML = "Owner Public-Key : ".bold() + OwnerPublicKeyToShow;
+    document.getElementById("PendingContractDialogBuyerID").innerHTML = "Buyer ID : ".bold() + offer.BuyerID;
+    document.getElementById("PendingContractDialogBuyerPublicKey").innerHTML = "Buyer Public-Key : ".bold() + BuyerPublicKeyToShow;
+
+    var taxAmountETH, taxAmountILS;
+    taxAmountETH = offer.PriceETH * 0.17;
+    taxAmountETH = taxAmountETH.toFixed(2);
+    taxAmountILS = offer.PriceILS * 0.17;
+    taxAmountILS = taxAmountILS.toFixed(2);
+    taxAmountILS = taxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var dealTax = "" + taxAmountETH + " ETH / ₪" + taxAmountILS;
+
+    document.getElementById("PendingContractDialogTaxAmount").innerHTML = "Tax : ".bold() + dealTax;
+
+}
+
+
+function ShowWarningFeforeApproval() //in regulator InGoingRequests
+{
+    var offer = approvedContract;
+
+    var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var dealPriceETH = offer.PriceETH
+    var DealPrice = "" + dealPriceETH + " ETH / ₪" + dealPriceILS;
+    var TaxAmountETH = offer.PriceETH * 0.17;
+    TaxAmountETH = TaxAmountETH.toFixed(2);
+    var TaxAmountILS = offer.PriceILS * 0.17;
+    TaxAmountILS = TaxAmountILS.toFixed(2)
+    TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var TaxAmount = "" + TaxAmountETH + " ETH / ₪" + TaxAmountILS;
+
+    var message = document.getElementById("additionalWarningForSigning");
+    message.innerHTML = "Asset ID : ".bold() + offer.AssetID + "</br>" + "Loaction : ".bold() + offer.Loaction + "</br>"
+        + "Deal Price : ".bold() + DealPrice + "</br>" + "Tax : ".bold() + TaxAmount;
+
+
+    $('#DialogBlockchainBeforeRegulatorApprove').modal('show');
+
+}
+
+
+
+function ApprovePendingContract() //in regulator InGoingRequests
+{
+    var offer = approvedContract;
+    var buttonID = "viewPendingContractDetailsBtn" + offer.AssetID;
+    var loaderID = "loader" + offer.AssetID;
+    var lblIdApproved = "lblPendingContractResult" + offer.AssetID;
+    console.log("Label ID is---->" + lblIdApproved);
+    var publicKeyRegultaor = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
+
+    var TaxAmountETH = offer.PriceETH * 0.17;
+    TaxAmountETH = TaxAmountETH.toFixed(2);
+    var TaxAmountILS = offer.PriceILS * 0.17;
+    TaxAmountILS = TaxAmountILS.toFixed(2)
+    TaxAmountILS = TaxAmountILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var TaxAmount = "" + TaxAmountETH + " ETH / ₪" + TaxAmountILS;
+    rowsInProcess = rowsInProcess + 1;
+
+    document.getElementById(buttonID).style.display = "none";
+    document.getElementById(loaderID).style.display = "block";
+
+    $.ajax({
+        url: "/InGoingRequests/ApproveContractAsRegulator",
+        type: 'POST',
+        async: true,
+        data: { ContractAddress: offer.ContractAddress },
+        success: function (data) {
+            document.getElementById(lblIdApproved).innerHTML = "Approved";
+            document.getElementById(lblIdApproved).style.color = "lightgreen";
+            document.getElementById(lblIdApproved).style.display = "block";
+            document.getElementById(loaderID).style.display = "none";
+            updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor);
+            var result = JSON.parse(data);
+            var feeILS = result.feeILS;
+            document.getElementById("ResultRegulatorDialogTitle").innerHTML = "The contract approved sucessfully";
+            document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "block";
+            document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "block";
+            document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "block";
+            document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "block";
+            document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "none";
+            document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "block";
+            document.getElementById("ResultRegulatorDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+            document.getElementById("ResultRegulatorDialogMessageContent1").innerHTML = "The contract been approved.";
+            document.getElementById("ResultRegulatorDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+            document.getElementById("ResultRegulatorConfirmationImg").src = "/img/V-symbol.png";
+            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById("ResultRegulatorDialogMessageContent4").innerHTML = "Tax recieved : ".bold() + TaxAmount + "</br>" + "Fee : ₪" + result.feeILS;
+            $('#ResultRegulatorDialog').modal('show');
+            rowsInProcess = rowsInProcess - 1;
+
+        },
+        error: function (xhr, text, error) {
+            document.getElementById("ResultRegulatorDialogMessageContent1").style.display = "none";
+            document.getElementById("ResultRegulatorDialogMessageContent2").style.display = "none";
+            document.getElementById("ResultRegulatorDialogMessageContent3").style.display = "none";
+            document.getElementById("ResultRegulatorDialogMessageContent4").style.display = "none";
+            document.getElementById("ResultRegulatorDialogEtherscanURL").style.display = "none";
+            updateAccountBalanceAfterBlockchainOperation(publicKeyRegultaor)
+            var ErrorMsg = "You running out of ETH, please deposit more ETH.<br>";
+            document.getElementById("ErrorRegulatorDialogMessageContent").innerHTML = "" + ErrorMsg;
+            document.getElementById("ErrorRegulatorDialogMessageContent").style.display = "block";
+            document.getElementById("ResultRegulatorConfirmationImg").style.display = "none";
+            document.getElementById(lblIdApproved).style.display = "none";
+            document.getElementById(loaderID).style.display = "none";
+            document.getElementById(buttonID).style.display = "block";
+            document.getElementById("ResultRegulatorDialogTitle").innerHTML = "Error";
+
+            $('#ResultRegulatorDialog').modal('show');
+
+
+
+            return;
+        }
+    });
+
+}
+
+
+
+
+function FilterPendingContractsResults() //in regulator InGoingRequests
+{
+    var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
+    input = document.getElementById("filterInputResults");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("PendingContractsTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td0 = tr[i].getElementsByTagName("td")[0];
+        td1 = tr[i].getElementsByTagName("td")[1];
+        if (td0 || td1) {
+            txtValue0 = td0.textContent || td0.innerText;
+            txtValue1 = td1.textContent || td1.innerText;
+            if ((txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1)) {
+                tr[i].style.display = "";
+            }
+            else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+}
+
+
+
+function FilterFinalDecitionsResults() //filter in the main page of regulator
+{
+    var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
+    input = document.getElementById("filterInputResults");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("decitionsTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td0 = tr[i].getElementsByTagName("td")[0];
+        td1 = tr[i].getElementsByTagName("td")[1];
+        if (td0 || td1) {
+            txtValue0 = td0.textContent || td0.innerText;
+            txtValue1 = td1.textContent || td1.innerText;
+            if ((txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1)) {
+                tr[i].style.display = "";
+            }
+            else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+}
+
+
+
 
 var interval; //time for the buyer
 function setTimer(timeLeftInSeconds) //time for the buyer
