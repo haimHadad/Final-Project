@@ -7,6 +7,231 @@
 
 
 
+function filterAccountsResults()  //AccountsManagment
+{
+    var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
+    input = document.getElementById("filterAccountsResults");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("accountsTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td0 = tr[i].getElementsByTagName("td")[0];
+        td1 = tr[i].getElementsByTagName("td")[1];
+        if (td0 || td1) {
+            txtValue0 = td0.textContent || td0.innerText;
+            txtValue1 = td1.textContent || td1.innerText;
+            if ((txtValue0.toUpperCase().indexOf(filter) > -1) || (txtValue1.toUpperCase().indexOf(filter) > -1)) {
+                tr[i].style.display = "";
+            }
+            else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+
+}
+
+
+
+
+function RegisterNewAccount() //AccountsManagment
+{
+    var idNumber = $('#NewIdNumber').val();
+    var publicKey = $('#NewPublicKey').val();
+
+    if (document.getElementById("NewIdNumber").classList.contains('is-invalid')) {
+        return;
+    }
+
+    if (document.getElementById("NewPublicKey").classList.contains('is-invalid')) {
+        return;
+    }
+
+
+
+    if (idNumber.length == 0) {
+        if (!document.getElementById("NewIdNumber").classList.contains('is-invalid')) {
+            document.getElementById("NewIdNumber").classList.add('is-invalid');
+            document.getElementById("inValidInputID").innerHTML = "Please insert ID number";
+            document.getElementById("inValidInputID").style.display = "block";
+            return;
+        }
+        return;
+    }
+
+    if (publicKey.length == 0) {
+        if (!document.getElementById("NewPublicKey").classList.contains('is-invalid')) {
+            document.getElementById("NewPublicKey").classList.add('is-invalid');
+            document.getElementById("inValidInputPublicKey").innerHTML = "Please insert PublicKey";
+            document.getElementById("inValidInputPublicKey").style.display = "block";
+            return;
+        }
+        return;
+    }
+
+
+    document.getElementById("AddAccountLoader").style.display = "block";
+
+    $.ajax({
+        url: "/AccountsManagment/AddNewAccount",
+        type: 'POST',
+        async: true,
+        data: { ID: idNumber, PublicKey: publicKey },
+        success: function (data) {
+            document.getElementById("ResponseID").style.display = "block";
+            document.getElementById("AddAccountLoader").style.display = "none";
+            if (data == "Success") {
+                document.getElementById("ResponseID").style.color = "lightgreen";
+                document.getElementById("ResponseID").innerHTML = "Account added successfully!";
+                document.getElementById("NewIdNumber").classList.remove('is-valid');
+                document.getElementById("NewPublicKey").classList.remove('is-valid');
+                document.getElementById("validInputID").style.display = "none";
+                document.getElementById("validInputPublicKey").style.display = "none";
+
+
+
+                table = document.getElementById("accountsTable");
+
+                var cell1, cell2, cell3, cell4;
+                var row = table.insertRow(table.rows.length);
+                cell1 = row.insertCell(0);
+                cell2 = row.insertCell(1);
+                cell3 = row.insertCell(2);
+                cell1.innerHTML = $('#NewIdNumber').val();
+                cell2.innerHTML = $('#NewPublicKey').val();
+                var etherscanURL = 'https://ropsten.etherscan.io/address/' + $('#NewPublicKey').val();
+
+                cell3.innerHTML = "<a target='_blank' href='" + etherscanURL + "'>Here</a>";
+
+                $('#NewIdNumber').val("");
+                $('#NewPublicKey').val("");
+            }
+
+            else {
+                document.getElementById("ResponseID").style.color = "red";
+                document.getElementById("ResponseID").innerHTML = data;
+            }
+
+        }
+    });
+
+}
+
+
+
+
+
+function checkValidityOfPublicKeyInput() //AccountsManagment
+{
+    document.getElementById("ResponseID").innerHTML = "";
+    document.getElementById("validInputPublicKey").style.display = "none";
+    document.getElementById("inValidInputPublicKey").style.display = "none";
+
+    if (document.getElementById("NewPublicKey").classList.contains('is-valid')) {
+        document.getElementById("NewPublicKey").classList.remove('is-valid');
+    }
+
+    var publicKey = $('#NewPublicKey').val();
+    if (publicKey == "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80") {
+        if (!document.getElementById("NewPublicKey").classList.contains('is-invalid')) {
+            document.getElementById("NewPublicKey").classList.add('is-invalid');
+        }
+        document.getElementById("inValidInputPublicKey").innerHTML = "The regulator cannot be added";
+        document.getElementById("inValidInputPublicKey").style.display = "block";
+        return;
+    }
+
+
+    $.ajax({
+        url: "/AccountsManagment/CheckPublicKeyValidity",
+        type: 'POST',
+        async: false,
+        data: { PublicKey: publicKey },
+        success: function (data) {
+            if (data == -1) {
+                if (!document.getElementById("NewPublicKey").classList.contains('is-invalid')) {
+                    document.getElementById("NewPublicKey").classList.add('is-invalid');
+                }
+                document.getElementById("inValidInputPublicKey").innerHTML = "Please insert a legal public Key";
+                document.getElementById("inValidInputPublicKey").style.display = "block";
+            }
+
+            else {
+                if (document.getElementById("NewPublicKey").classList.contains('is-invalid')) {
+                    document.getElementById("NewPublicKey").classList.remove('is-invalid');
+                }
+                document.getElementById("NewPublicKey").classList.add('is-valid');
+                document.getElementById("validInputPublicKey").style.display = "block";
+                document.getElementById("inValidInputPublicKey").style.display = "none";
+
+            }
+
+        }
+    });
+
+
+}   
+
+
+
+
+
+function checkValidityOfIdInput() //AccountsManagment
+{
+    document.getElementById("ResponseID").innerHTML = "";
+    document.getElementById("validInputID").style.display = "none";
+    document.getElementById("inValidInputID").style.display = "none";
+
+
+    var inputID = $('#NewIdNumber').val();
+    if (inputID.length != 9) {
+        if (document.getElementById("NewIdNumber").classList.contains('is-valid')) {
+            document.getElementById("NewIdNumber").classList.remove('is-valid');
+        }
+        document.getElementById("NewIdNumber").classList.add('is-invalid');
+        document.getElementById("validInputID").style.display = "none";
+        document.getElementById("inValidInputID").style.display = "block";
+        document.getElementById("inValidInputID").innerHTML = "ID length must be 9 digits."
+        return;
+    }
+    else {
+        if (document.getElementById("NewIdNumber").classList.contains('is-invalid')) {
+            document.getElementById("NewIdNumber").classList.remove('is-invalid');
+
+        }
+        document.getElementById("NewIdNumber").classList.add('is-valid');
+        document.getElementById("validInputID").style.display = "block";
+        document.getElementById("inValidInputID").style.display = "none";
+
+        return;
+
+    }
+}
+
+
+
+
+
+function resetValidation() //AccountsManagment
+{
+
+    if (document.getElementById("NewIdNumber").classList.contains('is-invalid')) {
+        document.getElementById("NewIdNumber").classList.remove('is-invalid');
+    }
+    document.getElementById("validInputPublicKey").style.display = "none";
+    document.getElementById("inValidInputPublicKey").style.display = "none";
+
+    if (document.getElementById("NewPublicKey").classList.contains('is-valid')) {
+        document.getElementById("NewPublicKey").classList.remove('is-valid');
+    }
+
+    else if (document.getElementById("NewPublicKey").classList.contains('is-invalid')) {
+        document.getElementById("NewPublicKey").classList.remove('is-invalid');
+    }
+}
+
+
 
 function CancelContract()   //in regulator InGoingRequests
 {
