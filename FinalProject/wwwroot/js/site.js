@@ -4,6 +4,302 @@
 // Write your JavaScript code.
 
 
+
+
+
+
+
+var interval; //time for the buyer
+function setTimer(timeLeftInSeconds) //time for the buyer
+{
+    console.log("time left -- " + timeLeftInSeconds);
+    clearInterval(interval)
+
+    var timeSpan = convert(timeLeftInSeconds);
+    console.log(timeSpan);
+    //var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+    var countDownDate = new Date(timeSpan).getTime();
+
+    // Update the count down every 1 second
+    interval = setInterval(function () {
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        var distance = countDownDate - now;
+        document.getElementById("openContractDialogTime").style.color = "lightgreen";
+        document.getElementById("openContractDenyBtn").disabled = false;
+        var checkBoxValue = document.getElementById("openContractCheckBox").checked;
+        if (checkBoxValue == true) {
+            document.getElementById("openContractSignBtn").disabled = true;
+        }
+        else {
+            document.getElementById("openContractSignBtn").disabled = false;
+        }
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Output the result in an element with id="demo"
+        //document.getElementById("demo").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+        document.getElementById("openContractDialogTime").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+
+        // If the count down is over, write some text
+        if (distance < 0) {
+            clearInterval(interval);
+            //document.getElementById("demo").innerHTML = "EXPIRED";
+            document.getElementById("openContractDialogTime").innerHTML = "EXPIRED";
+            document.getElementById("openContractDialogTime").style.color = "red";
+            document.getElementById("openContractDenyBtn").disabled = true;
+            document.getElementById("openContractSignBtn").disabled = true;
+        }
+    }, 1000);
+
+
+}
+
+
+
+
+function convert(timeLeft) //time for the buyer
+{
+    var now = new Date()
+    var secondsSinceEpoch = Math.round(now.getTime() / 1000)
+
+    // Unixtimestamp
+    var unixtimestamp = timeLeft;
+    unixtimestamp = parseInt(unixtimestamp);
+    secondsSinceEpoch = parseInt(secondsSinceEpoch);
+    unixtimestamp = unixtimestamp + secondsSinceEpoch;
+    // Months array
+    var months_arr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Convert timestamp to milliseconds
+    var date = new Date(unixtimestamp * 1000);
+
+    // Year
+    var year = date.getFullYear();
+
+    // Month
+    var month = months_arr[date.getMonth()];
+
+    // Day
+    var day = date.getDate();
+
+    // Hours
+    var hours = date.getHours();
+
+    // Minutes
+    var minutes = "0" + date.getMinutes();
+
+    // Seconds
+    var seconds = "0" + date.getSeconds();
+
+    // Display date time in MM-dd-yyyy h:m:s format
+    var convdataTime = month + ' ' + day + ', ' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    //"Jan 5, 2021 15:37:25"
+    //document.getElementById('datetime').innerHTML = convdataTime;
+    console.log("Time left date-->" + convdataTime);
+    return convdataTime;
+}
+
+
+
+
+
+
+function AllowNotes() //allow notes on buyer deny
+{
+    checkBox = document.getElementById("openContractCheckBox").checked;
+    if (checkBox == true) {
+
+        $('#openContractSignBtn').disabled = true;
+        document.getElementById("openContractdialogNotes").placeholder = "Add your notes";
+        document.getElementById("openContractdialogNotes").value = "";
+        document.getElementById("openContractdialogNotes").disabled = false;
+        document.getElementById("openContractSignBtn").disabled = true;
+    }
+
+    else {
+        document.getElementById("openContractdialogNotes").disabled = true;
+        document.getElementById("openContractdialogNotes").placeholder = "";
+        document.getElementById("openContractdialogNotes").value = "";
+        document.getElementById("openContractSignBtn").disabled = false;
+    }
+    var checkTimeLeft = document.getElementById("openContractDialogTime").textContent;
+    if (checkTimeLeft == "EXPIRED") {
+        document.getElementById("openContractDenyBtn").disabled = true;
+        document.getElementById("openContractSignBtn").disabled = true;
+    }
+}
+
+
+function CancelDealContract() //for the seller - if the buyer did not sign
+{
+    var offer = currentExpierdDealOffer;
+
+    var loaderID = "DeployLoader" + offer.AssetID;
+    var lblCancelID = "lblCancel" + offer.AssetID;
+    var btnCancelID = "btnCancelID" + offer.AssetID;
+
+    document.getElementById(btnCancelID).style.display = "none";
+    document.getElementById(loaderID).style.display = "block";
+
+    $.ajax({
+        url: "/ContractsStatus/CancelDealAsSeller",
+        type: 'POST',
+        async: true,
+        data: { ContractAddress: offer.ContractAddress, PublicKey: offer.SellerPublicKey },
+        success: function (data) {
+            document.getElementById(lblCancelID).style.display = "block";
+            document.getElementById(lblCancelID).style.color = "red";
+            document.getElementById(loaderID).style.display = "none";
+            timeLeftInView = data;
+            var result = JSON.parse(data);
+            var feeILS = result.feeILS;
+            document.getElementById("actionDealDialogTitle").innerHTML = "The contract canceled sucessfully";
+            document.getElementById("actionDealDialogMessageContent1").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent2").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent3").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent4").style.display = "block";
+            document.getElementById("actionDealDialogEtherscanURL").style.display = "block";
+            document.getElementById("actionDealDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+            document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract has canceled.";
+            document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+            document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
+            document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;
+            $('#actionDealDialog').modal('show');
+            updateAccountBalanceAfterBlockchainOperation(offer.SellerPublicKey);
+
+        }
+    });
+
+
+
+}
+
+
+function DenyContract() //for buyer
+{
+    var offer = currentContract;
+
+    var checkError = checkEthForFee();
+    if (checkError != "") {
+        $('#DialogBlockchainError').modal('show');
+        console.log(offer);
+        return;
+    }
+    var notes = document.getElementById("openContractdialogNotes").value;
+
+    var loaderDenyID = "DeployLoader" + offer.AssetID;
+    var lblDenyID = "resultOpenContract" + offer.AssetID;
+    var btnOpenContractID = "openContract" + offer.AssetID;
+
+    document.getElementById(btnOpenContractID).style.display = "none";
+    document.getElementById(loaderDenyID).style.display = "block";
+
+    $.ajax({
+        url: "/ContractsStatus/CancelDealAsBuyer",
+        type: 'POST',
+        async: true,
+        data: { ContractAddress: offer.ContractAddress, Notes: notes, PublicKey: offer.BuyerPublicKey },
+        success: function (data) {
+
+            document.getElementById(loaderDenyID).style.display = "none";
+            document.getElementById(lblDenyID).style.display = "block";
+            document.getElementById(lblDenyID).innerHTML = "Denied by the buyer (You)";
+            document.getElementById(lblDenyID).style.color = "red";
+            //timeLeftInView = data;
+            var result = JSON.parse(data);
+            var feeILS = result.feeILS;
+            document.getElementById("actionDealDialogTitle").innerHTML = "The contract denied sucessfully";
+            document.getElementById("actionDealDialogMessageContent1").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent2").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent3").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent4").style.display = "block";
+            document.getElementById("actionDealDialogEtherscanURL").style.display = "block";
+            document.getElementById("actionDealDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+            document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract has denied.";
+            document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+            document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
+            document.getElementById("actionDealDialogMessageContent4").innerHTML = "Fee : ₪" + result.feeILS;
+            $('#actionDealDialog').modal('show');
+            updateAccountBalanceAfterBlockchainOperation(offer.BuyerPublicKey);
+
+
+        }
+    });
+
+
+}
+
+
+function ApproveDeal() //for the buyer
+{
+    var offer = currentContract;
+    var ErrorMsg = "";
+    ErrorMsg = checkEthForDeal(offer);
+
+    if (ErrorMsg != "") {
+        $('#DialogBlockchainError').modal('show');
+        console.log(offer);
+        return;
+    }
+
+    var btnIdApprove = "openContract" + offer.AssetID;
+    var lblIdApprove = "resultOpenContract" + offer.AssetID;
+    var loaderIdApprove = "DeployLoader" + offer.AssetID;
+    document.getElementById(btnIdApprove).style.display = "none";
+    document.getElementById(loaderIdApprove).style.display = "block";
+
+    $.ajax({
+        url: "/ContractsStatus/ApproveContract",
+        type: 'POST',
+        async: true,
+        data: { ContractAddress: offer.ContractAddress, PublicKey: offer.BuyerPublicKey },
+        success: function (data) {
+
+            document.getElementById(lblIdApprove).innerHTML = "Awaiting for regulator signing";
+            document.getElementById(lblIdApprove).style.color = "lightgreen";
+            document.getElementById(lblIdApprove).style.display = "block";
+            document.getElementById(loaderIdApprove).style.display = "none";
+            updateAccountBalanceAfterBlockchainOperation(offer.BuyerPublicKey);
+            var result = JSON.parse(data);
+            var feeILS = result.feeILS;
+            document.getElementById("actionDealDialogTitle").innerHTML = "The contract approved sucessfully";
+            document.getElementById("actionDealDialogMessageContent1").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent2").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent3").style.display = "block";
+            document.getElementById("actionDealDialogMessageContent4").style.display = "block";
+            document.getElementById("actionDealDialogEtherscanURL").style.display = "block";
+            document.getElementById("actionDealDialogEtherscanURL").href = "https://ropsten.etherscan.io/address/" + result.ContractAddress;
+            document.getElementById("actionDealDialogMessageContent1").innerHTML = "The contract been approved.";
+            document.getElementById("actionDealDialogMessageContent2").innerHTML = "AssetID".bold() + " : " + offer.AssetID + "." + "</br>" + "Loaction".bold() + " : " + offer.Loaction + ".";
+            document.getElementById("actionConfirmationImg").src = "/img/V-symbol.png";
+            var dealPriceILS = offer.PriceILS.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById("actionDealDialogMessageContent4").innerHTML = "You paid : ".bold() + offer.PriceETH + " ETH / ₪" + dealPriceILS + "</br>" + "Fee : ₪" + result.feeILS;
+            $('#actionDealDialog').modal('show');
+        },
+        error: function (xhr, text, error) {
+            updateAccountBalanceAfterBlockchainOperation(offer.BuyerPublicKey)
+            var ErrorMsg = "You running out of ETH, please deposit more ETH.<br>";
+            $('#DialogBlockchainError').modal('show');
+            console.log(offer);
+            document.getElementById(btnIdApprove).style.display = "block";
+            document.getElementById(loaderIdApprove).style.display = "none";
+            return;
+        }
+
+    });
+
+
+
+}
+
+
 function offerContract()
 {
     document.getElementById("CreateContractDialogMessage").innerHTML = "";

@@ -67,7 +67,7 @@ namespace FinalProject.Models
             uint assetRooms = (uint)offer.Rooms;
             uint assetAreaIn = (uint)offer.AreaIn;
             string assetURL = offer.ImageURL;
-            double assetPrice = (uint)offer.PriceETH;
+            double assetPrice = offer.PriceETH;
             string buyerAddress = offer.BuyerPublicKey;
             var ContractAddresss = await Deploy(yourAccount, hoursTimeAmount, assetID, assetLoaction, assetRooms, assetAreaIn, assetURL, assetPrice, buyerAddress);
             return ContractAddresss;
