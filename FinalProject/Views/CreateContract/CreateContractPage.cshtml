@@ -316,6 +316,12 @@
                 console.log("The new test for empty fields has been proven");
             }
 
+            getBuyerID();
+            var buyerIDTxt = document.getElementById("BuyerIdTxt").value;
+            if (buyerIDTxt == "Error- buyer is not recognized")
+                ErrorMsg = ErrorMsg + "Buyer public-key is not recognized!<br>";
+
+
 
             /*
             var form = document.getElementById('DeployContractForm');
