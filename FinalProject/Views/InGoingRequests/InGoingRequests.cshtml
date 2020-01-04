@@ -37,9 +37,9 @@ else
     
 
 
-    <div hidden style="height:300px; overflow:auto;"></div>
-    <table id="PendingContractsTable" class=" table table-hover fixed_header_ingoing_requests">
-        <thead align="">
+    
+    <table id="PendingContractsTable" class=" table table-hover ">
+        <thead align="center">
             <tr>
                 <th scope="col">AssetID</th>
                 <th scope="col">Loaction</th>
@@ -47,7 +47,7 @@ else
                 <th scope="col">Action</th>
             </tr>
         </thead>
-        <tbody align="">
+        <tbody align="center">
             @foreach (var a in @Model.DeployedContractList)
             {
                 var ContractSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);

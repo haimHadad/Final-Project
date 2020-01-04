@@ -6,12 +6,12 @@
 <br />
 <h1>Your Assets</h1>
 <br />
-<div hidden style="height:300px; overflow:auto;"></div>
 
 
 
-    <table class=" table table-hover fixed_header_ownAssets">
-        <thead align="">
+
+    <table class=" table table-hove">
+        <thead align="center">
             <tr>
                 <th scope="col">AssetID</th>
                 <th scope="col">Loaction</th>
@@ -19,7 +19,7 @@
 
             </tr>
         </thead>
-        <tbody align="">
+        <tbody align="center">
             @foreach (var a in @Model.OwnAssetsList)
             {
                 var AssetSerialModel = Newtonsoft.Json.JsonConvert.SerializeObject(a);                                                                                //var dSerialModel = Newtonsoft.Json.JsonConvert.DeserializeObject(serialModel);

@@ -21,10 +21,9 @@
 
 
 <div id="myTabContent" class="tab-content">
-    <div class="tab-pane fade active show" id="OpenContractsTab">
-        <div hidden style="height:300px; overflow:auto;"></div>
-            <table class=" table table-hover fixed_header_open_closed_contracts">
-                <thead align="">
+    <div class="tab-pane fade active show" id="OpenContractsTab">    
+            <table class=" table table-hover">
+                <thead align="center">
                     <tr>
                         <th scope="col">AssetID</th>
                         <th scope="col">Loaction</th>
@@ -34,7 +33,7 @@
 
                     </tr>
                 </thead>
-                <tbody align="">
+                <tbody align="center">
                     @foreach (var a in @Model.DeployedContractList)
                     {
 
@@ -218,10 +217,10 @@
 
     <div class="tab-pane fade" id="ClosedContractsTab">
 
-        <div hidden style="height:300px; overflow:auto;"></div>
         
-        <table class=" table table-hover fixed_header_open_closed_contracts">
-            <thead align="">
+        
+        <table class=" table table-hover">
+            <thead align="center">
                 <tr>
                     <th scope="col">AssetID</th>
                     <th scope="col">Loaction</th>
@@ -231,7 +230,7 @@
 
                 </tr>
             </thead>
-            <tbody align="">
+            <tbody align="center">
                 @foreach (var a in @Model.DeployedContractList)
                 {
                     if (a.RegulatorSign == true)

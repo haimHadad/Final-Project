@@ -34,18 +34,9 @@ body {
     text-align: center;
     line-height: 64px; /* Vertically center the text there */
 }
-@media only screen and (max-width: 576px) 
-{
+
+@media only screen and (max-width: 576px) {
     .footer {
         line-height: 22px; /* Vertically center the text there */
     }
-
-
-
 }
-
-
-
-
-
-
