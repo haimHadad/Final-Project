@@ -1121,7 +1121,7 @@ function ViewAssetDeteils(assetJson) {
     document.getElementById("dialogAreaIn").innerHTML = "AreaIn : ".bold() + assetJson.AreaIn;
     document.getElementById("dialogRooms").innerHTML = "Rooms : ".bold() + assetJson.Rooms;
     document.getElementById("dialogImageURL").setAttribute("src", assetJson.ImageURL);
-    document.getElementById("dialogPrice").innerHTML = "Purchace Price : ".bold() + assetJson.Price + " ETH / ₪" + getPriceInILS(assetJson.Price);
+    document.getElementById("dialogPrice").innerHTML = "Purchase Price : ".bold() + assetJson.Price + " ETH / ₪" + getPriceInILS(assetJson.Price);
     $('.table tbody').on('click', '.btn', function () {
         var row = $(this).closest('tr');
         var col = row.find('td:eq(1)').text();

@@ -132,7 +132,7 @@ namespace FinalProject.Models
         public async Task<double> getTax()
         {
             var getTaxFunction = deployedContractIsntance.GetFunction("getTax");
-            UInt64 taxAmount = await getTaxFunction.CallAsync<UInt64>();
+            BigInteger taxAmount = await getTaxFunction.CallAsync<BigInteger>();
             var TaxAsDec = Web3.Convert.FromWei(taxAmount);
             double TaxAsDouble = Convert.ToDouble(TaxAsDec);
             return TaxAsDouble;
