@@ -27,6 +27,7 @@
         bool private isContractPayed = false; //flag raised after buyer sent ether to the contract
         bool private isExpired = false;       //if I bought the asset and want to sell it to another person, the govrenment raise this flag
         
+        
         event notifyNewOffer(address fromContract, address toBuyer); //send message to buyer when seller create and sign the contract
         event notifyContractApproved(address fromContract, address toSeller, address toBuyer); //govrenment raise signing flag, and send back the contract. Both sides reads the flag.
         event notifyContractSigned(address fromContract, address toGovrenment); //after buyer and sell signing we notify the govrenment 
@@ -116,6 +117,17 @@
         {
             return buyerSign;
         }
+        
+        function getGovrenmentSigning() public view returns(bool) //this method return state of buyer sign
+        {
+            return govrenmentSign;
+        }
+        
+        function getTax() public view returns (uint)
+        {
+            return taxPay;
+        }
+        
          
         function setBuyerSigning() public  //buyer sign the contract
         {
