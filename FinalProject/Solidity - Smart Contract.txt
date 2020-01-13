@@ -51,16 +51,16 @@
        
         
         
-        function() external payable //this is fallback function. it responisble for all data of transactions (pays for this contract)
-        { 
+        function() external payable 
+        {   //this is fallback function. it responisble for all data of transactions (pays for this contract)
             require( buyerAddress == msg.sender, 'Only buyer may pay this contract' );    //when address send ether to the contract, it must be the buyer`s address only
             require( ownerAsset.price == msg.value , 'Your pay is not equal to the asset`s price tag' ); //buyer can pay only the amount that the seller wants
             require( isContractPayed != true , 'Buyer already payed for this contract' ); //buyer can pay only the amount that the seller wants
             isContractPayed = true;
         }
 
-        function isTimerOver() public view returns (bool) //check if the time over
-        {
+        function isTimerOver() public view returns (bool) 
+        {   //check if the time over
             uint contractTime = now - timeOfContractCreation;
             if(contractTime > timeToBeOpen) 
                 return true;
@@ -68,13 +68,13 @@
             
         }
         
-        function getContractBalance() public view returns(uint) //this method return the balance of this contract = the ether amount that been sent to this contract by the buyer
-        {
+        function getContractBalance() public view returns(uint) 
+        { //this method return the balance of this contract = the ether amount that been sent to this contract by the buyer
             return address(this).balance;
         }
             
-        function getAssetDetails() public view returns (uint AssetID, string memory AssetLoaction, uint AssetRooms, uint AssetAreaIn, string memory AssetImageURL ,uint AssetPrice) //this method return the asset details for confirmation
-        {
+        function getAssetDetails() public view returns (uint AssetID, string memory AssetLoaction, uint AssetRooms, uint AssetAreaIn, string memory AssetImageURL ,uint AssetPrice) 
+        { //this method return the asset details for confirmation
             
             return 
                 (
@@ -87,44 +87,44 @@
                 );
         }
         
-        function getOldAssetOwner() public view returns(address) //return seller address
-        {
+        function getOldAssetOwner() public view returns(address) 
+        { //return seller address
             return oldOwnerAddress;
         }
         
-        function getAssetBuyer() public view returns(address) //gey buyer address
-        {
+        function getAssetBuyer() public view returns(address) 
+        { //get buyer address
             return buyerAddress;
         }
         
-        function getNewAssetOwner() public view returns(address) //get the owner after regulaotr approval
-        {
+        function getNewAssetOwner() public view returns(address) 
+        { //get the owner after regulaotr approval
            return newOwnerAddress; 
         } 
          
-        function getOwnerSigning() public view returns(bool) //this method return state of owner sign
-        {
+        function getOwnerSigning() public view returns(bool) 
+        { //this method return state of owner sign
             return ownerSign;
         }
          
-        function getBuyerSigning() public view returns(bool) //this method return state of buyer sign
-        {
+        function getBuyerSigning() public view returns(bool) 
+        { //this method return state of buyer sign
             return buyerSign;
         }
         
-        function getGovrenmentSigning() public view returns(bool) //this method return state of regulaotr sign
-        {
+        function getGovrenmentSigning() public view returns(bool) 
+        { //this method return state of regulaotr sign
             return govrenmentSign;
         }
         
-        function getTax() public view returns (uint) //get tax amount (ether), set by the regulator
-        {
+        function getTax() public view returns (uint) 
+        { //get tax amount (ether), set by the regulator
             return taxPay;
         }
         
          
-        function setBuyerSigning() public  //buyer sign the contract
-        {
+        function setBuyerSigning() public  
+        { //buyer sign the contract
             require( buyerAddress == msg.sender, 'Only buyer may sign this contract');    //only buyer can sign
             require(isContractPayed == true, 'You didn`t payed the price for the deal'); 
             require(buyerSign != true, 'The buyer already signed this contract' );
@@ -132,13 +132,13 @@
             emit notifyContractSigned(address(this), govrementAddress);
         }
         
-       function getIsExpired() public view returns(bool) //return expierd status
-       {
+       function getIsExpired() public view returns(bool) 
+       { //return expierd status
            return isExpired;
        }
        
        function TimeLeft() public view returns(uint)
-       {
+       { //get the time that left (in seconds) so the buyer be able to sign / sell be able to cancel the contract
            if(isTimerOver() == true)
                                 return 0;
             return (timeToBeOpen - ( now - timeOfContractCreation));
@@ -146,14 +146,14 @@
        
        
        
-       function setIsExpired() public //set expierd status by the regulaotor
-       {
+       function setIsExpired() public 
+       { //set expierd status by the regulaotor
            require( msg.sender ==  govrementAddress, 'Only govrenment may call this function' ); /
            isExpired = !isExpired;
        }
         
-        function approveAndExcecuteContract(uint _taxPay ) public returns (bool) //this method responsible for the excecution of the contract =ownership switch
-        {
+        function approveAndExcecuteContract(uint _taxPay ) public returns (bool) 
+        { //this method responsible for the excecution of the contract =ownership switch
            require( msg.sender ==  govrementAddress, 'Only govrenment may call this function' ); //only govrenment can call this function
            require(_taxPay < getContractBalance(), 'The tax payment must be lower than the buyer payment' );   //govrenment cannot take more ether than what the contract has
            require(buyerSign == true, 'The contract didn`t recieve the buyer`s signing' );
@@ -172,24 +172,24 @@
            
         }
         
-        function cancelContract() public //for the govrenment, cancel a contract by the regulator
-        {
+        function cancelContract() public 
+        { //for the govrenment, cancel a contract by the regulator
           require(govrementAddress == msg.sender, 'Only govrenment may call this function');
           require(govrenmentSign != true, 'The govrenment already signed this contract' );
           emit  notifyCancelOffer(address(this), buyerAddress , oldOwnerAddress, 1); //notifyCancelOffer 
           selfdestruct(buyerAddress); //Destruct the contract and return ether to the buyer
         }
     
-         function denyContract() public // cancel a contract by the buyer
-        {
+         function denyContract() public 
+        { // cancel a contract by the buyer
           require(buyerAddress == msg.sender, 'Only buyer may call this function'); 
           require(buyerSign != true, 'Buyer cannot deny the contract after signing'); 
           emit notifyDenyOffer(address(this), buyerAddress, oldOwnerAddress);
           selfdestruct(buyerAddress); //Destruct the contract, no need return ether to the buyer
         }
         
-        function abortContract() public //in case buyer didnt take action in time, the seller can cancel the contract using this method  
-        {
+        function abortContract() public   
+        { //in case buyer didnt take action in time, the seller can cancel the contract using this method
             require(oldOwnerAddress == msg.sender, 'Only asset owner may call this function'); 
             require(buyerSign != true, 'Buyer already signed the contract');
             require(isTimerOver() == true, 'Time didn`t over yet');
