@@ -14,8 +14,8 @@ namespace FinalProject.Controllers
 {
     public class CreateContractController : Controller
     {
-        private AssetsInContractContext _AssetInContractsContext;
-        private AccountsContext _AccountsContext;
+        private AssetsInContractContext _AssetInContractsContext; // AssetInContracts db table
+        private AccountsContext _AccountsContext; // Accounts db table
 
         public CreateContractController(AssetsInContractContext context, AccountsContext context2)
         {
@@ -24,7 +24,7 @@ namespace FinalProject.Controllers
         }
 
         public async Task<IActionResult> CreateContractPage(string PublicKey)
-        {
+        { //here we load the page that responsible for the contracts deployment (=creation), we read all the asset which owned by the account
             await DappAccountController.RefreshAccountData(PublicKey);
             PublicKey = PublicKey.ToLower();
             DappAccount account = DappAccountController.openWith[PublicKey];
@@ -60,7 +60,7 @@ namespace FinalProject.Controllers
 
 
         public async Task<double> CheckBuyerPublicKeyLegality(string BuyerPublicKey, string YourPublicKey)
-        {
+        { //check legality of the public key form
             YourPublicKey = YourPublicKey.ToLower();
             DappAccount account = DappAccountController.openWith[YourPublicKey];
             double buyerBalance = await DappAccountController.get_ETH_BalanceOfAnyAccount(YourPublicKey, BuyerPublicKey); 
@@ -69,7 +69,7 @@ namespace FinalProject.Controllers
 
         [HttpPost]
         public async Task<string> DeployContract (ContractOffer offer )
-        {
+        {   //deploy (=create) the contract, save it in the blockahin and in the DB table - AssetInContracts 
             double beforeBalanceETH = await DappAccountController.get_ETH_Balance(offer.SellerPublicKey, offer.SellerPublicKey);
             double beforeBalanceILS = await DappAccountController.get_ILS_Balance(offer.SellerPublicKey, offer.SellerPublicKey);
             double exchangeRate = DappAccountController.getExchangeRate_ETH_To_ILS();
@@ -110,7 +110,7 @@ namespace FinalProject.Controllers
 
 
         private bool InsertAssetInContractToDB(ContractOffer offer, string contractAddress)
-        {
+        { //update the AssetInContracts table after the contract deployment (=creation)
             AssetInContract newOffer = new AssetInContract();
             newOffer.AssetID = offer.AssetID;
             newOffer.ContractAddress = "" + contractAddress;
@@ -126,7 +126,7 @@ namespace FinalProject.Controllers
         }
 
         private void RemoveBusyAssetInContractFromDB(ContractOffer offer)
-        {
+        { //when we create the contract, we set a new record in AssetInContracts as "Busy" to prevent double contract deployment (=cration)
 
             var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.AssetID == offer.AssetID && d.ContractAddress=="Busy"
@@ -139,7 +139,7 @@ namespace FinalProject.Controllers
 
 
         public async Task<int> GetAddressIDAsync(string PublicKey)
-        {
+        { //return Israeli ID number from attached blockchain address
             List<AccountID> result = new List<AccountID>();
             result = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync(); 
             if(result.Count==0)
@@ -150,7 +150,7 @@ namespace FinalProject.Controllers
 
     }
 
-    internal class DeploymentRecipt
+    internal class DeploymentRecipt //response class after contract deployment
     {
         public string ContractAddress { get; set; }
 

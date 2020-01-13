@@ -14,10 +14,10 @@ namespace FinalProject.Controllers
     public class InGoingRequestsController : Controller
     {
 
-        private AssetsInContractContext _AssetInContractsContext;
-        private AccountsContext _AccountsContext;
-        private AssetContext _AssetsContext;
-        public static DappAccount _regulator;
+        private AssetsInContractContext _AssetInContractsContext; // AssetInContracts db table
+        private AccountsContext _AccountsContext; // Accounts db table
+        private AssetContext _AssetsContext; // Assets db table
+        public static DappAccount _regulator; // Regulaotr account
         public InGoingRequestsController(AssetsInContractContext context, AccountsContext context2, AssetContext context3)
         {
             _AssetInContractsContext = context;
@@ -28,7 +28,7 @@ namespace FinalProject.Controllers
 
 
         public async Task<IActionResult> ShowInGoingRequestsAsync()
-        {
+        { //show the pending contracts page for regulator approval
             DappAccount account = RegulatorController._regulator;
             await DappAccountController.RefreshAccountData(account.publicKey);
             account.DeployedContractList =  await GetPendingContracts();            
@@ -37,7 +37,7 @@ namespace FinalProject.Controllers
 
 
         private async Task<List<ContractOffer>> GetPendingContracts()
-        {
+        { //get all the open contracts (pending) that waits for the regulaotr approval
             DappAccount account = RegulatorController._regulator;
             await DappAccountController.RefreshAccountData(account.publicKey);
             List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();
@@ -78,21 +78,15 @@ namespace FinalProject.Controllers
 
 
         public async Task<string> UpdatePendingContracts()
-        {
+        { //update the table of the pending contract if the regulaotr click on the refresh button
             List<ContractOffer> deployedContractsFromBlockchain = await GetPendingContracts();
             RegulatorController._regulator.DeployedContractList = deployedContractsFromBlockchain;
             var ContractsListJson = Newtonsoft.Json.JsonConvert.SerializeObject(deployedContractsFromBlockchain);
             return ContractsListJson;
         }
 
-
-
-
-
-
-
-        public async Task<int> GetAddressID(string PublicKey) //give me blockchain address, I will give you Israeli ID number
-        {
+        public async Task<int> GetAddressID(string PublicKey)
+        { //return Israeli ID number from attached blockchain address
             List<AccountID> result = new List<AccountID>();
             result = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync();
             if (result.Count == 0)
@@ -102,7 +96,7 @@ namespace FinalProject.Controllers
         }
 
         public void DownloadExcelPendingContracts()
-        {
+        { //downlad all the pending contract in the HTML table to excel file
             var collection = RegulatorController._regulator.DeployedContractList;
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
@@ -145,7 +139,7 @@ namespace FinalProject.Controllers
 
         
         public async Task<string> ApproveContractAsRegulatorAsync(string ContractAddress)
-        {
+        { //approve the contract (regulator do it)
             DappAccount account = RegulatorController._regulator;
             await DappAccountController.RefreshAccountData(account.publicKey);
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
@@ -186,7 +180,7 @@ namespace FinalProject.Controllers
         }
 
         private async Task UpdateContractToApprovedInDB(string ContractAddress)
-        {
+        { //update registry - contract in "InGoing state" to "Approve" state
             DappAccount account = RegulatorController._regulator;
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
             Asset dealAsset = await deployedContract.getAssetDestails();
@@ -221,7 +215,7 @@ namespace FinalProject.Controllers
         }
 
         private async Task SwitchOwnership(string ContractAddress)
-        {
+        { //replace the ownership upon the asset - buyer = new owner
             string PublicKeySeller, PublicKeyNewOwner; 
             DappAccount account = RegulatorController._regulator;
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
@@ -251,8 +245,8 @@ namespace FinalProject.Controllers
             }
         }
 
-      public async Task<string> CancelContractAsRegulator(string ContractAddress, string DenyNotes)
-      {
+      public async Task<string> CancelContractAsRegulator(string ContractAddress, string DenyNotes) 
+      {     //cancel the contract and return the money to the buyer
             DappAccount account = RegulatorController._regulator;
             await DappAccountController.RefreshAccountData(account.publicKey);
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
@@ -289,7 +283,7 @@ namespace FinalProject.Controllers
         }
 
         private void UpdateContractToDeniedAsRegulatorInDB(string ContractAddress, string Notes)
-        {             
+        {  //update registry - contract in "InGoing state" to "Denied" state            
 
             var report = (from d in _AssetInContractsContext.AssetsInContract
                            where d.ContractAddress == ContractAddress
@@ -311,7 +305,7 @@ namespace FinalProject.Controllers
     }
 
     internal class RegulatorConfirmationRecipt
-    {
+    { //response class after approve / deny operation
         public string ContractAddress { get; set; }
 
         public double feeETH { get; set; }

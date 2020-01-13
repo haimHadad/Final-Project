@@ -27,19 +27,16 @@ namespace FinalProject.Controllers
             _AssetsContext = context3;
         }
 
-        public async Task<IActionResult> RegulatorMainPage() //here the login succeeded 
-        {
-
+        public async Task<IActionResult> RegulatorMainPage()
+        {  //here the login succeeded 
             await DappAccountController.RefreshAccountData(_regulator.publicKey);
-
-            //_regulator.ContractsList = await _AssetsContext.AssetsInContract.FromSqlRaw("select * from " + DB_TABLE_NAME + " where status = {0}", PENDING).ToListAsync();
             return RedirectToAction("ShowHomePage", "Regulator");
             
         }
 
 
-        public async Task<IActionResult> ShowHomePage() //collect all closed contracts
-        {
+        public async Task<IActionResult> ShowHomePage()
+        {   //read all closed contracts and show it in page
             DappAccount account = _regulator;
             List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();
             deployedContractsFromDB = await _AssetInContractsContext.AssetsInContract.FromSqlRaw("select * from AssetsInContract where Status= 'Approved' or (Status= 'Denied' and DeniedBy = 'Regulator') ").ToListAsync();
@@ -75,7 +72,7 @@ namespace FinalProject.Controllers
 
                 }
 
-                else //For the destroyed contracts, we need to get the data from db , except the deal price which is lost until we figure out what to do
+                else 
                 {
                     offer.SellerPublicKey = assCon.SellerPublicKey;
                     offer.BuyerPublicKey = assCon.BuyerPublicKey;
@@ -111,13 +108,8 @@ namespace FinalProject.Controllers
         }
 
 
-        
-
-
-
-
-        public async Task<int> GetAddressID(string PublicKey) //give me blockchain address, I will give you Israeli ID number
-        {
+        public async Task<int> GetAddressID(string PublicKey)
+        {   //return Israeli ID number from attached blockchain address
             List<AccountID> result = new List<AccountID>();
             result = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync();
             if (result.Count == 0)
@@ -127,7 +119,7 @@ namespace FinalProject.Controllers
         }
 
         public void DownloadExcelFinalDecitions()
-        {
+        { //download the closed contract html table into an excel file
             var collection = _regulator.DeployedContractList;
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
@@ -160,11 +152,7 @@ namespace FinalProject.Controllers
             Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             Response.Headers.Add("content-disposition", "attachment: filename=" + "Report.xlsx");
             Response.Body.WriteAsync(Ep.GetAsByteArray());
-            
-            //Response.AddHeader("content-disposition", "attachment: filename=" + "Report.xlsx");
-            //Response.BinaryWrite(Ep.GetAsByteArray());
-            //Response.StatusCode = StatusCodes.Status200OK;
-            //Response.End();
+
         }
 
 

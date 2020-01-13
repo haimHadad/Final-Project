@@ -24,7 +24,7 @@ namespace FinalProject.Controllers
         }
 
         public IActionResult Logout(string PublicKey)
-        {
+        { //perform logout from the account
             DappAccountController.openWith.Remove(PublicKey.ToLower());
             if (RegulatorController._regulator != null)
             {

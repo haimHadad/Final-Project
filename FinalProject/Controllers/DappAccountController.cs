@@ -16,9 +16,9 @@ namespace FinalProject.Controllers
 {
     public class DappAccountController : Controller
     {
-        private AssetContext _AssetsContext; 
-        public static Dictionary<string, DappAccount> openWith = new Dictionary<string, DappAccount>();
-        private const string REGULATOR_PUBLIC_KEY = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
+        private AssetContext _AssetsContext; // Assets db table
+        public static Dictionary<string, DappAccount> openWith = new Dictionary<string, DappAccount>(); //all the accounts in our web
+        private const string REGULATOR_PUBLIC_KEY = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80"; //this is the publick key of the regulator (=govrenment) 
 
         public DappAccountController(AssetContext context)
         {
@@ -27,8 +27,8 @@ namespace FinalProject.Controllers
 
         [HttpGet]
         [HttpPost]
-        public IActionResult AccountMainPage(DappAccount account) //here the login succeeded , e initialized the key
-        {   
+        public IActionResult AccountMainPage(DappAccount account)
+        {   //here the login succeeded , we initialized the basic details of the blockchain account
             account.BlockchainAcount = new Nethereum.Web3.Accounts.Account(account.privateKey);
             account.IsValidated = true;         
                 string myPublicKey = account.publicKey.ToLower();
@@ -50,8 +50,8 @@ namespace FinalProject.Controllers
 
         [HttpPost]
         public bool CheckAccount(String PublicKey, string PrivateKey)
-        {
-            
+        { //initilize login validiton status
+
             bool IsValidated = CheckLogin(PublicKey, PrivateKey); //here we just check the login, the model is not initilized in the key properties
 
             if (IsValidated)
@@ -62,7 +62,7 @@ namespace FinalProject.Controllers
         }
 
         public bool CheckLogin(string _publicKey, string _privateKey)
-        {
+        { //check login details
             DappAccount tempAccount = new DappAccount();
             try
             {
@@ -86,7 +86,7 @@ namespace FinalProject.Controllers
 
 
         public static async Task RefreshAccountData(string publicKey)
-        {
+        { //update the balance of the account (read it from the blockchain)
             string publicKeyToCheck = publicKey;
             publicKey = publicKey.ToLower();
             DappAccount account = DappAccountController.openWith[publicKey];
@@ -99,7 +99,7 @@ namespace FinalProject.Controllers
 
 
         public bool ConnectToBlockchain(String PublicKey)
-        {
+        { //connect to blockchain API using Nethereum
             PublicKey = PublicKey.ToLower();
             DappAccount account = openWith[PublicKey];
             if (account.IsValidated == true)
@@ -123,7 +123,7 @@ namespace FinalProject.Controllers
 
         [HttpPost]
         public async Task<double> RecheckBalanceAfterBlockchainOperation(string PublicKey)
-        {
+        { //read the current account balance from the blockchain, used after blockchain operation to update balance
             string PublicKeyToCheck = PublicKey;
             PublicKey = PublicKey.ToLower();
             double balanceETH = await get_ETH_Balance(PublicKey, PublicKeyToCheck);
@@ -132,7 +132,7 @@ namespace FinalProject.Controllers
 
 
         public static async Task<double> get_ETH_BalanceOfAnyAccount(String PublicKey, String PublicKeyToCheck)
-        {
+        { //read the balance of any account (ETH), from the blockchain, used after blockchain operation
             PublicKey = PublicKey.ToLower();
             DappAccount account = openWith[PublicKey];
                 if (PublicKey == null || account.IsValidated == false)
@@ -156,13 +156,13 @@ namespace FinalProject.Controllers
         }
 
         public static async Task<double> get_ETH_Balance(string PublicKey, string PublicKeyToCheck)
-        {
+        { //read the current account balance from the blockchain (ETH)
             double balance = await get_ETH_BalanceOfAnyAccount(PublicKey, PublicKeyToCheck);
             return balance;
         }
 
         public static double getExchangeRate_ETH_To_ILS()
-        {
+        { //read the real and live exchange rate from ETH to Shekel 
             double exchangeRate;
             string[] words;
             int indexOfExchangeRate;
@@ -186,14 +186,14 @@ namespace FinalProject.Controllers
         }
 
         public static async Task<double> get_ILS_Balance(string PublicKey, string PublicKeyToCheck)
-        {
+        { //read the current account balance from the blockchain (ILS)
             double tempBalance = await get_ILS_BalanceOfAnyAccount(PublicKey, PublicKeyToCheck);
             return tempBalance;
 
         }
 
         public static async Task<double> get_ILS_BalanceOfAnyAccount(string PublicKey, string PublicKeyToCheck)
-        {
+        { //read the balance of any account (ILS), from the blockchain, used after blockchain operation
             double exchangeRate = getExchangeRate_ETH_To_ILS();
             double tempBalance = await get_ETH_BalanceOfAnyAccount(PublicKey, PublicKeyToCheck);
             tempBalance = exchangeRate * tempBalance;
@@ -201,8 +201,8 @@ namespace FinalProject.Controllers
             return tempBalance;
         }
 
-        public async Task<IActionResult> ShowOwnAssets(string PublicKey) //get own assets update and return a view
-        {
+        public async Task<IActionResult> ShowOwnAssets(string PublicKey)
+        { //get the assets owned by the accounts 
             PublicKey = PublicKey.ToLower();
             DappAccount account = openWith[PublicKey];
             account.OwnAssetsList = null;
@@ -218,11 +218,3 @@ namespace FinalProject.Controllers
 
 }
 
-/* account.OwnAssetsList = await _context.assets.FromSqlRaw("SELECT Assets2.AssetID, Accounts.ID as OwnerID, Assets2.OwnerPublicKey,"
-                                                         + " Assets2.Loaction, Assets2.AreaIn, Assets2.Rooms, Assets2.ImageURL, Assets2.Price"
-                                                         + " FROM Assets2" 
-                                                         + " JOIN Accounts ON Assets2.OwnerPublicKey = Accounts.PublicKey"
-                                                         + " WHERE Assets2.OwnerPublicKey = {0}",account.publicKey).ToListAsync();   */
-
-//account.RecievedContractsList = await _context.recievedOpenContracts.FromSqlRaw("select * from OpenContracts where BuyerPublicKey = {0}", account.publicKey).ToListAsync();
-//account.ClosedContractsList = await _context.ClosedContracts.FromSqlRaw("select * from ClosedContracts").ToListAsync();

@@ -12,9 +12,9 @@ namespace FinalProject.Controllers
 {
     public class ContractsStatusController : Controller
     {
-        private AssetsInContractContext _AssetInContractsContext;
-        private AccountsContext _AccountsContext;
-        private AssetContext _AssetsContext;
+        private AssetsInContractContext _AssetInContractsContext; // AssetInContracts db table
+        private AccountsContext _AccountsContext; // Accounts db table
+        private AssetContext _AssetsContext; // Assets db table
 
         public ContractsStatusController(AssetsInContractContext context, AccountsContext context2, AssetContext context3)
         {
@@ -23,9 +23,8 @@ namespace FinalProject.Controllers
             _AssetsContext = context3;
         }
 
-        public async Task<IActionResult> ContractsStatusPage(string PublicKey) //now we are going to read all the open contracts
-        {
-            
+        public async Task<IActionResult> ContractsStatusPage(string PublicKey) //now 
+        {  //load the page of the open/closed contracts, we read all the related open contracts and sort them
             await DappAccountController.RefreshAccountData(PublicKey);
             DappAccount account = DappAccountController.openWith[PublicKey.ToLower()];
             List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();
@@ -74,7 +73,7 @@ namespace FinalProject.Controllers
 
                 }
 
-                else //For the destroyed contracts, we need to get the data from db , except the deal price which is lost until we figure out what to do
+                else 
                 {
                     offer.SellerPublicKey = assCon.SellerPublicKey;
                     offer.BuyerPublicKey = assCon.BuyerPublicKey;
@@ -120,8 +119,8 @@ namespace FinalProject.Controllers
             return View(account);
         }
 
-        public async Task<int> GetAddressID(string PublicKey) //give me blockchain address, I will give you Israeli ID number
-        {
+        public async Task<int> GetAddressID(string PublicKey)
+        {   //return Israeli ID number from attached blockchain address
             List<AccountID> result = new List<AccountID>();
             result = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where PublicKey = {0} ", PublicKey).ToListAsync();
             if (result.Count == 0)
@@ -132,7 +131,7 @@ namespace FinalProject.Controllers
 
         public async Task<int> GetTimeLeft(string ContractAddress, string PublicKey)
         {
-            //PublicKey = ExctractRealPublicKeyAfterNethereumBug(ContractAddress, PublicKey, "Buyer");
+            //get the time left in seconds for the contract to be signed buy the buyer  
             DappAccount account = DappAccountController.openWith[PublicKey.ToLower()];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
             ulong time = await deployedContract.getTimeLeftInSeconds();
@@ -143,7 +142,7 @@ namespace FinalProject.Controllers
         }
 
         public async Task<string> CancelDealAsSeller(string ContractAddress, string PublicKey)
-        {
+        {   //cancel the contract if the time is over (the buyer didn`t sign in time)
             DappAccount account = DappAccountController.openWith[PublicKey];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
             double beforeBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
@@ -175,7 +174,7 @@ namespace FinalProject.Controllers
         }
 
         public void deleteCanceledOfferBySeller(string ContractAddress)
-        {
+        { //delete the record from db of the unsigned contracts
             var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.ContractAddress == ContractAddress
                           select d).Single();
@@ -185,7 +184,7 @@ namespace FinalProject.Controllers
         }
 
         public async Task<string> CancelDealAsBuyer(string ContractAddress, string Notes, string PublicKey)
-        {
+        { //deny the contract /cancel the contract sent by seller 
             DappAccount account = DappAccountController.openWith[PublicKey];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
             double beforeBalanceETH = await DappAccountController.get_ETH_Balance(PublicKey, PublicKey);
@@ -217,7 +216,7 @@ namespace FinalProject.Controllers
         }
 
         public void updateOfferToDenied(string ContractAddress, string Notes)
-        {
+        { //update db open contract record from "Ongoing to denied"
             var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.ContractAddress == ContractAddress
                           select d).Single();
@@ -239,7 +238,7 @@ namespace FinalProject.Controllers
 
         public async Task<string> ApproveContract(string ContractAddress, string PublicKey)
         {
-            //PublicKey = ExctractRealPublicKeyAfterNethereumBug(ContractAddress, PublicKey, "Buyer");
+            //approve the contract seny by the seller (send money and sign the contract)
 
             DappAccount account = DappAccountController.openWith[PublicKey.ToLower()];
             SmartContractService deployedContract = new SmartContractService(account, ContractAddress);
@@ -282,7 +281,7 @@ namespace FinalProject.Controllers
 
 
         public void updateOfferToPending(string ContractAddress)
-        {
+        { //change state of the open contract from "ongoing" to pending, so the regulator be able to read it
             var report = (from d in _AssetInContractsContext.AssetsInContract
                           where d.ContractAddress == ContractAddress
                           select d).Single();
@@ -291,39 +290,12 @@ namespace FinalProject.Controllers
             _AssetInContractsContext.SaveChanges();
         }
 
-
-        public string ExctractRealPublicKeyAfterNethereumBug(string ContractAddress, string PublicKey, string Position)
-        {
-            var openContractRow = (from d in _AssetInContractsContext.AssetsInContract
-                                   where d.ContractAddress == ContractAddress
-                                   select d).Single();
-
-            if (Position.Equals("Buyer"))
-            {
-                string _buyerAdressToCheck = openContractRow.BuyerPublicKey.ToLower();
-                if (PublicKey.Equals(_buyerAdressToCheck))
-                {
-                    PublicKey = openContractRow.BuyerPublicKey;
-                }
-            }
-
-            else if (Position.Equals("Seller"))
-            {
-                string _sellerAdressToCheck = openContractRow.SellerPublicKey.ToLower();
-                if (PublicKey.Equals(_sellerAdressToCheck))
-                {
-                    PublicKey = openContractRow.SellerPublicKey;
-                }
-            }
-            return PublicKey;
-        }
-            
-            
+       
            
     }
 
     internal class ConfirmationRecipt
-    {
+    { //response class after deny/approve contract by the buyer or cancel expierd contract by the seller
         public string ContractAddress { get; set; }
 
         public double feeETH { get; set; }

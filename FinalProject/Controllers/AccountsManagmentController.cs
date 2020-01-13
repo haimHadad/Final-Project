@@ -13,8 +13,8 @@ namespace FinalProject.Controllers
 {
     public class AccountsManagmentController : Controller
     {
-        private AccountsContext _AccountsContext;
-        private static RegulatorAccount regulatorAcc;
+        private AccountsContext _AccountsContext; // Accounts db table
+        private static RegulatorAccount regulatorAcc; //regulator account
 
 
         public AccountsManagmentController(AccountsContext context)
@@ -25,7 +25,7 @@ namespace FinalProject.Controllers
 
 
         public async Task<IActionResult> ShowAccountsPage()
-        {        
+        {   //show the public-key -> ID table in the page, read all web accounts     
             DappAccount account = RegulatorController._regulator;
             await DappAccountController.RefreshAccountData(account.publicKey);
             regulatorAcc = new RegulatorAccount();
@@ -43,7 +43,7 @@ namespace FinalProject.Controllers
         }
 
         public async Task<string> AddNewAccount(int ID, string PublicKey)
-        {
+        { //add new account to the db so our web will be able to recognize it in new contract deployments
             List<AccountID> listToCheck;
 
             listToCheck = await _AccountsContext.Accounts.FromSqlRaw("select * from Accounts where ID = {0}", ID).ToListAsync();
@@ -71,7 +71,7 @@ namespace FinalProject.Controllers
 
 
         public async Task<double> CheckPublicKeyValidity(string PublicKey)
-        {
+        { //check the legality of the public-key in order to save it in the db table
             var YourPublicKey = regulatorAcc.publicKey;
             var PublicKeyToCheck = PublicKey;
             double Balance = await DappAccountController.get_ETH_BalanceOfAnyAccount(YourPublicKey, PublicKeyToCheck);
@@ -80,7 +80,7 @@ namespace FinalProject.Controllers
 
 
         public void DownloadExcelAccounts()
-        {
+        { //download the account html table into an excel file
             var collection = regulatorAcc.AllAccounts;
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Report");
