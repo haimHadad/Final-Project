@@ -31,7 +31,7 @@ namespace FinalProject.Models
 
         Contract deployedContractIsntance;
 
-        public SmartContractService(DappAccount _yourAccount, string contractAddress)
+        public SmartContractService(DappAccount _yourAccount, string contractAddress) //initilize the service
         {
             accountCaller = _yourAccount;
             EtherscanURL = "https://ropsten.etherscan.io/address/" + contractAddress;
@@ -40,7 +40,7 @@ namespace FinalProject.Models
         }
 
         public static async Task<string> Deploy(DappAccount yourAccount, uint hoursTimeAmount, uint assetID, string assetLoaction, uint assetRooms, uint assetAreaIn, string assetURL, double assetPrice, string buyerAddress)
-        {
+        { //deploy the contract (=create the contract)
             var TimeHours = hoursTimeAmount;
             var ID = assetID;
             var Loaction = assetLoaction;
@@ -59,7 +59,7 @@ namespace FinalProject.Models
             return salesContractAddress;
         }
 
-        public static async Task<string> Deploy(DappAccount yourAccount, ContractOffer offer)
+        public static async Task<string> Deploy(DappAccount yourAccount, ContractOffer offer) //another form of deploy function
         {
             uint hoursTimeAmount = (uint)offer.TimeToBeOpen;
             uint assetID = (uint)offer.AssetID;
@@ -77,7 +77,7 @@ namespace FinalProject.Models
 
 
 
-        public async Task<Asset> getAssetDestails() //Buyer the asset that included in the deal
+        public async Task<Asset> getAssetDestails() //read the asset that included in the contract
         {
             var contractHandlerAsBuyer = accountCaller.Blockchain.Eth.GetContractHandler(ContractAddress);
             var getAssetDetailsOutputDTO = await contractHandlerAsBuyer.QueryDeserializingToObjectAsync<GetAssetDetailsFunction, GetAssetDetailsOutputDTO>();
@@ -98,38 +98,37 @@ namespace FinalProject.Models
             AssetFromDeployedContract.Price = Convert.ToDouble(assetPriceAtEther);
             return AssetFromDeployedContract;
 
-            //string assetDetialsAllTogether = "" + assetID + ", " + assetLoaction + ", " + assetRooms + ", " + assetAreaIn + ", " + assetImageUrl + ", " + assetPriceAtEther;
         }
 
-        public async Task<string> getBuyerAddress() //get the address of the buyer which included in the deal
+        public async Task<string> getBuyerAddress() //get the address of the buyer which included in the contract
         {
             var getAssetBuyerFunction = deployedContractIsntance.GetFunction("getAssetBuyer");
             var assetBuyerAddress = await getAssetBuyerFunction.CallAsync<string>();
             return assetBuyerAddress;
         }
 
-        public async Task<bool> getBuyerSign()
+        public async Task<bool> getBuyerSign() //check if buyer did sign
         {
             var getBuyerSigningFunction = deployedContractIsntance.GetFunction("getBuyerSigning");
             var buyerSign = await getBuyerSigningFunction.CallAsync<bool>();
             return buyerSign;
         }
 
-        public async Task<bool> getSellerSign()
+        public async Task<bool> getSellerSign() //check if seller did sign
         {
             var getSellerSigningFunction = deployedContractIsntance.GetFunction("getOwnerSigning");
             var ownerSign = await getSellerSigningFunction.CallAsync<bool>();
             return ownerSign;
         }
 
-        public async Task<bool> getRegulatorSign()
+        public async Task<bool> getRegulatorSign() //check if regulaotr (also called govrenment) did sign
         {
             var getRegulatorSigningFunction = deployedContractIsntance.GetFunction("getGovrenmentSigning");
             var regulaotrSign = await getRegulatorSigningFunction.CallAsync<bool>();
             return regulaotrSign;
         }
 
-        public async Task<double> getTax()
+        public async Task<double> getTax() //get tax amount
         {
             var getTaxFunction = deployedContractIsntance.GetFunction("getTax");
             BigInteger taxAmount = await getTaxFunction.CallAsync<BigInteger>();
@@ -140,7 +139,7 @@ namespace FinalProject.Models
 
 
         public async Task<bool> sendEtherToContract(double amount) //send money to the contract, if fail return false, else true
-        {
+        { //send money to the contract 
             try
             {
                 decimal EtherToPay = Convert.ToDecimal(amount);
@@ -156,7 +155,7 @@ namespace FinalProject.Models
             return true;
         }
 
-        public async Task<double> getBalance()
+        public async Task<double> getBalance() //get the money amount that sent into the contract
         {
             double returnedEther=0;
             var getContractBalanceFunction = deployedContractIsntance.GetFunction("getContractBalance");
@@ -169,21 +168,21 @@ namespace FinalProject.Models
 
         }
 
-        public async Task<string> getNewAssetOwner()
+        public async Task<string> getNewAssetOwner() //get address of the new owner (will be set only if the regulaotr approved)
         {
             var getNewAssetOwnerFunction = deployedContractIsntance.GetFunction("getNewAssetOwner");
             var newOwner = await getNewAssetOwnerFunction.CallAsync<string>();
             return newOwner;
         }
 
-        public async Task<string> getOldAssetOwner()
+        public async Task<string> getOldAssetOwner() //get the seller address
         {
             var getNewAssetOwnerFunction = deployedContractIsntance.GetFunction("getOldAssetOwner");
             var newOwner = await getNewAssetOwnerFunction.CallAsync<string>();
             return newOwner;
         }
 
-        public async Task<ulong> getTimeLeftInSeconds()
+        public async Task<ulong> getTimeLeftInSeconds() //get the time that left in seconds 
         {
             var TimeLeftFunction = deployedContractIsntance.GetFunction("TimeLeft");
             var timeLeft = await TimeLeftFunction.CallAsync<UInt64>();
@@ -211,7 +210,7 @@ namespace FinalProject.Models
             return true;
         }
 
-        public async Task<bool> approveAndExcecute(double taxPercentage) //for regulator only
+        public async Task<bool> approveAndExcecute(double taxPercentage) //for regulator only - approve the contract
         {
             string GovrenmentAddress = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
             if (!GovrenmentAddress.Equals(accountCaller.publicKey)) //if the caller is not the regulator
@@ -246,7 +245,7 @@ namespace FinalProject.Models
         }
 
 
-        public async Task<bool> denyDeal() //for the buyer
+        public async Task<bool> denyDeal() //for the buyer -cancel the contract
         {
             string BuyerAddress = await getBuyerAddress();
             bool BuyerSign = await getBuyerSign();
@@ -270,7 +269,7 @@ namespace FinalProject.Models
             return true;
         }
 
-        public async Task<bool> abort() //in case buyer didnt take action in time
+        public async Task<bool> abort() //in case buyer didnt take action in time - the seller can call this function in order to cancel the contract
         {
             string SellerAddress = await getOldAssetOwner();
             bool BuyerSign = await getBuyerSign();
@@ -299,7 +298,7 @@ namespace FinalProject.Models
             return true;
         }
 
-        public async Task<bool> setIsExpired() //For regulator (=Govrenment)
+        public async Task<bool> setIsExpired() //For regulator (=Govrenment) set expierd flag for the deal
         {
             string GovrenmentAddress = "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80";
             if (!GovrenmentAddress.Equals(accountCaller.publicKey)) //if the caller is not the regulator
@@ -318,7 +317,7 @@ namespace FinalProject.Models
             return true;
         }
 
-        public async Task<bool> setBuyerSign() //For regulator (=Govrenment)
+        public async Task<bool> setBuyerSign() //sign the contract (for the buyer)
         {      
             string buyerAccount = await getBuyerAddress();
             string myBuyerAddress = accountCaller.publicKey.ToLower();

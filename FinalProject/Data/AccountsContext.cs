@@ -9,7 +9,7 @@ namespace FinalProject.Data
 {
     public class AccountsContext : DbContext
     {
-        
+        //database class (API) to communicate with db (accounts table)
             public AccountsContext(DbContextOptions<AccountsContext> options) : base(options) { }
             public DbSet<AccountID> Accounts { get; set; }
         

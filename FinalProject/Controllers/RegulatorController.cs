@@ -15,10 +15,10 @@ namespace FinalProject.Controllers
     public class RegulatorController : Controller
     {
 
-        private AssetsInContractContext _AssetInContractsContext;
-        private AccountsContext _AccountsContext;
-        private AssetContext _AssetsContext;
-        public static DappAccount _regulator;
+        private AssetsInContractContext _AssetInContractsContext; // AssetInContracts db table
+        private AccountsContext _AccountsContext; // Accounts db table
+        private AssetContext _AssetsContext; // Assets db table
+        public static DappAccount _regulator; // Regulaotr account
 
         public RegulatorController(AssetsInContractContext context, AccountsContext context2, AssetContext context3)
         {
@@ -27,7 +27,7 @@ namespace FinalProject.Controllers
             _AssetsContext = context3;
         }
 
-        public async Task<IActionResult> RegulatorMainPage() //here the login succeeded , e initialized the key
+        public async Task<IActionResult> RegulatorMainPage() //here the login succeeded 
         {
 
             await DappAccountController.RefreshAccountData(_regulator.publicKey);
@@ -38,7 +38,7 @@ namespace FinalProject.Controllers
         }
 
 
-        public async Task<IActionResult> ShowHomePage()
+        public async Task<IActionResult> ShowHomePage() //collect all closed contracts
         {
             DappAccount account = _regulator;
             List<AssetInContract> deployedContractsFromDB = new List<AssetInContract>();

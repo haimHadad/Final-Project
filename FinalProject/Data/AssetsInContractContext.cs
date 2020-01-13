@@ -10,7 +10,7 @@ namespace FinalProject.Data
     public class AssetsInContractContext : DbContext
     {
         public AssetsInContractContext(DbContextOptions<AssetsInContractContext> options) : base(options) { }
-
+        //database class (API) to communicate with db (open contracts)
 
         public DbSet<AssetInContract> AssetsInContract { get; set; }
 
