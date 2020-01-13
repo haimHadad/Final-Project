@@ -2,9 +2,9 @@
     pragma solidity ^0.5.11;
     contract SalesContract 
     {
-        uint private timeOfContractCreation;
-        uint private timeToBeOpen;
-        address payable constant internal govrementAddress = 0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80;
+        uint private timeOfContractCreation; //time in seconds since 1970
+        uint private timeToBeOpen; // the time in seconds for the contract to be open
+        address payable constant internal govrementAddress = 0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80; 
         uint private taxPay;
 
         struct Asset{
@@ -28,12 +28,6 @@
         bool private isExpired = false;       //if I bought the asset and want to sell it to another person, the govrenment raise this flag
         
         
-        event notifyNewOffer(address fromContract, address toBuyer); //send message to buyer when seller create and sign the contract
-        event notifyContractApproved(address fromContract, address toSeller, address toBuyer); //govrenment raise signing flag, and send back the contract. Both sides reads the flag.
-        event notifyContractSigned(address fromContract, address toGovrenment); //after buyer and sell signing we notify the govrenment 
-        event notifyDenyOffer(address fromContract, address fromBuyer,address toSeller);  //send message to seller and tell him that buyer denied contract
-        event notifyCancelOffer(address fromContract, address toBuyer,address toSeller, uint codeAction); //govrenment cancel the contract 
-
         
         constructor(uint _timeToBeOpen ,uint _Id, string memory _Loaction, uint _Rooms, uint _AreaIn,string memory _Image, uint _price, address payable _buyer ) public 
         {
@@ -65,7 +59,7 @@
             isContractPayed = true;
         }
 
-        function isTimerOver() public view returns (bool)
+        function isTimerOver() public view returns (bool) //check if the time over
         {
             uint contractTime = now - timeOfContractCreation;
             if(contractTime > timeToBeOpen) 
@@ -74,7 +68,7 @@
             
         }
         
-        function getContractBalance() public view returns(uint) //this method return the balance of this contract = the ether amount that sent to this contract
+        function getContractBalance() public view returns(uint) //this method return the balance of this contract = the ether amount that been sent to this contract by the buyer
         {
             return address(this).balance;
         }
@@ -93,17 +87,17 @@
                 );
         }
         
-        function getOldAssetOwner() public view returns(address) 
+        function getOldAssetOwner() public view returns(address) //return seller address
         {
             return oldOwnerAddress;
         }
         
-        function getAssetBuyer() public view returns(address) 
+        function getAssetBuyer() public view returns(address) //gey buyer address
         {
             return buyerAddress;
         }
         
-        function getNewAssetOwner() public view returns(address)
+        function getNewAssetOwner() public view returns(address) //get the owner after regulaotr approval
         {
            return newOwnerAddress; 
         } 
@@ -118,12 +112,12 @@
             return buyerSign;
         }
         
-        function getGovrenmentSigning() public view returns(bool) //this method return state of buyer sign
+        function getGovrenmentSigning() public view returns(bool) //this method return state of regulaotr sign
         {
             return govrenmentSign;
         }
         
-        function getTax() public view returns (uint)
+        function getTax() public view returns (uint) //get tax amount (ether), set by the regulator
         {
             return taxPay;
         }
@@ -138,7 +132,7 @@
             emit notifyContractSigned(address(this), govrementAddress);
         }
         
-       function getIsExpired() public view returns(bool)
+       function getIsExpired() public view returns(bool) //return expierd status
        {
            return isExpired;
        }
@@ -152,13 +146,13 @@
        
        
        
-       function setIsExpired() public
+       function setIsExpired() public //set expierd status by the regulaotor
        {
-           require( msg.sender ==  govrementAddress, 'Only govrenment may call this function' ); //only govrenment can call this function
+           require( msg.sender ==  govrementAddress, 'Only govrenment may call this function' ); /
            isExpired = !isExpired;
        }
         
-        function approveAndExcecuteContract(uint _taxPay ) public returns (bool) //this method responsible for the excecution of the contract
+        function approveAndExcecuteContract(uint _taxPay ) public returns (bool) //this method responsible for the excecution of the contract =ownership switch
         {
            require( msg.sender ==  govrementAddress, 'Only govrenment may call this function' ); //only govrenment can call this function
            require(_taxPay < getContractBalance(), 'The tax payment must be lower than the buyer payment' );   //govrenment cannot take more ether than what the contract has
@@ -178,7 +172,7 @@
            
         }
         
-        function cancelContract() public //for the govrenment
+        function cancelContract() public //for the govrenment, cancel a contract by the regulator
         {
           require(govrementAddress == msg.sender, 'Only govrenment may call this function');
           require(govrenmentSign != true, 'The govrenment already signed this contract' );
@@ -186,7 +180,7 @@
           selfdestruct(buyerAddress); //Destruct the contract and return ether to the buyer
         }
     
-         function denyContract() public //for the buyer
+         function denyContract() public // cancel a contract by the buyer
         {
           require(buyerAddress == msg.sender, 'Only buyer may call this function'); 
           require(buyerSign != true, 'Buyer cannot deny the contract after signing'); 
@@ -194,7 +188,7 @@
           selfdestruct(buyerAddress); //Destruct the contract, no need return ether to the buyer
         }
         
-        function abortContract() public //in case buyer didnt take action in time   
+        function abortContract() public //in case buyer didnt take action in time, the seller can cancel the contract using this method  
         {
             require(oldOwnerAddress == msg.sender, 'Only asset owner may call this function'); 
             require(buyerSign != true, 'Buyer already signed the contract');

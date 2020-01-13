@@ -62,11 +62,14 @@
 {
 
         <script type="text/javascript">
-        $(document).ready(function () {
+            $(document).ready(function () //set bold on the links to this page
+            {
             document.getElementById("assetsNavBar").style.textDecoration = "underline";
             document.getElementById("assetsNavBar").style.fontWeight = "bold";
-        });
-        function getPriceInILS(EthPrice)
+            });
+
+
+        function getPriceInILS(EthPrice)  //convert price from ETH to ILS
         {
             var exchangeRate = @Model.exchangeRateETH_ILS;
             var IlsPrice = exchangeRate * EthPrice;
@@ -75,7 +78,7 @@
             return IlsPriceToReturn;
         }
 
-        function ViewAssetDeteils(assetJson)
+        function ViewAssetDeteils(assetJson) //open own assets details (from db)
         {
             var fullPublicKey = assetJson.OwnerPublicKey;
             var partOne = fullPublicKey.substring(0, 12);
@@ -97,7 +100,7 @@
             })
         }
         $('#myModal').on('shown.bs.modal', function () {
-            $('#myInput').trigger('focus')
+            $('#myInput').trigger('focus');
         })
         </script>
     }

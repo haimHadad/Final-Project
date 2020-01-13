@@ -226,13 +226,13 @@
     <script type="text/javascript">
 
         var assetReturnedFromFailedDeplyment; //to reload the asset details in case of failure in the deployment
-        $(document).ready(function ()
+        $(document).ready(function () //set bold to the links of this page
         {
             document.getElementById("createContractNavBar").style.textDecoration = "underline";
             document.getElementById("createContractNavBar").style.fontWeight = "bold";
             var eSelect = document.getElementById('AssetSelector');
 
-            eSelect.onchange = function ()
+            eSelect.onchange = function () //event for the combobox of the own assets for the contract deployment
             {
                 var getAssetJson = eSelect.options[eSelect.selectedIndex].value;
                 if (getAssetJson == "Deafult")
@@ -257,7 +257,7 @@
 
     
 
-        function SetIlsPrice()
+        function SetIlsPrice() //set ils price on the text box
         {
             var priceETH = $('#PriceEthTxt').val();
             var priceILS = getPriceInILS(priceETH);
@@ -270,7 +270,7 @@
             document.getElementById("TaxLabel").textContent = "Tax amount: " + taxAmountETH + " ETH | ₪" + taxAmountILS;
         }
 
-        function checkErrors()
+        function checkErrors() //check pre condition errors for the deployment
         {
             var ErrorMsg = "";
             var accountBalance = @Model.EthBalance;
@@ -336,7 +336,7 @@
             return ErrorMsg;
         }
 
-        function getPriceInILS(EthPrice)
+        function getPriceInILS(EthPrice) //convers ETH to ILS
         {
             var exchangeRate = @Model.exchangeRateETH_ILS;
             var IlsPrice = exchangeRate * EthPrice;

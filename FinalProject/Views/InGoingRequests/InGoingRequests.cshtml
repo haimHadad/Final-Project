@@ -15,7 +15,6 @@
 }
 else
 {
-    <!--<div class="row justify-content-center"><button class="btn btn-light">Refresh Table</button></div>-->
     <br />
 
     <div class=""><h1>Pending Contracts</h1></div>
@@ -201,7 +200,8 @@ else
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function () //bold the link to this page
+        {
             document.getElementById("navBarInGoingRequest").style.textDecoration = "underline";
             document.getElementById("navBarInGoingRequest").style.fontWeight = "bold";
             rowsInProcess = 0;
@@ -209,7 +209,7 @@ else
         var rowsInProcess;
         //$('#ExportPendingContractBtn').click(function(){ document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")'; });
 
-        function DownloadPendingRequests()
+        function DownloadPendingRequests() //download excel version of the HTML table 
         {
             document.location = '@Url.Action("DownloadExcelPendingContracts" ,"InGoingRequests")';
         }

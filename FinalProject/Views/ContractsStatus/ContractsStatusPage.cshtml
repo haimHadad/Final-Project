@@ -424,12 +424,13 @@
 
     <script type="text/javascript">
 
-        $(document).ready(function () {
+        $(document).ready(function () //bold the link to this page
+        {
             document.getElementById("contractsStatusNavBar").style.textDecoration = "underline";
             document.getElementById("contractsStatusNavBar").style.fontWeight = "bold";
         });
 
-        function checkEthForDeal(offer)
+        function checkEthForDeal(offer) //check balance of user
         {
             var ErrorMsg = "";
             var dealPrice = parseFloat(offer.PriceETH);
@@ -454,7 +455,7 @@
 
         
 
-        function CheckIfSure()
+        function CheckIfSure() //check if user sure in his decition (using dialog show)
         {
             var offer = currentContract;
             var accountBalanceETH = @Model.EthBalance;
@@ -471,7 +472,7 @@
             $('#DialogBlockchainBeforeApprove').modal('show');
         }
 
-        var currentContract;
+        var currentContract; //passing contract details between dialogs
 
 
 
@@ -480,7 +481,7 @@
 
 
 
-        function checkEthForFee()
+        function checkEthForFee() // basic check of money balance for blockchain operation
         {
             var ErrorMsg = "";
             var accountBalance = @Model.EthBalance;
@@ -498,9 +499,9 @@
 
 
 
-        var currentExpierdDealOffer;
+        var currentExpierdDealOffer; //passing expierd contracts between dialogs
 
-        function ShowExpierdContract(offer) //for seller
+        function ShowExpierdContract(offer) //for seller -show expierdcontract in dialog box
         {
             currentExpierdDealOffer = offer;
             var fullOwnerPublicKey = offer.SellerPublicKey;
@@ -549,7 +550,7 @@
         
 
 
-        function LoadOpenContractDetails(offer)
+        function LoadOpenContractDetails(offer) //of buyer - show contract in dialog
         {
             currentContract = offer;
             document.getElementById("openContractDenyBtn").disabled = true;
@@ -625,7 +626,7 @@
         }
 
 
-        function LoadClosedContractDetails(offer)
+        function LoadClosedContractDetails(offer) //for user (=buyer / seller) - show approved/unapproved contract
         {
             var fullOwnerPublicKey = offer.SellerPublicKey;
             var partOne = fullOwnerPublicKey.substring(0, 12);

@@ -67,22 +67,6 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
-            <!--<div class="modal position-fixed" id="dialogCopy">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Public-Key</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h5 id="generalDialogContent">Public Key has been copied to clipboard.</h5>
-                </div>
-            </div>
-        </div>
-    </div>-->
-
 
 
             <script type="text/javascript">
@@ -91,7 +75,7 @@
                     updateAccountBalance();
                 })();
 
-                function updateAccountBalance()
+                function updateAccountBalance() // set buyer/seller balance (Ether | ILS) from the model (=class)
                 {
 
 
@@ -110,7 +94,7 @@
 
 
 
-                function updateAccountBalanceAfterBlockchainOperation(publicKey)
+                function updateAccountBalanceAfterBlockchainOperation(publicKey) // update buyer/seller balance (Ether | ILS)
                 {
                     var echangeRate = @Model.exchangeRateETH_ILS;
                     console.log("Before update, the public key is : "+publicKey);

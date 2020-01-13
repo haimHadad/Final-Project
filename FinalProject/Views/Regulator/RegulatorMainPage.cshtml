@@ -106,7 +106,8 @@ else
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function () //bold the link for this page
+        {
             document.getElementById("navBarRegulatorHome").style.textDecoration = "underline";
             document.getElementById("navBarRegulatorHome").style.fontWeight = "bold";
         });
@@ -114,14 +115,16 @@ else
         //$('#ExportFinalDecitionsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelFinalDecitions" ,"Regulator")'; });
 
 
-        function DownloadFinalDecitions() {
+        function DownloadFinalDecitions() //download excel version of the HTML table 
+        {
             document.location = '@Url.Action("DownloadExcelFinalDecitions" ,"Regulator")';
         }
 
 
         
 
-        function ViewContractDeteils(offer) {
+        function ViewContractDeteils(offer) //open contract details from the blockchain
+        {
 
             console.log("ID is : -->" + offer.OwnerID);
             var fullPublicKey = offer.SellerPublicKey;

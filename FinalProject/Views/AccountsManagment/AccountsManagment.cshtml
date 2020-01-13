@@ -104,14 +104,15 @@
     @section scripts
 {
         <script type="text/javascript">
-            $(document).ready(function () {
+            $(document).ready(function () //bold the link to this page
+            {
                 document.getElementById("navBarAccountsManagement").style.textDecoration = "underline";
                 document.getElementById("navBarAccountsManagement").style.fontWeight = "bold";
             });
 
             //$('#ExportAccountsBtn').click(function(){ document.location = '@Url.Action("DownloadExcelAccounts" ,"AccountsManagment")'; });
 
-            function DownloadAccounts()
+            function DownloadAccounts() //download the HTML table to excel file
             {
                 document.location = '@Url.Action("DownloadExcelAccounts" ,"AccountsManagment")';
             }
@@ -120,10 +121,10 @@
 
             setInputFilter(document.getElementById("NewIdNumber"), function (value)
             {
-                return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp
+                return /^\d*\.?\d*$/.test(value); // Allow digits and '.' only, using a RegExp to the id textbox
             });
 
-            function setInputFilter(textbox, inputFilter)
+            function setInputFilter(textbox, inputFilter) //search balance or id in the HTML table
             {
                 ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
                     textbox.addEventListener(event, function () {

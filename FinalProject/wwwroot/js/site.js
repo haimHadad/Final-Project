@@ -7,7 +7,7 @@
 
 
 
-function filterAccountsResults()  //AccountsManagment
+function filterAccountsResults()  //AccountsManagment page- filter id->address from table
 {
     var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
     input = document.getElementById("filterAccountsResults");
@@ -35,7 +35,7 @@ function filterAccountsResults()  //AccountsManagment
 
 
 
-function RegisterNewAccount() //AccountsManagment
+function RegisterNewAccount() //AccountsManagment - add id->address to table
 {
     var idNumber = $('#NewIdNumber').val();
     var publicKey = $('#NewPublicKey').val();
@@ -122,7 +122,7 @@ function RegisterNewAccount() //AccountsManagment
 
 
 
-function checkValidityOfPublicKeyInput() //AccountsManagment
+function checkValidityOfPublicKeyInput() //AccountsManagment -check if the address is legal
 {
     document.getElementById("ResponseID").innerHTML = "";
     document.getElementById("validInputPublicKey").style.display = "none";
@@ -177,7 +177,7 @@ function checkValidityOfPublicKeyInput() //AccountsManagment
 
 
 
-function checkValidityOfIdInput() //AccountsManagment
+function checkValidityOfIdInput() //AccountsManagment -check if ID is recognized (in db)
 {
     document.getElementById("ResponseID").innerHTML = "";
     document.getElementById("validInputID").style.display = "none";
@@ -213,7 +213,7 @@ function checkValidityOfIdInput() //AccountsManagment
 
 
 
-function resetValidation() //AccountsManagment
+function resetValidation() //AccountsManagment -set attribute for text inputs
 {
 
     if (document.getElementById("NewIdNumber").classList.contains('is-invalid')) {
@@ -233,7 +233,7 @@ function resetValidation() //AccountsManagment
 
 
 
-function CancelContract()   //in regulator InGoingRequests
+function CancelContract()   //in regulator InGoingRequests -regulator cancel the contract
 {
     var offer = approvedContract;
     var buttonID = "viewPendingContractDetailsBtn" + offer.AssetID;
@@ -304,7 +304,7 @@ function CancelContract()   //in regulator InGoingRequests
 
 
 
-function RefreshTable()  //in regulator InGoingRequests
+function RefreshTable()  //in regulator InGoingRequests - refresh table for the pending contracts
 {
     if (rowsInProcess > 0)
         return;
@@ -369,7 +369,7 @@ function RefreshTable()  //in regulator InGoingRequests
 
 
 
-function AllowNotesRegulaotrDenial() //in regulator InGoingRequests
+function AllowNotesRegulaotrDenial() //in regulator InGoingRequests form - functionality for the regulaotr deny notes
 {
     // PendingContractDenyBtn
     checkBox = document.getElementById("PendingContractCheckBox").checked;
@@ -395,7 +395,7 @@ function AllowNotesRegulaotrDenial() //in regulator InGoingRequests
 
 
 
-function ViewPendingContractDeteils(offer) //in regulator InGoingRequests
+function ViewPendingContractDeteils(offer) //in regulator InGoingRequests - show contract details
 {
     approvedContract = offer;
     console.log("Json is : -->" + offer);
@@ -443,7 +443,7 @@ function ViewPendingContractDeteils(offer) //in regulator InGoingRequests
 }
 
 
-function ShowWarningFeforeApproval() //in regulator InGoingRequests
+function ShowWarningFeforeApproval() //in regulator InGoingRequests -show warning before approval
 {
     var offer = approvedContract;
 
@@ -468,7 +468,7 @@ function ShowWarningFeforeApproval() //in regulator InGoingRequests
 
 
 
-function ApprovePendingContract() //in regulator InGoingRequests
+function ApprovePendingContract() //in regulator InGoingRequests - approve the contract (regulator)
 {
     var offer = approvedContract;
     var buttonID = "viewPendingContractDetailsBtn" + offer.AssetID;
@@ -547,7 +547,7 @@ function ApprovePendingContract() //in regulator InGoingRequests
 
 
 
-function FilterPendingContractsResults() //in regulator InGoingRequests
+function FilterPendingContractsResults() //in regulator InGoingRequests -filter pending contract table from the search input
 {
     var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
     input = document.getElementById("filterInputResults");
@@ -573,7 +573,7 @@ function FilterPendingContractsResults() //in regulator InGoingRequests
 
 
 
-function FilterFinalDecitionsResults() //filter in the main page of regulator
+function FilterFinalDecitionsResults() //filter the RegulaotrMainPage table from the search input
 {
     var input, filter, table, tr, td0, i, txtValue0, td1, txtValue1;
     input = document.getElementById("filterInputResults");
@@ -641,7 +641,6 @@ function setTimer(timeLeftInSeconds) //time for the buyer
         // If the count down is over, write some text
         if (distance < 0) {
             clearInterval(interval);
-            //document.getElementById("demo").innerHTML = "EXPIRED";
             document.getElementById("openContractDialogTime").innerHTML = "EXPIRED";
             document.getElementById("openContractDialogTime").style.color = "red";
             document.getElementById("openContractDenyBtn").disabled = true;
@@ -702,7 +701,7 @@ function convert(timeLeft) //time for the buyer
 
 
 
-function AllowNotes() //allow notes on buyer deny
+function AllowNotes() //Allow notes on buyer contract deny
 {
     checkBox = document.getElementById("openContractCheckBox").checked;
     if (checkBox == true) {
@@ -728,7 +727,7 @@ function AllowNotes() //allow notes on buyer deny
 }
 
 
-function CancelDealContract() //for the seller - if the buyer did not sign
+function CancelDealContract() //for the seller - if the buyer did not sign in time, the seller can cancel the contract using this function
 {
     var offer = currentExpierdDealOffer;
 
@@ -773,7 +772,7 @@ function CancelDealContract() //for the seller - if the buyer did not sign
 }
 
 
-function DenyContract() //for buyer
+function DenyContract() //for buyer - cancel the contract
 {
     var offer = currentContract;
 
@@ -828,7 +827,7 @@ function DenyContract() //for buyer
 }
 
 
-function ApproveDeal() //for the buyer
+function ApproveDeal() //for the buyer - approve the deal = send the money to the contract (contract = middle man) and later sign the contract
 {
     var offer = currentContract;
     var ErrorMsg = "";
@@ -891,7 +890,7 @@ function ApproveDeal() //for the buyer
 }
 
 
-function offerContract()
+function offerContract() //seller deploy the contract (=create the contract) and save it in db
 {
     document.getElementById("CreateContractDialogMessage").innerHTML = "";
     ErrorMsg = checkErrors();
@@ -980,7 +979,8 @@ function offerContract()
 
 
 
-function DeleteFormContent() { //for deployment
+function DeleteFormContent() //for deployment - reset things
+{ 
     $('#AssetIdTxt').val("");
     $('#OwnerIdTxt').val("")
     $('#OwnerPublicKeyTxt').val("")
@@ -999,7 +999,7 @@ function DeleteFormContent() { //for deployment
     document.getElementById("imageAssetForm").setAttribute("src", "");
 }
 
-function DisableForm() { //for deployment
+function DisableForm() { //for deployment - reset things
 
     document.getElementById("PriceEthTxt").disabled = true;
     document.getElementById("BuyerAddressTxt").disabled = true;
@@ -1028,7 +1028,7 @@ function DisableForm() { //for deployment
 
 }
 
-function EnableForm(getAssetJson) { //for deployemnt
+function EnableForm(getAssetJson) { //for deployemnt - reset things
     document.getElementById("AssetIdTxt").disabled = false;
     document.getElementById("AssetIdTxt").readOnly = true;
     document.getElementById("OwnerIdTxt").disabled = false;
@@ -1069,7 +1069,8 @@ function EnableForm(getAssetJson) { //for deployemnt
 
 }
 
-function getBuyerID() {
+function getBuyerID() // get buyer ID using his blockchain adddress
+{
     var buyerPublicKey = document.getElementById("BuyerAddressTxt").value;
     var sellerPublicKey = document.getElementById("OwnerPublicKeyTxt").value;
 
@@ -1108,7 +1109,8 @@ function getBuyerID() {
     }
 }
 
-function ViewAssetDeteils(assetJson) {
+function ViewAssetDeteils(assetJson) //view detials of contract
+{
     var fullPublicKey = assetJson.OwnerPublicKey;
     var partOne = fullPublicKey.substring(0, 12);
     var partTwo = " . . . ";
@@ -1125,7 +1127,6 @@ function ViewAssetDeteils(assetJson) {
     $('.table tbody').on('click', '.btn', function () {
         var row = $(this).closest('tr');
         var col = row.find('td:eq(1)').text();
-        //document.getElementById("asset_dialog_body").innerHTML("vddv");
     })
 }
 $('#myModal').on('shown.bs.modal', function () {
@@ -1133,7 +1134,7 @@ $('#myModal').on('shown.bs.modal', function () {
 })
 
 
-function copyToClipBoard()
+function copyToClipBoard() //copy user public-key to the clipboard
 {
     var copyText = document.getElementById("PublicKeyInput");
     copyText.select();
@@ -1144,7 +1145,8 @@ function copyToClipBoard()
 
 
 
-function SendLoginData() {
+function SendLoginData() //login validition
+{
     var url = "/DappAccount/CheckAccount";
     $.post(url, { PublicKey: $("#public_key_input").val(), PrivateKey: $("#private_key_input").val() }, function (data) {
         if (data == false) {
@@ -1157,8 +1159,6 @@ function SendLoginData() {
         }
         else {
             document.getElementById("loader").style.display = "block";
-           /* if ($("#public_key_input").val() == "0x7988dfD8E9ceCb888C1AeA7Cb416D44C6160Ef80")
-                document.getElementById("israelLogo").style.display = "block";*/
             $("#myform").submit()
         }
 
@@ -1169,7 +1169,8 @@ function SendLoginData() {
     });
 }
 
-function wait(ms) {
+function wait(ms) //delay function
+{
     var d = new Date();
     var d2 = null;
     do {
