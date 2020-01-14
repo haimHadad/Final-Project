@@ -8,6 +8,8 @@ namespace FinalProject.Models
 {
     public class AssetInContract
     {
+        //class migration to database
+        //save the open-contract after deployment, and update its state. this is for general read.
         [Key]
         public int AssetID { get; set; }
 

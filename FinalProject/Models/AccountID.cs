@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 namespace FinalProject.Models
 {
     public class AccountID
-    {
+    { 
+        //class migration to database
+        //save id->public-key recognition
         [Key]
         public int ID { get; set; }
 

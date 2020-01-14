@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace FinalProject.Models
 {
-    public class DappAccount //this class i a general class of user ! ! ! from this class the regulator and buyer/seller will will be inherited
+    //the account of seller/buyer/regulaotr  - a blockchain account integreated with our web appliction
+    public class DappAccount 
     {
         public string publicKey { get; set; }
 

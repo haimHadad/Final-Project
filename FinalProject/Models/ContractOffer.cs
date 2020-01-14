@@ -7,7 +7,8 @@ namespace FinalProject.Models
 {
     public class ContractOffer
     {
-        
+        //Smart Contract details
+        //we read the contract details into this class
         public int AssetID { get; set; } 
 
         public int OwnerID { get; set; }

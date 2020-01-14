@@ -10,6 +10,8 @@ namespace FinalProject.Models
     
     public class Asset
     {
+        //class migration to database
+        //save the assets of the account
         [Key]
         public int AssetID { get; set; }
         
