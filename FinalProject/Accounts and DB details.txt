@@ -18,10 +18,3 @@ Private-Key: ce155c9664386764ee49f72aa0e5d2820c7dee301154b545e26e69f6408f4d34
 ----------------------------------------------------------------------------------------------------------------------------
 
 Database -login window (its detials):
-
-
-Server type: Database Engine
-Server name: haimdbserver.database.windows.net
-Authentication: SQL Server Authentication
-Login: nativhaim
-Password: P@ss4Arc!
